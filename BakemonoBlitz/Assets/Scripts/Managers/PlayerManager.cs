@@ -15,7 +15,10 @@ using System.Collections;
 
 public class PlayerManager : MonoBehaviour
 {
+    public string gender;
     public int health, energy, lives, gems, score, time;
+    public bool weapon1, weapon2, weapon3;
+    public float x, y, z;
 
     private float startTime;
     private float currentTime;

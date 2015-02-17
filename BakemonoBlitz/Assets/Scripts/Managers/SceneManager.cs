@@ -19,6 +19,7 @@ using System.Collections;
     Invoking the events according to the triggers defined
  */
 
+// Scene Manager needs to set the Scene and Checkpoint Number in Profile Manager in order to save different number into file
 public class SceneManager : MonoBehaviour {
 
     // Managers
@@ -32,9 +33,15 @@ public class SceneManager : MonoBehaviour {
     SoundManager mSoundManager;
     StageManager mStageManager;
     VideoManager mVideoManager;
+    ProfileManager mProfileManager;
+
+    public int mSceneNumber = 1;
+    public int mCheckpointNumber = 1;
 
     // Profile Number being loaded
-    int mProfileNumber = 0;
+    int mProfileNumber = 1;
+
+    Rect _Save, _Load, _SaveMSG, _LoadMSG;
 
     // Initialize Scene Manager and get reference to all other Managers
     void Awake()
@@ -50,6 +57,8 @@ public class SceneManager : MonoBehaviour {
         mSoundManager = GameObject.Find("Sound Manager").GetComponent<SoundManager>();
         mStageManager = GameObject.Find("Stage Manager").GetComponent<StageManager>();
         mVideoManager = GameObject.Find("Video Manager").GetComponent<VideoManager>();
+        mProfileManager = GameObject.Find("Profile Manager").GetComponent<ProfileManager>();
+
 
         Debug.Log("Initializing other Managers...");
         mBackgroundManager.InitializeManager();
@@ -61,6 +70,7 @@ public class SceneManager : MonoBehaviour {
         mPlayerManager.InitializeManager();
         mSoundManager.InitializeManager();
         mStageManager.InitializeManager();
+        mProfileManager.InitializeManager();
         mVideoManager.InitializeManager();
 
         // Load Profile Properties for Player and Scene
@@ -69,9 +79,35 @@ public class SceneManager : MonoBehaviour {
 
     }
 
+
+    void OnGUI()
+    {
+        //*************************************************** 
+        // Loading The Player... 
+        // **************************************************       
+        if (GUI.Button(_Load, "Load"))
+        {
+            mProfileManager.LoadProfile(1);
+        }
+
+        //*************************************************** 
+        // Saving The Player... 
+        // **************************************************    
+        if (GUI.Button(_Save, "Save"))
+        {
+            mProfileManager.SaveProfile(2);
+        }
+
+
+    }
 	// Use this for initialization
 	void Start ()
     {
+        // We setup our rectangles for our messages 
+        _Save = new Rect(10, 80, 100, 20);
+        _Load = new Rect(10, 100, 100, 20);
+        _SaveMSG = new Rect(10, 120, 400, 40);
+        _LoadMSG = new Rect(10, 140, 400, 40);
 	
 	}
 	
