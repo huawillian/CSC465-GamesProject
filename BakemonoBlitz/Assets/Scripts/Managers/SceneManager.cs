@@ -114,8 +114,10 @@ public class SceneManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-	
-	}
+        GameObject camera =  mCameraManager.getCamera("Main Camera");
+
+        camera.transform.position = new Vector3(camera.transform.position.x + 0.001f, camera.transform.position.y, camera.transform.position.z);
+    }
 
     // Load Properties
     void LoadSceneProperties(int profileNumber)
