@@ -88,6 +88,9 @@ public class SceneManager : MonoBehaviour {
         if (GUI.Button(_Load, "Load"))
         {
             mProfileManager.LoadProfile(1);
+            //mHUDManager.showTextbox("HELLO");
+            //mCameraManager.beginFadeIn();
+            mSoundManager.playSound("sound3", Vector3.zero);
         }
 
         //*************************************************** 
@@ -96,6 +99,8 @@ public class SceneManager : MonoBehaviour {
         if (GUI.Button(_Save, "Save"))
         {
             mProfileManager.SaveProfile(2);
+            //mHUDManager.showTextbox("WORLD");
+            mCameraManager.beginFadeOut();
         }
 
 
@@ -116,7 +121,7 @@ public class SceneManager : MonoBehaviour {
     {
         GameObject camera =  mCameraManager.getCamera("Main Camera");
 
-        camera.transform.position = new Vector3(camera.transform.position.x + 0.001f, camera.transform.position.y, camera.transform.position.z);
+        //camera.transform.position = new Vector3(camera.transform.position.x + 0.001f, camera.transform.position.y, camera.transform.position.z);
     }
 
     // Load Properties

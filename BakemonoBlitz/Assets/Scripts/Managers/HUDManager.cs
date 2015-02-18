@@ -31,6 +31,12 @@ public class HUDManager : MonoBehaviour
     private int screenWidth, screenHeight;
     //public Texture2D image;
 
+    private string text = "Random Text";
+    private bool showingTextbox = false;
+    private float textboxDuration = 3.0f;
+
+    private bool disableHUD = false;
+
 	// Use this for initialization
 	void Start ()
     {
@@ -59,18 +65,27 @@ public class HUDManager : MonoBehaviour
         GUI.color = Color.white;
         //GUI.Box(new Rect(10, 10, 100, 100), image);
 
-        // Draw Health
-        GUI.Box(new Rect(getPositionX(1), getPositionY(1), getPositionX(14), getPositionY(4)), "HEALTH: " + health);
-        // Draw Energy
-        GUI.Box(new Rect(getPositionX(1), getPositionY(6), getPositionX(14), getPositionY(4)), "ENERGY: " + energy);
-        // Draw Lives
-        GUI.Box(new Rect(getPositionX(1), getPositionY(11), getPositionX(14), getPositionY(4)), "LIVES: " + lives);
-        // Draw Gems
-        GUI.Box(new Rect(screenWidth / 2 - getPositionX(7), getPositionY(1), getPositionX(14), getPositionY(4)), "GEMS: " + gems);
-        // Draw Score
-        GUI.Box(new Rect(screenWidth - getPositionX(15), getPositionY(1), getPositionX(14), getPositionY(4)), "SCORE: " + score);
-        // Draw Time
-        GUI.Box(new Rect(screenWidth - getPositionX(15), getPositionY(6), getPositionX(14), getPositionY(4)), "TIME: " + time);
+        if (!disableHUD)
+        {
+            // Draw Health
+            GUI.Box(new Rect(getPositionX(1), getPositionY(1), getPositionX(14), getPositionY(4)), "HEALTH: " + health);
+            // Draw Energy
+            GUI.Box(new Rect(getPositionX(1), getPositionY(6), getPositionX(14), getPositionY(4)), "ENERGY: " + energy);
+            // Draw Lives
+            GUI.Box(new Rect(getPositionX(1), getPositionY(11), getPositionX(14), getPositionY(4)), "LIVES: " + lives);
+            // Draw Gems
+            GUI.Box(new Rect(screenWidth / 2 - getPositionX(7), getPositionY(1), getPositionX(14), getPositionY(4)), "GEMS: " + gems);
+            // Draw Score
+            GUI.Box(new Rect(screenWidth - getPositionX(15), getPositionY(1), getPositionX(14), getPositionY(4)), "SCORE: " + score);
+            // Draw Time
+            GUI.Box(new Rect(screenWidth - getPositionX(15), getPositionY(6), getPositionX(14), getPositionY(4)), "TIME: " + time);
+        }
+        if (showingTextbox)
+        {
+            // Draw Text Box
+            GUI.Box(new Rect(getPositionX(5), getPositionY(3), getPositionX(90), getPositionY(30)), text);
+        }
+
 
     }
 
@@ -90,6 +105,20 @@ public class HUDManager : MonoBehaviour
     {
         Debug.Log("Initializing " + this.gameObject.name);
         mPlayerManager = GameObject.Find("Player Manager").GetComponent<PlayerManager>();
-
     }
+
+    public void showTextbox(string someText)
+    {
+        text = someText;
+        showingTextbox = true;
+        disableHUD = true;
+        Invoke("unsetShowTextbox", textboxDuration);
+    }
+
+    private void unsetShowTextbox()
+    {
+        this.showingTextbox = false;
+        this.disableHUD = false;
+    }
+
 }
