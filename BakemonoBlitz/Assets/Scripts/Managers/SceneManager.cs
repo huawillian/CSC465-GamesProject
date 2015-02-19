@@ -113,7 +113,8 @@ public class SceneManager : MonoBehaviour {
         _Load = new Rect(10, 100, 100, 20);
         _SaveMSG = new Rect(10, 120, 400, 40);
         _LoadMSG = new Rect(10, 140, 400, 40);
-	
+
+        mSoundManager.playSound("video", Vector3.zero);
 	}
 	
 	// Update is called once per frame

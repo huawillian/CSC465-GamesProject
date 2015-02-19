@@ -45,7 +45,7 @@ public class SoundManager : MonoBehaviour
     {
         Debug.Log("Initializing " + this.gameObject.name);
 
-        soundList = new string[] { "sound1", "sound2", "sound3" };
+        soundList = new string[] { "sound1", "sound2", "sound3", "video" };
         clip = new AudioClip[soundList.Length];
         soundHolders = new GameObject[soundList.Length];
 
