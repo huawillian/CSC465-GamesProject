@@ -90,7 +90,7 @@ public class SceneManager : MonoBehaviour {
         //*************************************************** 
         // Loading The Player... 
         // **************************************************       
-        if (GUI.Button(_Load, "Load"))
+        //if (GUI.Button(_Load, "Load"))
         {
             //mProfileManager.LoadProfile(1);
             //mHUDManager.showTextbox("HELLO");
@@ -101,7 +101,7 @@ public class SceneManager : MonoBehaviour {
         //*************************************************** 
         // Saving The Player... 
         // **************************************************    
-        if (GUI.Button(_Save, "Save"))
+        //if (GUI.Button(_Save, "Save"))
         {
             //mProfileManager.SaveProfile(1);
             //mHUDManager.showTextbox("WORLD");
@@ -124,14 +124,25 @@ public class SceneManager : MonoBehaviour {
         _Load = new Rect(10, 100, 100, 20);
         _SaveMSG = new Rect(10, 120, 400, 40);
         _LoadMSG = new Rect(10, 140, 400, 40);
+
+        StartCoroutine("MenuPlay", 0.0f);
 	}
-	
+
+    IEnumerator MenuPlay()
+    {
+        mHUDManager.disableHUD = true;
+        mVideoManager.playVideo("starcraft");
+        yield return new WaitForSeconds(mSoundManager.getSoundLength("starcraft") - 0.2f);
+        mSoundManager.playSound("lol", Vector3.zero);
+        mCameraManager.beginFadeIn();
+        mMenuController.showMenu = true;
+
+    }
+
 	// Update is called once per frame
 	void Update ()
     {
         GameObject camera =  mCameraManager.getCamera("Main Camera");
-
-        //camera.transform.position = new Vector3(camera.transform.position.x + 0.001f, camera.transform.position.y, camera.transform.position.z);
     }
 
     // Load Properties

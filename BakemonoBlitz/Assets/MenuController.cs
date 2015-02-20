@@ -35,12 +35,16 @@ public class MenuController : MonoBehaviour
     {
         state = Direction.Menu;
         mSceneManager = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
+        resolution = mSceneManager.mResolution;
+        volume = mSceneManager.mVolume;
     }
 
     private void reset()
     {
         selectorIndex = 0;
         state = Direction.Menu;
+        resolution = mSceneManager.mResolution;
+        volume = mSceneManager.mVolume;
     }
 
     IEnumerator returnToMainMenu()
@@ -48,41 +52,15 @@ public class MenuController : MonoBehaviour
         mSceneManager.mCameraManager.beginFadeOut();
         showMenu = false;
         yield return new WaitForSeconds(3.0f);
-        Application.LoadLevel("TestScene");
+        Application.LoadLevel("MainMenuScene");
     }
 
     public void A()
     {
         if (showMenu)
         {
-
             mSceneManager.mSoundManager.playSound("beep1", this.transform.position);
-
-            switch (state)
-            {
-                case Direction.Menu:
-                    selectorIndex++;
-                    selectorIndex = selectorIndex % menuNum;
-                    break;
-                case Direction.Sound:
-                    selectorIndex++;
-                    selectorIndex = selectorIndex % soundNum;
-                    break;
-                case Direction.Video:
-                    selectorIndex++;
-                    selectorIndex = selectorIndex % videoNum;
-                    break;
-                case Direction.SaveProfile:
-                    selectorIndex++;
-                    selectorIndex = selectorIndex % saveNum;
-                    break;
-                case Direction.Exit:
-                    selectorIndex++;
-                    selectorIndex = selectorIndex % exitNum;
-                    break;
-                default:
-                    break;
-            }
+            selectorIndex++;
         }
     }
 
@@ -179,54 +157,65 @@ public class MenuController : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
     {
-        if (screenHeight != Screen.height || screenWidth != Screen.width)
+        if (showMenu)
         {
-            screenHeight = Screen.height;
-            screenWidth = Screen.width;
+            if (screenHeight != Screen.height || screenWidth != Screen.width)
+            {
+                screenHeight = Screen.height;
+                screenWidth = Screen.width;
 
-            _Container = new Vector4(getPositionX(25), getPositionY(20), getPositionX(50), getPositionY(65));
+                _Container = new Vector4(getPositionX(25), getPositionY(20), getPositionX(50), getPositionY(65));
 
-            _Resume = new Vector4(getPositionX(30), getPositionY(30), getPositionX(40), getPositionY(8));
-            _Sound = new Vector4(getPositionX(30), getPositionY(40), getPositionX(40), getPositionY(8));
-            _Video = new Vector4(getPositionX(30), getPositionY(50), getPositionX(40), getPositionY(8));
-            _SaveProfile = new Vector4(getPositionX(30), getPositionY(60), getPositionX(40), getPositionY(8));
-            _Exit = new Vector4(getPositionX(30), getPositionY(70), getPositionX(40), getPositionY(8));
+                _Resume = new Vector4(getPositionX(30), getPositionY(30), getPositionX(40), getPositionY(8));
+                _Sound = new Vector4(getPositionX(30), getPositionY(40), getPositionX(40), getPositionY(8));
+                _Video = new Vector4(getPositionX(30), getPositionY(50), getPositionX(40), getPositionY(8));
+                _SaveProfile = new Vector4(getPositionX(30), getPositionY(60), getPositionX(40), getPositionY(8));
+                _Exit = new Vector4(getPositionX(30), getPositionY(70), getPositionX(40), getPositionY(8));
 
-            _Volume = new Vector4(getPositionX(30), getPositionY(30), getPositionX(40), getPositionY(40));
-            _VolumeSlider = new Vector4(getPositionX(35), getPositionY(50), getPositionX(30), getPositionY(8));
+                _Volume = new Vector4(getPositionX(30), getPositionY(30), getPositionX(40), getPositionY(40));
+                _VolumeSlider = new Vector4(getPositionX(35), getPositionY(50), getPositionX(30), getPositionY(8));
 
-            _Resolution = new Vector4(getPositionX(30), getPositionY(30), getPositionX(40), getPositionY(40));
-            _ResolutionSlider = new Vector4(getPositionX(35), getPositionY(50), getPositionX(30), getPositionY(8));
+                _Resolution = new Vector4(getPositionX(30), getPositionY(30), getPositionX(40), getPositionY(40));
+                _ResolutionSlider = new Vector4(getPositionX(35), getPositionY(50), getPositionX(30), getPositionY(8));
 
-            _Profile1 = new Vector4(getPositionX(30), getPositionY(30), getPositionX(40), getPositionY(15));
-            _Profile2 = new Vector4(getPositionX(30), getPositionY(47), getPositionX(40), getPositionY(15));
-            _Profile3 = new Vector4(getPositionX(30), getPositionY(64), getPositionX(40), getPositionY(15)); ;
+                _Profile1 = new Vector4(getPositionX(30), getPositionY(30), getPositionX(40), getPositionY(15));
+                _Profile2 = new Vector4(getPositionX(30), getPositionY(47), getPositionX(40), getPositionY(15));
+                _Profile3 = new Vector4(getPositionX(30), getPositionY(64), getPositionX(40), getPositionY(15)); ;
 
-            _Yes = new Vector4(getPositionX(30), getPositionY(30), getPositionX(40), getPositionY(18));
-            _No = new Vector4(getPositionX(30), getPositionY(50), getPositionX(40), getPositionY(18));
+                _Yes = new Vector4(getPositionX(30), getPositionY(30), getPositionX(40), getPositionY(18));
+                _No = new Vector4(getPositionX(30), getPositionY(50), getPositionX(40), getPositionY(18));
+            }
+
+            switch (state)
+            {
+                case Direction.Menu:
+                    if (selectorIndex >= menuNum) selectorIndex = 0;
+                    selectorIndex = selectorIndex % menuNum;
+                    break;
+                case Direction.Sound:
+                    if (selectorIndex >= soundNum) selectorIndex = 0;
+                    if (volume > volMax) volume = volMax;
+                    if (volume < volMin) volume = volMin;
+                    selectorIndex = selectorIndex % soundNum;
+                    break;
+                case Direction.Video:
+                    if (selectorIndex >= videoNum) selectorIndex = 0;
+                    if (resolution > resMax) resolution = resMax;
+                    if (resolution < resMin) resolution = resMin;
+                    selectorIndex = selectorIndex % videoNum;
+                    break;
+                case Direction.SaveProfile:
+                    if (selectorIndex >= saveNum) selectorIndex = 0;
+                    selectorIndex = selectorIndex % saveNum;
+                    break;
+                case Direction.Exit:
+                    if (selectorIndex >= exitNum) selectorIndex = 0;
+                    selectorIndex = selectorIndex % exitNum;
+                    break;
+                default:
+                    break;
+            }
         }
-
-        switch (state)
-        {
-            case Direction.Menu:
-                if (selectorIndex >= menuNum) selectorIndex = 0;
-                break;
-            case Direction.Sound:
-                if (selectorIndex >= soundNum) selectorIndex = 0;
-                break;
-            case Direction.Video:
-                if (selectorIndex >= videoNum) selectorIndex = 0;
-                break;
-            case Direction.SaveProfile:
-                if (selectorIndex >= saveNum) selectorIndex = 0;
-                break;
-            case Direction.Exit:
-                if (selectorIndex >= exitNum) selectorIndex = 0;
-                break;
-            default:
-                break;
-        }
-
 	}
 
     void OnGUI()
@@ -309,9 +298,11 @@ public class MenuController : MonoBehaviour
                 // Display Volume 
                 GUI.Box(new Rect(_Volume.x, _Volume.y, _Volume.z, _Volume.w), "Change Volume");
 
+                volume += mSceneManager.mInputManager.LX * 0.5f;
+
                 GUI.backgroundColor = Color.black;
                 // Display Volume Slider
-                volume = GUI.HorizontalSlider(new Rect(_VolumeSlider.x, _VolumeSlider.y, _VolumeSlider.z, _VolumeSlider.w), volume, volMin, volMax);
+                GUI.HorizontalSlider(new Rect(_VolumeSlider.x, _VolumeSlider.y, _VolumeSlider.z, _VolumeSlider.w), volume, volMin, volMax);
                 GUI.backgroundColor = Color.clear;
 
             }
@@ -340,9 +331,12 @@ public class MenuController : MonoBehaviour
                 // Display Resolution 
                 GUI.Box(new Rect(_Resolution.x, _Resolution.y, _Resolution.z, _Resolution.w), "Change Resolution");
 
+                resolution += mSceneManager.mInputManager.LX * 0.05f;
+
+
                 GUI.backgroundColor = Color.black;
                 // Display Resolution Slider
-                resolution = GUI.HorizontalSlider(new Rect(_ResolutionSlider.x, _ResolutionSlider.y, _ResolutionSlider.z, _ResolutionSlider.w), resolution, resMin, resMax);
+                GUI.HorizontalSlider(new Rect(_ResolutionSlider.x, _ResolutionSlider.y, _ResolutionSlider.z, _ResolutionSlider.w), resolution, resMin, resMax);
                 GUI.backgroundColor = Color.clear;
 
             }

@@ -36,6 +36,8 @@ public class VideoManager : MonoBehaviour
     public bool playingVideo = false;
     public int numberImages = 0;
     public float durationVideo = 0.0f;
+    public float startingTime;
+
 
     Texture2D mTex;
 
@@ -67,9 +69,9 @@ public class VideoManager : MonoBehaviour
                 mSoundManager.playSound(name, Vector3.zero);
 
                 durationVideo = mSoundManager.getSoundLength(name);
+                startingTime = Time.time;
 
-
-                InvokeRepeating("change", 0.0f, durationVideo / (float)numberImages);
+                InvokeRepeating("change", 0.0f, durationVideo / (float)(numberImages-20));
 
                 // Set Play Video Values Here
                 return;
@@ -83,12 +85,12 @@ public class VideoManager : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-        if (false)
+        if (playingVideo)
         {
             int numberDigits = 5;
             string digits = "";
 
-            if (i >= numberImages)
+            if (i >= numberImages || Time.time - startingTime > durationVideo)
             {
                 CancelInvoke();
                 playingVideo = false;
@@ -159,6 +161,6 @@ public class VideoManager : MonoBehaviour
 
         mSoundManager = GameObject.Find("Sound Manager").GetComponent<SoundManager>();
 
-        videoList = new string[] { "scene" };
+        videoList = new string[] { "scene" , "starcraft"};
     }
 }
