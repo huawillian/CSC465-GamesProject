@@ -179,6 +179,15 @@ public class CameraManager : MonoBehaviour
         }
     }
 
+    public void setResolution(float size)
+    {
+        for (int i = 0; i < numCameras; i++)
+        {
+            cameras[i].GetComponent<Camera>().orthographicSize = size;
+        }
+    }
+
+
     public void lockCameraPositions()
     {
         locked = true;

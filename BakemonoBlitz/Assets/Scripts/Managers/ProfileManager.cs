@@ -8,9 +8,8 @@ using System.Text;
 public class ProfileManager : MonoBehaviour
 {
     private PlayerManager mPlayerManager;
-    private float mVolume;
-    private int mSceneNumber;
-    private int mCheckpointNumber;
+    private SceneManager mSceneManager;
+    private CameraManager mCameraManager;
 
     // This is our local private members 
     string _FileLocation, _FileName;
@@ -24,12 +23,6 @@ public class ProfileManager : MonoBehaviour
     // so we setup our initial values for our local members 
     void Start()
     {
-        // Where we want to save and load to and from 
-        _FileLocation = Application.dataPath + "/Profiles/";
-        _FileName = "SaveData";
-
-        // we need soemthing to store the information into 
-        myData = new UserData();
     }
 
     /* The following metods came from the referenced URL */
@@ -103,7 +96,7 @@ public class ProfileManager : MonoBehaviour
     // or SaveFile2.xml or SaveFile3.xml
     public void SaveProfile(int profileNumber)
     {
-        if (profileNumber >= 1 && profileNumber <= 3)
+        if (profileNumber >= 0 && profileNumber <= 3)
         {
             this._ProfileNumber = profileNumber;
 
@@ -142,7 +135,12 @@ public class ProfileManager : MonoBehaviour
             myData._userData.y = mPlayerManager.y;
             myData._userData.z = mPlayerManager.z;
             myData._userData.gems = mPlayerManager.gems;
-            myData._userData.volume = 10;
+
+            myData._userData.volume = mSceneManager.mVolume;
+            myData._userData.resolution = mSceneManager.mResolution;
+
+            myData._userData.sceneNumber = mSceneManager.mSceneNumber;
+            myData._userData.checkpointNumber = mSceneManager.mCheckpointNumber;
 
             // Time to creat our XML! 
             _data = SerializeObject(myData);
@@ -157,10 +155,29 @@ public class ProfileManager : MonoBehaviour
         }
     }
 
+    public UserData getProfileData(int profileNumber)
+    {
+        if (profileNumber >= 0 && profileNumber <= 3)
+        {
+            StreamReader r = File.OpenText(_FileLocation + "\\" + _FileName + profileNumber + ".xml");
+            string _info = r.ReadToEnd();
+            r.Close();
+
+            if (_info.ToString() != "")
+            {
+                // notice how I use a reference to type (UserData) here, you need this 
+                // so that the returned object is converted into the correct type 
+                return (UserData)DeserializeObject(_info);
+            }
+        }
+
+        return null;
+    }
+
     // Load Profile given profile number from 1 to 3 inclusive
     public void LoadProfile(int profileNumber)
     {
-        if (profileNumber >= 1 && profileNumber <= 3)
+        if (profileNumber >= 0 && profileNumber <= 3)
         {
             this._ProfileNumber = profileNumber;
 
@@ -208,12 +225,12 @@ public class ProfileManager : MonoBehaviour
                 mPlayerManager.z = myData._userData.z;
 
                 mPlayerManager.gems = myData._userData.gems;
+                mPlayerManager.gender = myData._userData.gender;
 
-                this.mVolume = myData._userData.volume;
-                this.mSceneNumber = myData._userData.sceneNumber;
-                this.mCheckpointNumber = myData._userData.checkpointNumber;
-
-                setVolume(mVolume);
+                mSceneManager.mVolume = myData._userData.volume;
+                mSceneManager.mResolution = myData._userData.resolution;
+                mSceneManager.mSceneNumber = myData._userData.sceneNumber;
+                mSceneManager.mCheckpointNumber = myData._userData.checkpointNumber;
 
             }
         }
@@ -224,36 +241,32 @@ public class ProfileManager : MonoBehaviour
     {
         Debug.Log("Initializing " + this.gameObject.name);
         this.mPlayerManager = GameObject.Find("Player Manager").GetComponent<PlayerManager>();
-    }
+        this.mSceneManager = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
+        this.mCameraManager = GameObject.Find("Camera Manager").GetComponent<CameraManager>();
 
-    // Called by Scene Manager
-    public int getSceneNumber()
-    {
-        return this.mSceneNumber;
-    }
 
-    // Called by Scene Manager
-    public int getCheckpointNumber()
-    {
-        return this.mCheckpointNumber;
-    }
+        // Where we want to save and load to and from 
+        _FileLocation = Application.dataPath + "/Profiles/";
+        _FileName = "SaveData";
 
-    public void setSceneNumber(int number)
-    {
-        this.mSceneNumber = number;
-        this.myData._userData.sceneNumber = number;
-    }
-
-    public void setCheckpointNumber(int number)
-    {
-        this.mCheckpointNumber = number;
-        this.myData._userData.checkpointNumber = number;
+        // we need soemthing to store the information into 
+        myData = new UserData();
     }
 
     public void setVolume(float vol)
     {
+        Debug.Log("Setting volume to: " + vol);
         AudioListener.volume = vol;
+        mSceneManager.mVolume = vol;
         this.myData._userData.volume = vol;
+    }
+
+    public void setResolution(float res)
+    {
+        Debug.Log("Setting resolution to: " + res);
+        mCameraManager.setResolution(res);
+        mSceneManager.mResolution = res;
+        this.myData._userData.resolution = res;
     }
 }
 
@@ -285,10 +298,10 @@ public class UserData
         public int gems; // #
 
         public float volume; // #.##...
+        public float resolution; // #.##...
 
         public int sceneNumber; // #
         public int checkpointNumber; // #
     }
 
-   
 }

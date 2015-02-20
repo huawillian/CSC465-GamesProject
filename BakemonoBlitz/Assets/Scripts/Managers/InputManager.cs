@@ -35,10 +35,17 @@ public class InputManager : MonoBehaviour {
 
     private float holdThreshold = 0.25f;
 
+    HUDManager mHUDManager;
+    MenuController mMenuController;
+    SceneManager mSceneManager;
+
 	// Use this for initialization
 	void Start ()
     {
-	
+        mHUDManager = GameObject.Find("HUD Manager").GetComponent<HUDManager>();
+        mMenuController = GameObject.Find("Menu Controller").GetComponent<MenuController>();
+        mSceneManager = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
+
 	}
 	
 	// Update is called once per frame
@@ -77,6 +84,9 @@ public class InputManager : MonoBehaviour {
         {
             Debug.Log("A has been pressed");
             A = true;
+
+            mHUDManager.A();
+            mMenuController.A();
         }
 
         if (Input.GetKeyUp(KeyCode.Keypad2) || Input.GetButtonUp("A"))
@@ -91,6 +101,8 @@ public class InputManager : MonoBehaviour {
         {
             Debug.Log("B has been pressed");
             B = true;
+
+            mMenuController.B();
         }
 
         if (Input.GetKeyUp(KeyCode.Keypad6) || Input.GetButtonUp("B"))
@@ -133,6 +145,9 @@ public class InputManager : MonoBehaviour {
         {
             Debug.Log("Start has been pressed");
             START = true;
+
+            mSceneManager.StartButton();
+            mMenuController.StartButton();
         }
 
         if (Input.GetKeyUp(KeyCode.Keypad5) || Input.GetButtonUp("Start"))
@@ -143,13 +158,11 @@ public class InputManager : MonoBehaviour {
 
     private void checkLT()
     {
-        if (Input.GetKeyDown(KeyCode.Q) || TriggerButtons.LT)
+        if (Input.GetAxis("Left Trigger Axis") > 0.0f)
         {
-            Debug.Log("LT has been pressed");
             LT = true;
         }
-
-        if (Input.GetKeyUp(KeyCode.Q) || TriggerButtons.LT)
+        else
         {
             LT = false;
         }
@@ -157,13 +170,11 @@ public class InputManager : MonoBehaviour {
 
     private void checkRT()
     {
-        if (Input.GetKeyDown(KeyCode.E) || TriggerButtons.RT)
+        if (Input.GetAxis("Right Trigger Axis") > 0.0f)
         {
-            Debug.Log("RT has been pressed");
             RT = true;
         }
-
-        if (Input.GetKeyUp(KeyCode.E) || TriggerButtons.RT)
+        else
         {
             RT = false;
         }
@@ -187,7 +198,7 @@ public class InputManager : MonoBehaviour {
         else 
             if (Input.GetKey(KeyCode.D)) LX = 1.0f;
         else
-                LX = LX = Input.GetAxis("Left Analog Stick X");
+                LX = Input.GetAxis("Left Analog Stick X");
     }
 
     private void setLY()
@@ -196,7 +207,7 @@ public class InputManager : MonoBehaviour {
         else
             if (Input.GetKey(KeyCode.W)) LY = 1.0f;
             else
-                LY = LY = Input.GetAxis("Left Analog Stick Y");
+                LY = (-1.0f) * Input.GetAxis("Left Analog Stick Y");
     }
 
     private void setLTA()
