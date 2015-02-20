@@ -9,6 +9,7 @@ public class ProfileManager : MonoBehaviour
 {
     private PlayerManager mPlayerManager;
     private SceneManager mSceneManager;
+    private CameraManager mCameraManager;
 
     // This is our local private members 
     string _FileLocation, _FileName;
@@ -95,7 +96,7 @@ public class ProfileManager : MonoBehaviour
     // or SaveFile2.xml or SaveFile3.xml
     public void SaveProfile(int profileNumber)
     {
-        if (profileNumber >= 1 && profileNumber <= 3)
+        if (profileNumber >= 0 && profileNumber <= 3)
         {
             this._ProfileNumber = profileNumber;
 
@@ -154,10 +155,29 @@ public class ProfileManager : MonoBehaviour
         }
     }
 
+    public UserData getProfileData(int profileNumber)
+    {
+        if (profileNumber >= 0 && profileNumber <= 3)
+        {
+            StreamReader r = File.OpenText(_FileLocation + "\\" + _FileName + profileNumber + ".xml");
+            string _info = r.ReadToEnd();
+            r.Close();
+
+            if (_info.ToString() != "")
+            {
+                // notice how I use a reference to type (UserData) here, you need this 
+                // so that the returned object is converted into the correct type 
+                return (UserData)DeserializeObject(_info);
+            }
+        }
+
+        return null;
+    }
+
     // Load Profile given profile number from 1 to 3 inclusive
     public void LoadProfile(int profileNumber)
     {
-        if (profileNumber >= 1 && profileNumber <= 3)
+        if (profileNumber >= 0 && profileNumber <= 3)
         {
             this._ProfileNumber = profileNumber;
 
@@ -222,6 +242,8 @@ public class ProfileManager : MonoBehaviour
         Debug.Log("Initializing " + this.gameObject.name);
         this.mPlayerManager = GameObject.Find("Player Manager").GetComponent<PlayerManager>();
         this.mSceneManager = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
+        this.mCameraManager = GameObject.Find("Camera Manager").GetComponent<CameraManager>();
+
 
         // Where we want to save and load to and from 
         _FileLocation = Application.dataPath + "/Profiles/";
@@ -233,8 +255,18 @@ public class ProfileManager : MonoBehaviour
 
     public void setVolume(float vol)
     {
+        Debug.Log("Setting volume to: " + vol);
         AudioListener.volume = vol;
+        mSceneManager.mVolume = vol;
         this.myData._userData.volume = vol;
+    }
+
+    public void setResolution(float res)
+    {
+        Debug.Log("Setting resolution to: " + res);
+        mCameraManager.setResolution(res);
+        mSceneManager.mResolution = res;
+        this.myData._userData.resolution = res;
     }
 }
 

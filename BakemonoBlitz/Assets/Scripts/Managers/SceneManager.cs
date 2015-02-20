@@ -23,17 +23,17 @@ using System.Collections;
 public class SceneManager : MonoBehaviour {
 
     // Managers
-    BackgroundManager mBackgroundManager;
-    CameraManager mCameraManager;
-    EnemyManager mEnemyManager;
-    HUDManager mHUDManager;
-    InputManager mInputManager;
-    ItemManager mItemManager;
-    PlayerManager mPlayerManager;
-    SoundManager mSoundManager;
-    StageManager mStageManager;
-    VideoManager mVideoManager;
-    ProfileManager mProfileManager;
+    public BackgroundManager mBackgroundManager;
+    public CameraManager mCameraManager;
+    public EnemyManager mEnemyManager;
+    public HUDManager mHUDManager;
+    public InputManager mInputManager;
+    public ItemManager mItemManager;
+    public PlayerManager mPlayerManager;
+    public SoundManager mSoundManager;
+    public StageManager mStageManager;
+    public VideoManager mVideoManager;
+    public ProfileManager mProfileManager;
 
     public int mSceneNumber = 1;
     public int mCheckpointNumber = 1;
@@ -44,7 +44,7 @@ public class SceneManager : MonoBehaviour {
 
 
     // Profile Number being loaded
-    int mProfileNumber = 1;
+    int mProfileNumber = 0;
 
     Rect _Save, _Load, _SaveMSG, _LoadMSG;
 
@@ -142,5 +142,17 @@ public class SceneManager : MonoBehaviour {
 
         mProfileManager.setVolume(mVolume);
         mCameraManager.setResolution(mResolution);        
+    }
+
+    public void StartButton()
+    {
+        if (!mMenuController.showMenu)
+        {
+            mMenuController.showMenu =  true;
+        }
+        else
+        {
+            mMenuController.showMenu = false;
+        }
     }
 }

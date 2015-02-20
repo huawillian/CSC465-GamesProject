@@ -37,12 +37,14 @@ public class InputManager : MonoBehaviour {
 
     HUDManager mHUDManager;
     MenuController mMenuController;
+    SceneManager mSceneManager;
 
 	// Use this for initialization
 	void Start ()
     {
         mHUDManager = GameObject.Find("HUD Manager").GetComponent<HUDManager>();
-        mMenuController = GameObject.Find("Menu Controller").GetComponent<MenuController>();	
+        mMenuController = GameObject.Find("Menu Controller").GetComponent<MenuController>();
+        mSceneManager = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
 
 	}
 	
@@ -143,6 +145,9 @@ public class InputManager : MonoBehaviour {
         {
             Debug.Log("Start has been pressed");
             START = true;
+
+            mSceneManager.StartButton();
+            mMenuController.StartButton();
         }
 
         if (Input.GetKeyUp(KeyCode.Keypad5) || Input.GetButtonUp("Start"))

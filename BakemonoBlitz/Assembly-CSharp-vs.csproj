@@ -70,6 +70,8 @@
      <Compile Include="Assets\Scripts\s.cs" />
      <None Include="Assets\Profiles\SaveData1.xml" />
      <None Include="Assets\Profiles\SaveData2.xml" />
+     <None Include="Assets\Profiles\SaveData3.xml" />
+     <None Include="Assets\Profiles\SaveData0.xml" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Editor/Data/UnityExtensions/Unity/GUISystem/4.6.2/UnityEngine.UI.dll</HintPath>
  </Reference>

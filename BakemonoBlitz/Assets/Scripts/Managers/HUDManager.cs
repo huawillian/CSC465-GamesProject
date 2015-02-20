@@ -36,7 +36,7 @@ public class HUDManager : MonoBehaviour
     private bool showingTextbox = false;
     private float textboxDuration = 3.0f;
 
-    private bool disableHUD = false;
+    public bool disableHUD = false;
 
     private LinkedList<string> texts = new LinkedList<string>();
 
