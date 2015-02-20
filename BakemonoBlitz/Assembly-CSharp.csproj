@@ -46,6 +46,7 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\MenuController.cs" />
      <Compile Include="Assets\Scripts\CameraController.cs" />
      <Compile Include="Assets\Scripts\DPadButtons.cs" />
      <Compile Include="Assets\Scripts\EnemyGreen.cs" />
@@ -67,8 +68,6 @@
      <Compile Include="Assets\Scripts\ShurikenController.cs" />
      <Compile Include="Assets\Scripts\TriggerButtons.cs" />
      <Compile Include="Assets\Scripts\s.cs" />
-     <Compile Include="Assets\VideoController.cs" />
-     <Compile Include="Assets\something.cs" />
      <None Include="Assets\Profiles\SaveData1.xml" />
      <None Include="Assets\Profiles\SaveData2.xml" />
  <Reference Include="UnityEngine.UI">

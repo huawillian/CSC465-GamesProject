@@ -45,7 +45,7 @@ public class SoundManager : MonoBehaviour
     {
         Debug.Log("Initializing " + this.gameObject.name);
 
-        soundList = new string[] { "sound1", "sound2", "sound3", "video" };
+        soundList = new string[] { "sound1", "sound2", "sound3", "scene" };
         clip = new AudioClip[soundList.Length];
         soundHolders = new GameObject[soundList.Length];
 
@@ -76,6 +76,21 @@ public class SoundManager : MonoBehaviour
         }
 
         Debug.Log("[" + location.x + ", " + location.y + ", " + location.z + "] Sound Not Found: " + name);
+    }
+
+    public float getSoundLength(string name)
+    {
+
+        for (int i = 0; i < soundList.Length; i++)
+        {
+            if (soundList[i].Equals(name))
+            {
+                return clip[i].length;
+            }
+        }
+
+        Debug.Log("Sound Not Found: " + name);
+        return 0.0f;
     }
 
     public void stopSound(string name)

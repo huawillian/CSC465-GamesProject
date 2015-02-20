@@ -37,6 +37,11 @@ public class SceneManager : MonoBehaviour {
 
     public int mSceneNumber = 1;
     public int mCheckpointNumber = 1;
+    public float mVolume = 100.0f;
+    public float mResolution = 5.0f;
+
+    MenuController mMenuController;
+
 
     // Profile Number being loaded
     int mProfileNumber = 1;
@@ -75,8 +80,8 @@ public class SceneManager : MonoBehaviour {
 
         // Load Profile Properties for Player and Scene
         this.LoadSceneProperties(mProfileNumber);
-        mPlayerManager.LoadPlayerProperties(mProfileNumber);
 
+        mMenuController = GameObject.Find("Menu Controller").GetComponent<MenuController>();
     }
 
 
@@ -87,10 +92,10 @@ public class SceneManager : MonoBehaviour {
         // **************************************************       
         if (GUI.Button(_Load, "Load"))
         {
-            mProfileManager.LoadProfile(1);
+            //mProfileManager.LoadProfile(1);
             //mHUDManager.showTextbox("HELLO");
             //mCameraManager.beginFadeIn();
-            mSoundManager.playSound("sound3", Vector3.zero);
+            //mSoundManager.playSound("sound3", new Vector3(0,0,-10));
         }
 
         //*************************************************** 
@@ -98,9 +103,15 @@ public class SceneManager : MonoBehaviour {
         // **************************************************    
         if (GUI.Button(_Save, "Save"))
         {
-            mProfileManager.SaveProfile(2);
+            //mProfileManager.SaveProfile(1);
             //mHUDManager.showTextbox("WORLD");
-            mCameraManager.beginFadeOut();
+            //mCameraManager.beginFadeOut();
+            //mVideoManager.playVideo("scene");
+            //mHUDManager.addTextToQueue("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
+            //mHUDManager.addTextToQueue("Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?");
+            //mHUDManager.addTextToQueue("But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?");
+
+        
         }
 
 
@@ -113,8 +124,6 @@ public class SceneManager : MonoBehaviour {
         _Load = new Rect(10, 100, 100, 20);
         _SaveMSG = new Rect(10, 120, 400, 40);
         _LoadMSG = new Rect(10, 140, 400, 40);
-
-        mSoundManager.playSound("video", Vector3.zero);
 	}
 	
 	// Update is called once per frame
@@ -129,8 +138,9 @@ public class SceneManager : MonoBehaviour {
     void LoadSceneProperties(int profileNumber)
     {
         Debug.Log("Loading Scene Properties from Profile: " + profileNumber);
+        mProfileManager.LoadProfile(profileNumber);
 
-        // Change/Set Volume, Resolution, Controls... (Scene Number and Checkpoint Number?)
-        
+        mProfileManager.setVolume(mVolume);
+        mCameraManager.setResolution(mResolution);        
     }
 }

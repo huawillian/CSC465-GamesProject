@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 // Select Video to play
 // Fade in/out
@@ -27,20 +28,137 @@ using System.Collections;
 
 public class VideoManager : MonoBehaviour
 {
+    SoundManager mSoundManager;
+
+    private Texture2D[] textures;
+    public string[] videoList;
+
+    public bool playingVideo = false;
+    public int numberImages = 0;
+    public float durationVideo = 0.0f;
+
+    Texture2D mTex;
+
+    public string name;
+
+    int i = 1;
+    string currentFile = "";
+    string previousFile = "";
+    Texture2D videoTexture;
 
 	// Use this for initialization
-	void Start () {
-	
+	void Start ()
+    {
 	}
-	
+
+    public void playVideo(string nameVideo)
+    {
+        this.name = nameVideo;
+
+        for (int i = 0; i < videoList.Length; i++)
+        {
+            if (videoList[i].Equals(name))
+            {
+                Debug.Log("Playing Video: " + name);
+
+                textures = Resources.LoadAll<Texture2D>("Videos/" + name);
+                numberImages = textures.Length;
+                playingVideo = true;
+                mSoundManager.playSound(name, Vector3.zero);
+
+                durationVideo = mSoundManager.getSoundLength(name);
+
+
+                InvokeRepeating("change", 0.0f, durationVideo / (float)numberImages);
+
+                // Set Play Video Values Here
+                return;
+            }
+        }
+
+        Debug.Log("Video Not Found: " + name);
+    }
+
+
 	// Update is called once per frame
-	void Update () {
-	
+	void Update ()
+    {
+        if (false)
+        {
+            int numberDigits = 5;
+            string digits = "";
+
+            if (i >= numberImages)
+            {
+                CancelInvoke();
+                playingVideo = false;
+                this.i = 1;
+            }
+
+            if (i < 10 && i >= 0)
+            {
+                for (int w = 0; w < numberDigits - 1; w++)
+                {
+                    digits = digits + "0";
+                }
+                digits = digits + i;
+            }
+            if (i < 100 && i >= 10)
+            {
+                for (int x = 0; x < numberDigits - 2; x++)
+                {
+                    digits = digits + "0";
+                }
+                digits = digits + i;
+            }
+            if (i < 1000 && i >= 100)
+            {
+                for (int y = 0; y < numberDigits - 3; y++)
+                {
+                    digits = digits + "0";
+                }
+                digits = digits + i;
+            }
+            if (i < 10000 && i >= 1000)
+            {
+                for (int z = 0; z < numberDigits - 4; z++)
+                {
+                    digits = digits + "0";
+                }
+                digits = digits + i;
+            }
+            previousFile = currentFile;
+            currentFile = "Videos" + "/" + name + "/" + name + digits;
+        }
+
 	}
+
+    void change()
+    {
+        try
+        {
+            i++;
+            print(currentFile);
+            Resources.UnloadAsset(textures[i-1]); 
+            mTex = textures[i];
+        } catch(Exception e){}
+    }
+
+    void OnGUI()
+    {
+        if (playingVideo)
+        {
+            GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), mTex);
+        }
+    }
 
     // Initialization called by Scene Manager
     public void InitializeManager()
     {
         Debug.Log("Initializing " + this.gameObject.name);
+
+        mSoundManager = GameObject.Find("Sound Manager").GetComponent<SoundManager>();
+
+        videoList = new string[] { "scene" };
     }
 }

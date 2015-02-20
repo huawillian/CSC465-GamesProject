@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 /*
     HUD Manager
@@ -29,13 +30,17 @@ public class HUDManager : MonoBehaviour
     public int health, energy, lives, gems, score, time;
 
     private int screenWidth, screenHeight;
-    //public Texture2D image;
 
+    // Textbox variables
     private string text = "Random Text";
     private bool showingTextbox = false;
     private float textboxDuration = 3.0f;
 
     private bool disableHUD = false;
+
+    private LinkedList<string> texts = new LinkedList<string>();
+
+    public Texture2D tex;
 
 	// Use this for initialization
 	void Start ()
@@ -63,7 +68,7 @@ public class HUDManager : MonoBehaviour
         // Make a background box
         GUI.backgroundColor = Color.black;
         GUI.color = Color.white;
-        //GUI.Box(new Rect(10, 10, 100, 100), image);
+        GUI.skin.box.fontSize = 15;
 
         if (!disableHUD)
         {
@@ -80,12 +85,23 @@ public class HUDManager : MonoBehaviour
             // Draw Time
             GUI.Box(new Rect(screenWidth - getPositionX(15), getPositionY(6), getPositionX(14), getPositionY(4)), "TIME: " + time);
         }
+
         if (showingTextbox)
         {
-            // Draw Text Box
+            GUI.DrawTexture(new Rect(getPositionX(5), getPositionY(3), getPositionX(90), getPositionY(30)), tex);
+
+            GUI.skin.box.fontSize = 25;
+            GUI.skin.box.wordWrap = true;
             GUI.Box(new Rect(getPositionX(5), getPositionY(3), getPositionX(90), getPositionY(30)), text);
+            GUI.skin.box.fontSize = 15;
         }
 
+        if (texts.Count > 0 && !showingTextbox)
+        {
+            showingTextbox = true;
+            disableHUD = true;
+            StartCoroutine(setText());
+        }
 
     }
 
@@ -121,4 +137,55 @@ public class HUDManager : MonoBehaviour
         this.disableHUD = false;
     }
 
+    public void addTextToQueue(string someText)
+    {
+        this.texts.AddLast(someText);
+    }
+
+    private void removeTextFromQueue()
+    {
+        this.showingTextbox = false;
+        this.disableHUD = false;
+        texts.RemoveFirst();
+    }
+
+    private IEnumerator setText()
+    {
+        string tempString = "";
+        string completeString = texts.First.Value;
+
+        for (int i = 0; i < completeString.Length; i++)
+        {
+            text = completeString.Substring(0, i);
+            yield return new WaitForSeconds(0.05f);
+
+            if (pressedA == true)
+            {
+                pressedA = false;
+                text = completeString;
+                break;
+            }
+        }
+
+        float timeStart = Time.time;
+
+        while (Time.time - timeStart < 3.0f)
+        {
+            if (pressedA)
+            {
+                pressedA = false;
+                break;
+            }
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        removeTextFromQueue();
+    }
+
+    public bool pressedA = false;
+
+    public void A()
+    {
+        pressedA = true;
+    }
 }

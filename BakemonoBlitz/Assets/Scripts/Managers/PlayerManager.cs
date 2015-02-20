@@ -46,19 +46,4 @@ public class PlayerManager : MonoBehaviour
         Debug.Log("Initializing " + this.gameObject.name);
     }
 
-    // Load Player Properties from given Profile Number, called by Scene Manager
-    public void LoadPlayerProperties(int profileNumber)
-    {
-        Debug.Log("Loading Player Properties from Profile: " + profileNumber);
-        startTime = Time.time;
-        health = 100;
-        energy = 100;
-        lives = 3;
-        gems = 10;
-        score = 0;
-
-
-        // Change/Set Gender, Health, Lives, Energy, Weapons, Items, Position, Currency)
-        
-    }
 }
