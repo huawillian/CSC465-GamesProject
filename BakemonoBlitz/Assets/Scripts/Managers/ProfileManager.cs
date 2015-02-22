@@ -142,6 +142,8 @@ public class ProfileManager : MonoBehaviour
             myData._userData.sceneNumber = mSceneManager.mSceneNumber;
             myData._userData.checkpointNumber = mSceneManager.mCheckpointNumber;
 
+            myData._userData.sessionNumber = mSceneManager.mProfileNumber;
+
             // Time to creat our XML! 
             _data = SerializeObject(myData);
             // This is the final resulting XML from the serialization process 
@@ -232,6 +234,7 @@ public class ProfileManager : MonoBehaviour
                 mSceneManager.mSceneNumber = myData._userData.sceneNumber;
                 mSceneManager.mCheckpointNumber = myData._userData.checkpointNumber;
 
+                mSceneManager.mProfileNumber = myData._userData.sessionNumber;
             }
         }
     }
@@ -246,7 +249,7 @@ public class ProfileManager : MonoBehaviour
 
 
         // Where we want to save and load to and from 
-        _FileLocation = Application.dataPath + "/Profiles/";
+        _FileLocation = Application.streamingAssetsPath + "/Profiles/";
         _FileName = "SaveData";
 
         // we need soemthing to store the information into 
@@ -302,6 +305,8 @@ public class UserData
 
         public int sceneNumber; // #
         public int checkpointNumber; // #
+
+        public int sessionNumber; // #
     }
 
 }

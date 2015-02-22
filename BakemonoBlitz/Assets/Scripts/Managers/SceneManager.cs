@@ -40,11 +40,14 @@ public class SceneManager : MonoBehaviour {
     public float mVolume = 100.0f;
     public float mResolution = 5.0f;
 
-    MenuController mMenuController;
+    public MenuController mMenuController;
+    public MainMenuController mMainMenuController;
 
+    public bool menuEnabled = false;
+    public bool mainMenuEnabled = false;
 
     // Profile Number being loaded
-    int mProfileNumber = 0;
+    public int mProfileNumber = 0;
 
     Rect _Save, _Load, _SaveMSG, _LoadMSG;
 
@@ -82,6 +85,8 @@ public class SceneManager : MonoBehaviour {
         this.LoadSceneProperties(mProfileNumber);
 
         mMenuController = GameObject.Find("Menu Controller").GetComponent<MenuController>();
+        mMainMenuController = GameObject.Find("Main Menu Controller").GetComponent<MainMenuController>();
+
     }
 
 
@@ -125,18 +130,48 @@ public class SceneManager : MonoBehaviour {
         _SaveMSG = new Rect(10, 120, 400, 40);
         _LoadMSG = new Rect(10, 140, 400, 40);
 
-        StartCoroutine("MenuPlay", 0.0f);
+        // Load Profile currently being used, defined in SaveData0
+        mProfileManager.LoadProfile(0);
+        int tempProfile = this.mProfileNumber;
+        mProfileManager.LoadProfile(tempProfile);
+
+        string sceneName = Application.loadedLevelName;
+
+        if(sceneName.Equals("MainMenuScene"))
+        {
+            StartCoroutine("MenuPlay", 0.0f);
+        }
+
+        if (sceneName.Equals("TestScene"))
+        {
+            mHUDManager.addTextToQueue("Hello Friends...");
+            mHUDManager.addTextToQueue("Welcome to Testing the TestScene");
+            mHUDManager.addTextToQueue("LALALALALALALALALALA");
+            mainMenuEnabled = false;
+            menuEnabled = true;
+            mMainMenuController.showMenu = false;
+        }
 	}
 
     IEnumerator MenuPlay()
     {
+        mProfileManager.LoadProfile(0);
+        mProfileManager.setResolution(5.0f);
+        mProfileManager.setVolume(100.0f);
+
+
+
         mHUDManager.disableHUD = true;
+        mMainMenuController.showMenu = false;
+        mMenuController.showMenu = false;
+        menuEnabled = false;
+
         mVideoManager.playVideo("starcraft");
         yield return new WaitForSeconds(mSoundManager.getSoundLength("starcraft") - 0.2f);
         mSoundManager.playSound("lol", Vector3.zero);
         mCameraManager.beginFadeIn();
-        mMenuController.showMenu = true;
-
+        mMainMenuController.showMenu = true;
+        mainMenuEnabled = true;
     }
 
 	// Update is called once per frame
@@ -157,13 +192,21 @@ public class SceneManager : MonoBehaviour {
 
     public void StartButton()
     {
-        if (!mMenuController.showMenu)
+        if (menuEnabled)
         {
-            mMenuController.showMenu =  true;
+            if (!mMenuController.showMenu)
+            {
+                mMenuController.showMenu = true;
+            }
+            else
+            {
+                mMenuController.showMenu = false;
+            }
         }
-        else
+
+        if (mainMenuEnabled)
         {
-            mMenuController.showMenu = false;
+            // Do Nothing
         }
     }
 }

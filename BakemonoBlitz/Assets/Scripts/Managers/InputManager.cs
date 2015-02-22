@@ -35,17 +35,12 @@ public class InputManager : MonoBehaviour {
 
     private float holdThreshold = 0.25f;
 
-    HUDManager mHUDManager;
-    MenuController mMenuController;
-    SceneManager mSceneManager;
+    private SceneManager mSceneManager;
 
 	// Use this for initialization
 	void Start ()
     {
-        mHUDManager = GameObject.Find("HUD Manager").GetComponent<HUDManager>();
-        mMenuController = GameObject.Find("Menu Controller").GetComponent<MenuController>();
         mSceneManager = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
-
 	}
 	
 	// Update is called once per frame
@@ -85,8 +80,9 @@ public class InputManager : MonoBehaviour {
             Debug.Log("A has been pressed");
             A = true;
 
-            mHUDManager.A();
-            mMenuController.A();
+            mSceneManager.mHUDManager.A();
+            mSceneManager.mMenuController.A();
+            mSceneManager.mMainMenuController.A();
         }
 
         if (Input.GetKeyUp(KeyCode.Keypad2) || Input.GetButtonUp("A"))
@@ -102,7 +98,8 @@ public class InputManager : MonoBehaviour {
             Debug.Log("B has been pressed");
             B = true;
 
-            mMenuController.B();
+            mSceneManager.mMenuController.B();
+            mSceneManager.mMainMenuController.B();
         }
 
         if (Input.GetKeyUp(KeyCode.Keypad6) || Input.GetButtonUp("B"))
@@ -147,7 +144,8 @@ public class InputManager : MonoBehaviour {
             START = true;
 
             mSceneManager.StartButton();
-            mMenuController.StartButton();
+            mSceneManager.mMenuController.StartButton();
+            mSceneManager.mMainMenuController.StartButton();
         }
 
         if (Input.GetKeyUp(KeyCode.Keypad5) || Input.GetButtonUp("Start"))
