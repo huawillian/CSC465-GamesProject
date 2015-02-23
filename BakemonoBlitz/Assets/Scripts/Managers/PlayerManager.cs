@@ -23,6 +23,12 @@ public class PlayerManager : MonoBehaviour
     private float startTime;
     private float currentTime;
 
+    public bool lockPlayerCoordinates = false;
+    public bool lockPlayerInput = false;
+
+    public bool LTH, RTH;
+    public float LTA, LX, LY;
+
 	// Use this for initialization
 	void Start ()
     {
@@ -36,9 +42,64 @@ public class PlayerManager : MonoBehaviour
         currentTime = Time.time;
         time = (int)(currentTime - startTime);
 
+        // Lock Player coordinates
+        if (lockPlayerCoordinates)
+        {
+            this.gameObject.transform.position = new Vector3(x,y,z);
+        }
+        else
+        {
+            x = this.gameObject.transform.position.x;
+            y = this.gameObject.transform.position.y;
+            z = this.gameObject.transform.position.z;
+        }
 
+        if (lockPlayerInput)
+        {
+            LTH = false;
+            RTH = false;
+            LTA = 0.0f;
+            LX = 0.0f;
+            LY = 0.0f;
+        }
 
 	}
+
+    public void A()
+    {
+        if (lockPlayerInput) return;
+    }
+
+    public void B()
+    {
+        if (lockPlayerInput) return;
+
+    }
+
+    public void X()
+    {
+        if (lockPlayerInput) return;
+
+    }
+
+    public void Y()
+    {
+        if (lockPlayerInput) return;
+
+    }
+
+    public void LT()
+    {
+        if (lockPlayerInput) return;
+
+    }
+
+    public void RT()
+    {
+        if (lockPlayerInput) return;
+
+    }
+
 
     // Initialization called by Scene Manager
     public void InitializeManager()

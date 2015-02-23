@@ -28,7 +28,7 @@ public class BackgroundManager : MonoBehaviour
         // Move Background Based on Player position and z axis...
         foreach (GameObject image in images)
         {
-            //image.transform.position = new Vector3(image.transform.position.x + 0.005f, image.transform.position.y, zPos);
+            image.transform.position = new Vector3(image.transform.position.x + 0.005f, image.transform.position.y, zPos);
         }
 	}
 

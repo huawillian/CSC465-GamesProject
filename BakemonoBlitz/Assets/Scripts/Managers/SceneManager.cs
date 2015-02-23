@@ -20,7 +20,8 @@ using System.Collections;
  */
 
 // Scene Manager needs to set the Scene and Checkpoint Number in Profile Manager in order to save different number into file
-public class SceneManager : MonoBehaviour {
+public class SceneManager : MonoBehaviour
+{
 
     // Managers
     public BackgroundManager mBackgroundManager;
@@ -49,7 +50,32 @@ public class SceneManager : MonoBehaviour {
     // Profile Number being loaded
     public int mProfileNumber = 0;
 
+    // Debug variables, used to create button
     Rect _Save, _Load, _SaveMSG, _LoadMSG;
+
+    public enum SceneState { MainMenu, Playing, Paused, Locked, Animating, SceneComplete};
+    public SceneState state = SceneState.Playing;
+    public float tempVol;
+    // State:
+    // Main Menu - Input to all except the Main Menu Controller is disabled, Main Menu is enabled, Menu is disabled
+    // Playing - Everything is normal, Input to the Main Menu is disabled
+    // Paused - Entered/Leaved from Playing State only, Input to everything except the Menu Controller is disabled, Menu is enabled, Player and Enemy position locked
+    // Locked - No Input received by the Input Manager. Player and Enemy positions are locked, but game is still running. Usually done during speech boxes
+    // Animating - No Input received by the Input Manager. Positions are not locked. But animation script is played, moving players.
+    // Scene Complete - Called when the level is done. Scene is completed, start script to display points and stuff.
+
+    // State Actions:
+    // Main Menu will not be able to change states via input
+    // Playing State is the default during level scenes
+    // Playing State can be paused with a start Input
+    // Paused State can be unpaused with a start Input or via script
+    // Locked State is initiated/reset to Playing state via script
+    // Animating State is set/reset via script 
+    // Scene Complete is set/reset via script
+
+
+
+
 
     // Initialize Scene Manager and get reference to all other Managers
     void Awake()
@@ -139,45 +165,157 @@ public class SceneManager : MonoBehaviour {
 
         if(sceneName.Equals("MainMenuScene"))
         {
-            StartCoroutine("MenuPlay", 0.0f);
+            StartCoroutine("MainMenuScript", 0.0f);
         }
 
         if (sceneName.Equals("TestScene"))
         {
-            mHUDManager.addTextToQueue("Hello Friends...");
-            mHUDManager.addTextToQueue("Welcome to Testing the TestScene");
-            mHUDManager.addTextToQueue("LALALALALALALALALALA");
-            mainMenuEnabled = false;
-            menuEnabled = true;
-            mMainMenuController.showMenu = false;
+            StartCoroutine("TestSceneScript", 0.0f);
         }
 	}
 
-    IEnumerator MenuPlay()
+    IEnumerator MainMenuScript()
     {
+        state = SceneState.MainMenu;
+
         mProfileManager.LoadProfile(0);
         mProfileManager.setResolution(5.0f);
         mProfileManager.setVolume(100.0f);
 
-
-
-        mHUDManager.disableHUD = true;
         mMainMenuController.showMenu = false;
-        mMenuController.showMenu = false;
-        menuEnabled = false;
 
         mVideoManager.playVideo("starcraft");
         yield return new WaitForSeconds(mSoundManager.getSoundLength("starcraft") - 0.2f);
         mSoundManager.playSound("lol", Vector3.zero);
+
         mCameraManager.beginFadeIn();
         mMainMenuController.showMenu = true;
-        mainMenuEnabled = true;
     }
+
+    IEnumerator TestSceneScript()
+    {
+        state = SceneState.Playing;
+        yield return new WaitForSeconds(1.5f);
+
+        //state = SceneState.Locked;
+        mHUDManager.addTextToQueue("Hello Friends...");
+        mHUDManager.addTextToQueue("Welcome to Testing the TestScene");
+        mHUDManager.addTextToQueue("LALALALALALALALALALA");
+
+        while(this.mHUDManager.texts.Count > 0)
+        {
+            yield return new WaitForSeconds(0.5f);
+        }
+
+        //state = SceneState.Playing;
+
+
+
+
+
+    }
+
+
+
+
 
 	// Update is called once per frame
 	void Update ()
     {
-        GameObject camera =  mCameraManager.getCamera("Main Camera");
+        // Set state values
+        switch (state)
+        {
+            case SceneState.MainMenu:
+                this.mHUDManager.enabled = false;
+                this.mPlayerManager.enabled = false;
+                this.mEnemyManager.enabled = false;
+                this.mMenuController.enabled = false;
+                this.mMainMenuController.enabled = true;
+                break;
+
+            case SceneState.Playing:
+                this.mHUDManager.enabled = true;
+                this.mHUDManager.disableHUD = false;
+                this.mHUDManager.lockHUDSpeech = false;
+
+                this.mPlayerManager.enabled = true;
+                this.mPlayerManager.lockPlayerCoordinates = false;
+                this.mPlayerManager.lockPlayerInput = false;
+
+                this.mEnemyManager.enabled = true;
+                this.mEnemyManager.lockEnemyCoordinates = false;
+
+                this.mMainMenuController.enabled = false;
+
+                this.mMenuController.enabled = true;
+                mMenuController.lockMenuInput = true;
+
+                break;
+
+            case SceneState.Paused:
+                mMenuController.lockMenuInput = false;
+                this.mHUDManager.lockHUDSpeech = true;
+
+                this.mPlayerManager.lockPlayerCoordinates = true;
+                this.mPlayerManager.lockPlayerInput = true;
+
+                this.mEnemyManager.lockEnemyCoordinates = true;
+
+                this.mMainMenuController.enabled = false;
+                this.mMenuController.enabled = true;
+
+                break;
+
+            case SceneState.Locked:
+                this.mHUDManager.enabled = true;
+                this.mHUDManager.disableHUD = true;
+
+                this.mPlayerManager.lockPlayerCoordinates = true;
+                this.mPlayerManager.lockPlayerInput = true;
+
+                this.mEnemyManager.lockEnemyCoordinates = true;
+
+                this.mMainMenuController.enabled = false;
+                mMenuController.lockMenuInput = true;
+                this.mMenuController.enabled = true;
+
+                break;
+
+            case SceneState.Animating:
+                this.mHUDManager.enabled = true;
+                this.mHUDManager.disableHUD = false;
+
+                this.mPlayerManager.lockPlayerCoordinates = false;
+                this.mPlayerManager.lockPlayerInput = true;
+
+                this.mEnemyManager.lockEnemyCoordinates = true;
+
+                this.mMainMenuController.enabled = false;
+
+                mMenuController.lockMenuInput = true;
+                this.mMenuController.enabled = true;
+
+                break;
+
+            case SceneState.SceneComplete:
+                this.mHUDManager.enabled = false;
+                this.mHUDManager.disableHUD = false;
+
+                this.mPlayerManager.lockPlayerCoordinates = true;
+                this.mPlayerManager.lockPlayerInput = true;
+
+                this.mEnemyManager.lockEnemyCoordinates = true;
+
+                this.mMainMenuController.enabled = false;
+                mMenuController.lockMenuInput = true;
+                this.mMenuController.enabled = true;
+
+                break;
+
+            default:
+                break;
+        }
+
     }
 
     // Load Properties
@@ -192,21 +330,19 @@ public class SceneManager : MonoBehaviour {
 
     public void StartButton()
     {
-        if (menuEnabled)
+        switch (state)
         {
-            if (!mMenuController.showMenu)
-            {
-                mMenuController.showMenu = true;
-            }
-            else
-            {
-                mMenuController.showMenu = false;
-            }
-        }
-
-        if (mainMenuEnabled)
-        {
-            // Do Nothing
+            case SceneState.Playing:
+                tempVol = mVolume;
+                this.mProfileManager.setVolume(mVolume * 0.25f);
+                state = SceneState.Paused;
+                break;
+            case SceneState.Paused:
+                this.mProfileManager.setVolume(tempVol);
+                state = SceneState.Playing;
+                break;
+            default:
+                break;
         }
     }
 }
