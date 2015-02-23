@@ -195,8 +195,9 @@ public class SceneManager : MonoBehaviour
     IEnumerator TestSceneScript()
     {
         state = SceneState.Playing;
+        
         yield return new WaitForSeconds(1.5f);
-
+        /*
         //state = SceneState.Locked;
         mHUDManager.addTextToQueue("Hello Friends...");
         mHUDManager.addTextToQueue("Welcome to Testing the TestScene");
@@ -210,7 +211,7 @@ public class SceneManager : MonoBehaviour
         //state = SceneState.Playing;
 
 
-
+        */
 
 
     }

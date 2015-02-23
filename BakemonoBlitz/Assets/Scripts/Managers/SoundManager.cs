@@ -58,6 +58,7 @@ public class SoundManager : MonoBehaviour
             // Create sound holder
             soundHolders[i] = new GameObject();
             soundHolders[i].AddComponent<AudioSource>();
+            soundHolders[i].transform.parent = this.transform;
         }
     }
 
