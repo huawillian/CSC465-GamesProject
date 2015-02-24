@@ -42,10 +42,12 @@ public class CameraManager : MonoBehaviour
     public bool fadeIn = false;
     public bool fadeOut = false;
 
+    SceneManager mSceneManager;
+
 	// Use this for initialization
 	void Start ()
     {
-	
+        mSceneManager = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
 	}
 	
 	// Update is called once per frame
@@ -59,6 +61,8 @@ public class CameraManager : MonoBehaviour
         {
             setCoordinatesFromCamera();
         }
+
+        cameras[numCameras - 1].transform.position = new Vector3(mSceneManager.mPlayerManager.x, mSceneManager.mPlayerManager.y, cameras[numCameras - 1].transform.position.z);
 	}
 
     // Initialization called by Scene Manager

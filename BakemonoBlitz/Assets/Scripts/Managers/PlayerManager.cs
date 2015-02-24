@@ -29,10 +29,11 @@ public class PlayerManager : MonoBehaviour
     public bool LTH, RTH;
     public float LTA, LX, LY;
 
+    GameObject player;
+
 	// Use this for initialization
 	void Start ()
     {
-	
 	}
 	
 	// Update is called once per frame
@@ -49,9 +50,9 @@ public class PlayerManager : MonoBehaviour
         }
         else
         {
-            x = this.gameObject.transform.position.x;
-            y = this.gameObject.transform.position.y;
-            z = this.gameObject.transform.position.z;
+            x = player.gameObject.transform.position.x;
+            y = player.gameObject.transform.position.y;
+            z = player.gameObject.transform.position.z;
         }
 
         if (lockPlayerInput)
@@ -105,6 +106,7 @@ public class PlayerManager : MonoBehaviour
     public void InitializeManager()
     {
         Debug.Log("Initializing " + this.gameObject.name);
+        player = GameObject.Find("Player");
     }
 
 }

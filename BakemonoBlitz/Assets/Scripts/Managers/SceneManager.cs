@@ -95,7 +95,6 @@ public class SceneManager : MonoBehaviour
 
 
         Debug.Log("Initializing other Managers...");
-        mBackgroundManager.InitializeManager();
         mCameraManager.InitializeManager();
         mEnemyManager.InitializeManager();
         mHUDManager.InitializeManager();
@@ -106,6 +105,7 @@ public class SceneManager : MonoBehaviour
         mStageManager.InitializeManager();
         mProfileManager.InitializeManager();
         mVideoManager.InitializeManager();
+        mBackgroundManager.InitializeManager();
 
         // Load Profile Properties for Player and Scene
         this.LoadSceneProperties(mProfileNumber);
