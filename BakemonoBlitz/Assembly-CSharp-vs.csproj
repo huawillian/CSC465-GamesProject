@@ -47,12 +47,14 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Clouds.cs" />
+     <Compile Include="Assets\GrappleController.cs" />
      <Compile Include="Assets\ItemController.cs" />
+     <Compile Include="Assets\PlayerController.cs" />
      <Compile Include="Assets\Scripts\Controllers\CameraController.cs" />
      <Compile Include="Assets\Scripts\Controllers\InputController.cs" />
      <Compile Include="Assets\Scripts\Controllers\MainMenuController.cs" />
      <Compile Include="Assets\Scripts\Controllers\MenuController.cs" />
-     <Compile Include="Assets\Scripts\Controllers\PlayerController.cs" />
+     <Compile Include="Assets\Scripts\Controllers\PlayerController1.cs" />
      <Compile Include="Assets\Scripts\CrumblingPlatform.cs" />
      <Compile Include="Assets\Scripts\DPadButtons.cs" />
      <Compile Include="Assets\Scripts\EnemyGreen.cs" />

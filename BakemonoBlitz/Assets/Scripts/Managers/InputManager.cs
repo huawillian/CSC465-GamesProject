@@ -162,13 +162,20 @@ public class InputManager : MonoBehaviour {
 
     private void checkLT()
     {
-        if (Input.GetAxis("Left Trigger Axis") > 0.0f && !LT)
+        if ((Input.GetAxis("Left Trigger Axis") > 0.0f && !LT) || Input.GetKeyDown(KeyCode.Q))
         {
             LT = true;
 
             mSceneManager.mPlayerManager.LT();
         }
-        else
+
+        if (Input.GetAxis("Left Trigger Axis") == 0.0f)
+        {
+
+            LT = false;
+        }
+
+        if (Input.GetKeyUp(KeyCode.Q))
         {
             LT = false;
         }
@@ -176,13 +183,18 @@ public class InputManager : MonoBehaviour {
 
     private void checkRT()
     {
-        if (Input.GetAxis("Right Trigger Axis") > 0.0f && !RT)
+        if ((Input.GetAxis("Right Trigger Axis") > 0.0f && !RT) || Input.GetKeyDown(KeyCode.E))
         {
             RT = true;
-
             mSceneManager.mPlayerManager.RT();
         }
-        else
+
+        if (Input.GetAxis("Right Trigger Axis") == 0.0f)
+        {
+            RT = false;
+        }
+
+        if (Input.GetKeyUp(KeyCode.E))
         {
             RT = false;
         }
@@ -195,7 +207,11 @@ public class InputManager : MonoBehaviour {
             LTH = true;
             mSceneManager.mPlayerManager.LTH = true;
         }
-        else LTH = false;
+        else
+        {
+            LTH = false;
+            mSceneManager.mPlayerManager.LTH = false;
+        }
     }
 
     private void checkRTH()
@@ -205,7 +221,11 @@ public class InputManager : MonoBehaviour {
             RTH = true;
             mSceneManager.mPlayerManager.RTH = true;
         }
-        else RTH = false;
+        else
+        {
+            RTH = false;
+            mSceneManager.mPlayerManager.RTH = false;
+        }
     }
 
     private void setLX()

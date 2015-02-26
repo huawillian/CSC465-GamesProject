@@ -177,6 +177,9 @@ public class SceneManager : MonoBehaviour
     IEnumerator MainMenuScript()
     {
         state = SceneState.MainMenu;
+        mCameraManager.setCamera("Camera1");
+
+
 
         mProfileManager.LoadProfile(0);
         mProfileManager.setResolution(5.0f);
@@ -195,7 +198,10 @@ public class SceneManager : MonoBehaviour
     IEnumerator TestSceneScript()
     {
         state = SceneState.Playing;
-        
+        mProfileManager.setResolution(mResolution);
+        mProfileManager.setVolume(mVolume);
+
+
         yield return new WaitForSeconds(1.5f);
         /*
         //state = SceneState.Locked;

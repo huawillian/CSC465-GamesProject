@@ -61,7 +61,7 @@ public class InputController : MonoBehaviour
             if (Input.GetButtonDown("A") || Input.GetKeyDown(KeyCode.W))
             {
                 Debug.Log("A has been pressed");
-                if (player.GetComponentInChildren<PlayerController>().isGrounded)
+                if (player.GetComponentInChildren<PlayerController1>().isGrounded)
                     player.rigidbody.AddForce(0, jumpForce, 0);
             }
 
@@ -75,7 +75,7 @@ public class InputController : MonoBehaviour
                 {
                     if (Input.GetAxis("Left Analog Stick X") == 0 && Input.GetAxis("Left Analog Stick Y") == 0)
                     {
-                        if (player.GetComponentInChildren<PlayerController>().isFacingRight)
+                        if (player.GetComponentInChildren<PlayerController1>().isFacingRight)
                         {
                             dashStart = player.transform.position;
                             dashEnd = new Vector3(player.transform.position.x + shortDashDist, player.transform.position.y, 0);
@@ -187,13 +187,13 @@ public class InputController : MonoBehaviour
             if (Input.GetKey(KeyCode.A))
             {
                 player.rigidbody.AddForce(-28, 0, 0);
-                player.GetComponentInChildren<PlayerController>().isFacingRight = false;
+                player.GetComponentInChildren<PlayerController1>().isFacingRight = false;
             }
 
             if (Input.GetKey(KeyCode.D))
             {
                 player.rigidbody.AddForce(28, 0, 0);
-                player.GetComponentInChildren<PlayerController>().isFacingRight = true;
+                player.GetComponentInChildren<PlayerController1>().isFacingRight = true;
             }
         }
 	}
@@ -209,9 +209,9 @@ public class InputController : MonoBehaviour
         {
             // Player movement based on player states:
             // Grounded, Speeding, Jumping
-            if (player.GetComponentInChildren<PlayerController>().isGrounded)
+            if (player.GetComponentInChildren<PlayerController1>().isGrounded)
             {
-                if (player.GetComponentInChildren<PlayerController>().isSpeeding && (Input.GetAxis("Left Analog Stick X") * player.rigidbody.velocity.x < 0))
+                if (player.GetComponentInChildren<PlayerController1>().isSpeeding && (Input.GetAxis("Left Analog Stick X") * player.rigidbody.velocity.x < 0))
                 {
                     // Player Movement when on the ground, player is speeding, and the input is in the opposite direction of current velocity
                     player.rigidbody.AddForce(Input.GetAxis("Left Analog Stick X") * brakeMovementCoefficient, 0, 0);
@@ -228,7 +228,7 @@ public class InputController : MonoBehaviour
                 player.rigidbody.AddForce(Input.GetAxis("Left Analog Stick X") * airMovementCoefficient, 0, 0);
             }
 
-            if (groundToggle == true && player.GetComponentInChildren<PlayerController>().isGrounded == false)
+            if (groundToggle == true && player.GetComponentInChildren<PlayerController1>().isGrounded == false)
             {
                 groundToggle = false;
                 initSpeed = Input.GetAxis("Left Analog Stick X");
@@ -237,7 +237,7 @@ public class InputController : MonoBehaviour
 
                 vel = player.rigidbody.velocity;
             }
-            if (groundToggle == false && player.GetComponentInChildren<PlayerController>().isGrounded == true)
+            if (groundToggle == false && player.GetComponentInChildren<PlayerController1>().isGrounded == true)
             {
                 groundToggle = true;
                 initSpeed = 0.0f;
@@ -291,7 +291,7 @@ public class InputController : MonoBehaviour
             StartCoroutine("freezePlayer", 0.2f);
         }
 
-        if (dashing && player.GetComponent<PlayerController>().hasCollided == true && !player.GetComponent<PlayerController>().isGrounded)
+        if (dashing && player.GetComponent<PlayerController1>().hasCollided == true && !player.GetComponent<PlayerController1>().isGrounded)
         {
             dashing = false;
             StartCoroutine("freezePlayer", 0.2f);

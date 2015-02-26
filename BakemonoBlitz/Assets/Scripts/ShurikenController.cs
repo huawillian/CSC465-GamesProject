@@ -27,7 +27,7 @@ public class ShurikenController : MonoBehaviour
         ttl = 5.0f;
         player = GameObject.Find("Player");
 
-        if (player.GetComponentInChildren<PlayerController>().isFacingRight)
+        if (player.GetComponentInChildren<PlayerController1>().isFacingRight)
             direction = new Vector3(speed, 0f, 0f);
         else
             direction = new Vector3(-speed, 0f, 0f);
