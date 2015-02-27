@@ -15,13 +15,17 @@ using System.Collections;
 public class BackgroundManager : MonoBehaviour
 {
     public GameObject[] images;
+    public GameObject[] horizon;
+
     private float zPos = 10.0f;
 
     SceneManager mSceneManager;
 
     float playerOrigPosx = 0.0f;
-    float horizonOrigPosx = 0.0f;
-    float horizonOrigPosy = 0.0f;
+
+    float[] horizonOrigPosx;
+    float[] horizonOrigPosy;
+    public bool horSet = false;
     GameObject player;
 
     public GameObject clouds; 
@@ -40,9 +44,12 @@ public class BackgroundManager : MonoBehaviour
 	void Update ()
     {
         // Move Background Based on Player position and z axis...
-        foreach (GameObject image in images)
+        for (int i = 0; i < horizon.Length; i++)
         {
-            if (image.name == "Horizon") image.transform.position = new Vector3((mSceneManager.mPlayerManager.x - playerOrigPosx) * 0.2f + horizonOrigPosx, image.transform.position.y, image.transform.position.z);
+            if (horSet)
+            {
+                horizon[i].transform.position = new Vector3((mSceneManager.mPlayerManager.x - playerOrigPosx) * 0.4f + horizonOrigPosx[i], horizon[i].transform.position.y, horizon[i].transform.position.z);
+            }
         }
 	}
 
@@ -52,7 +59,7 @@ public class BackgroundManager : MonoBehaviour
 
         while (true)
         {
-            Instantiate(clouds, new Vector3(mSceneManager.mPlayerManager.x + 5.0f, horizonOrigPosy + Random.Range(1, 5), 0.0f ), Quaternion.identity);
+            Instantiate(clouds, new Vector3(mSceneManager.mPlayerManager.x + 5.0f, horizonOrigPosy[0] + Random.Range(1, 5), 0.0f ), Quaternion.identity);
             yield return new WaitForSeconds(2.0f);
         }
 
@@ -65,14 +72,17 @@ public class BackgroundManager : MonoBehaviour
     {
         Debug.Log("Initializing " + this.gameObject.name);
         images = GameObject.FindGameObjectsWithTag("Background");
+        horizon = GameObject.FindGameObjectsWithTag("Horizon");
+        horizonOrigPosx = new float[horizon.Length];
+        horizonOrigPosy = new float[horizon.Length];
 
-        foreach (GameObject image in images)
+        for (int i = 0; i < horizon.Length; i++ )
         {
-            if (image.name == "Horizon")
-            {
-                horizonOrigPosx = image.transform.position.x;
-                horizonOrigPosx = image.transform.position.y;
-            }
+
+            horizonOrigPosx[i] = horizon[i].transform.position.x;
+            horizonOrigPosy[i] = horizon[i].transform.position.y;
         }
+
+        horSet = true;
     }
 }

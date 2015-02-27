@@ -49,7 +49,7 @@ public class PlayerManager : MonoBehaviour
     // Swing - only during throwing and it hooks to a wall or ceiling
     // Reel - Reel Button, but only when swinging
     public bool canRun, canDash, canJump, canThrow, canSlide;
-    public bool throwReady, dashReady, jumpReady, reelReady;
+    public bool throwReady, dashReady, jumpReady, reelReady, dashReadyFromGrapple;
 
 	// Use this for initialization
 	void Start ()
@@ -151,18 +151,22 @@ public class PlayerManager : MonoBehaviour
             case GrappleState.GrappleReady:
                 throwReady = true;
                 reelReady = false;
+                dashReadyFromGrapple = true;
                 break;
             case GrappleState.GrappleExtending:
                 throwReady = false;
                 reelReady = false;
+                dashReadyFromGrapple = false;
                 break;
             case GrappleState.GrappleHooked:
                 throwReady = false;
                 reelReady = true;
+                dashReadyFromGrapple = false;
                 break;
             case GrappleState.GrappleRetracting:
                 throwReady = false;
                 reelReady = true;
+                dashReadyFromGrapple = true;
                 break;
             default: 
                 break;
@@ -296,7 +300,7 @@ public class PlayerManager : MonoBehaviour
 
         if (state == PlayerState.WallSliding)
         {
-            player.rigidbody2D.velocity = new Vector2(player.rigidbody2D.velocity.x, player.rigidbody2D.velocity.y* 0.95f);
+            player.rigidbody2D.velocity = new Vector2(player.rigidbody2D.velocity.x, player.rigidbody2D.velocity.y* 0.6f);
         }
 
 	}
@@ -338,7 +342,7 @@ public class PlayerManager : MonoBehaviour
     {
         if (lockPlayerInput) return;
 
-        if (canDash && dashReady)
+        if (canDash && dashReady && dashReadyFromGrapple)
         {
             player.rigidbody2D.AddForce(new Vector2(LX*500.0f, LY*500.0f));
             dashReady = false;
@@ -390,6 +394,7 @@ public class PlayerManager : MonoBehaviour
             playerController = player.GetComponent<PlayerController>();
             grappleController = GameObject.Find("Grapple").GetComponent<GrappleController>();
             dashReady = true;
+            dashReadyFromGrapple = true;
         }
     }
 
