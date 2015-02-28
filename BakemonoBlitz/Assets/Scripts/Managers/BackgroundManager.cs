@@ -15,27 +15,74 @@ using System.Collections;
 public class BackgroundManager : MonoBehaviour
 {
     public GameObject[] images;
+    public GameObject[] horizon;
+
     private float zPos = 10.0f;
+
+    SceneManager mSceneManager;
+
+    float playerOrigPosx = 0.0f;
+
+    float[] horizonOrigPosx;
+    float[] horizonOrigPosy;
+    public bool horSet = false;
+    GameObject player;
+
+    public GameObject clouds; 
 
 	// Use this for initialization
 	void Start ()
     {
+        mSceneManager = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
+        player = GameObject.Find("Player");
+
+        StartCoroutine("playClouds");
+
 	}
 	
 	// Update is called once per frame
 	void Update ()
     {
         // Move Background Based on Player position and z axis...
-        foreach (GameObject image in images)
+        for (int i = 0; i < horizon.Length; i++)
         {
-            //image.transform.position = new Vector3(image.transform.position.x + 0.005f, image.transform.position.y, zPos);
+            if (horSet)
+            {
+                horizon[i].transform.position = new Vector3((mSceneManager.mPlayerManager.x - playerOrigPosx) * 0.4f + horizonOrigPosx[i], horizon[i].transform.position.y, horizon[i].transform.position.z);
+            }
         }
 	}
+
+    IEnumerator playClouds()
+    {
+        yield return new WaitForSeconds(2.0f);
+
+        while (true)
+        {
+            Instantiate(clouds, new Vector3(mSceneManager.mPlayerManager.x + 5.0f, horizonOrigPosy[0] + Random.Range(1, 5), 0.0f ), Quaternion.identity);
+            yield return new WaitForSeconds(2.0f);
+        }
+
+    }
+
+
 
     // Initialization called by Scene Manager
     public void InitializeManager()
     {
         Debug.Log("Initializing " + this.gameObject.name);
         images = GameObject.FindGameObjectsWithTag("Background");
+        horizon = GameObject.FindGameObjectsWithTag("Horizon");
+        horizonOrigPosx = new float[horizon.Length];
+        horizonOrigPosy = new float[horizon.Length];
+
+        for (int i = 0; i < horizon.Length; i++ )
+        {
+
+            horizonOrigPosx[i] = horizon[i].transform.position.x;
+            horizonOrigPosy[i] = horizon[i].transform.position.y;
+        }
+
+        horSet = true;
     }
 }

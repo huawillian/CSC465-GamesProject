@@ -54,13 +54,13 @@ public class Grapple : MonoBehaviour
         hasCollided = false;
         speed = 0.4f;
         player = GameObject.Find("Player");
-        isMovingRight = player.GetComponentInChildren<PlayerController>().isFacingRight;
+        isMovingRight = player.GetComponentInChildren<PlayerController1>().isFacingRight;
 
         // Set Swinging motion variables
         grapple = this.transform;
 
         // Set player is chaining
-        player.GetComponentInChildren<PlayerController>().Chaining = true;
+        player.GetComponentInChildren<PlayerController1>().Chaining = true;
 
         time = Time.time;
         ttl = 0.2f;
@@ -113,7 +113,7 @@ public class Grapple : MonoBehaviour
         {
             RetractIn();
 
-            if (!player.GetComponentInChildren<PlayerController>().hasCollided)
+            if (!player.GetComponentInChildren<PlayerController1>().hasCollided)
             {
                 retractIn = false;
                 player.GetComponent<Rigidbody>().isKinematic = false;
@@ -122,10 +122,10 @@ public class Grapple : MonoBehaviour
             }
         }
 
-        if (player.GetComponentInChildren<PlayerController>().isSwinging == true)
+        if (player.GetComponentInChildren<PlayerController1>().isSwinging == true)
         {
 
-            if ((Time.time < timeStamp + translationTime) && !(player.GetComponentInChildren<PlayerController>().hasCollided))
+            if ((Time.time < timeStamp + translationTime) && !(player.GetComponentInChildren<PlayerController1>().hasCollided))
             {
                 float currX;
                 float currY;
@@ -145,23 +145,23 @@ public class Grapple : MonoBehaviour
             }
             else
             {
-                if (player.GetComponentInChildren<PlayerController>().isGrounded)
+                if (player.GetComponentInChildren<PlayerController1>().isGrounded)
                 {
-                    player.GetComponentInChildren<PlayerController>().isSwinging = false;
+                    player.GetComponentInChildren<PlayerController1>().isSwinging = false;
                     player.rigidbody.AddForce(posDiff.x * 200, 0, 0f);
                     reelingIn = true;
                 }
                 else
                 {
-                    if (player.GetComponentInChildren<PlayerController>().hasCollided)
+                    if (player.GetComponentInChildren<PlayerController1>().hasCollided)
                     {
-                        player.GetComponentInChildren<PlayerController>().isSwinging = false;
+                        player.GetComponentInChildren<PlayerController1>().isSwinging = false;
                         player.rigidbody.velocity = Vector3.zero;
                         retractIn = true;
                     }
                     else
                     {
-                        player.GetComponentInChildren<PlayerController>().isSwinging = false;
+                        player.GetComponentInChildren<PlayerController1>().isSwinging = false;
                         player.rigidbody.velocity = Vector3.zero;
                         player.rigidbody.AddForce(posDiff.x * 30, 300f, 0f);
                         reelingIn = true;
@@ -178,7 +178,7 @@ public class Grapple : MonoBehaviour
         if (string.Compare(other.name, "Platform") == 0 && !reelingIn)
         {
             hasCollided = true;
-            player.GetComponentInChildren<PlayerController>().Swinging = true;
+            player.GetComponentInChildren<PlayerController1>().Swinging = true;
             Swing1();
         }
 
@@ -193,13 +193,13 @@ public class Grapple : MonoBehaviour
 
     void Swing1()
     {
-        if (player.GetComponentInChildren<PlayerController>().isFacingRight)
+        if (player.GetComponentInChildren<PlayerController1>().isFacingRight)
         {
             playerPos = player.transform.position;
             grapplePos = this.transform.position;
             posDiff = grapplePos - playerPos;
 
-            if (player.GetComponentInChildren<PlayerController>().isGrounded || posDiff.x < 0.0f)
+            if (player.GetComponentInChildren<PlayerController1>().isGrounded || posDiff.x < 0.0f)
             {
                 player.rigidbody.AddForce(posDiff.x * 20, 0, 0);
                 reelingIn = true;
@@ -210,7 +210,7 @@ public class Grapple : MonoBehaviour
                 endPos = new Vector3(playerPos.x + 2 * posDiff.x, playerPos.y, playerPos.z);
 
                 timeStamp = Time.time;
-                player.GetComponentInChildren<PlayerController>().isSwinging = true;
+                player.GetComponentInChildren<PlayerController1>().isSwinging = true;
                 radius = Vector3.Distance(grapple.transform.position, player.transform.position);
             }
         }
@@ -221,7 +221,7 @@ public class Grapple : MonoBehaviour
             grapplePos = this.transform.position;
             posDiff = grapplePos - playerPos;
 
-            if (player.GetComponentInChildren<PlayerController>().isGrounded || posDiff.x > 0.0f)
+            if (player.GetComponentInChildren<PlayerController1>().isGrounded || posDiff.x > 0.0f)
             {
                 player.rigidbody.AddForce(posDiff.x * 20, 0, 0);
                 reelingIn = true;
@@ -232,7 +232,7 @@ public class Grapple : MonoBehaviour
                 endPos = new Vector3(playerPos.x + 2 * posDiff.x, playerPos.y, playerPos.z);
 
                 timeStamp = Time.time;
-                player.GetComponentInChildren<PlayerController>().isSwinging = true;
+                player.GetComponentInChildren<PlayerController1>().isSwinging = true;
                 radius = Vector3.Distance(grapple.transform.position, player.transform.position);
             }
         }
@@ -242,9 +242,9 @@ public class Grapple : MonoBehaviour
     {
         try
         {
-            player.GetComponentInChildren<PlayerController>().Swinging = false;
-            player.GetComponentInChildren<PlayerController>().Chaining = false;
-            player.GetComponentInChildren<PlayerController>().isSwinging = false;
+            player.GetComponentInChildren<PlayerController1>().Swinging = false;
+            player.GetComponentInChildren<PlayerController1>().Chaining = false;
+            player.GetComponentInChildren<PlayerController1>().isSwinging = false;
             foreach(GameObject obj in chains)
             {
                 Destroy(obj);

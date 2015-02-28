@@ -37,8 +37,9 @@ public class HUDManager : MonoBehaviour
     private float textboxDuration = 3.0f;
 
     public bool disableHUD = false;
+    public bool lockHUDSpeech = false;
 
-    private LinkedList<string> texts = new LinkedList<string>();
+    public LinkedList<string> texts = new LinkedList<string>();
 
     public Texture2D tex;
 
@@ -102,7 +103,6 @@ public class HUDManager : MonoBehaviour
             disableHUD = true;
             StartCoroutine(setText());
         }
-
     }
 
     // Return position depending on percentage
@@ -156,15 +156,18 @@ public class HUDManager : MonoBehaviour
 
         for (int i = 0; i < completeString.Length; i++)
         {
-            text = completeString.Substring(0, i);
+            if (!lockHUDSpeech)
+            {
+                text = completeString.Substring(0, i);
+                if (pressedA == true)
+                {
+                    pressedA = false;
+                    text = completeString;
+                    break;
+                }
+            }
             yield return new WaitForSeconds(0.05f);
 
-            if (pressedA == true)
-            {
-                pressedA = false;
-                text = completeString;
-                break;
-            }
         }
 
         float timeStart = Time.time;

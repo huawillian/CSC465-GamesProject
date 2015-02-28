@@ -46,13 +46,20 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Clouds.cs" />
+     <Compile Include="Assets\EnemyController.cs" />
+     <Compile Include="Assets\GrappleController.cs" />
+     <Compile Include="Assets\ItemController.cs" />
+     <Compile Include="Assets\PlayerController.cs" />
      <Compile Include="Assets\Scripts\Controllers\CameraController.cs" />
      <Compile Include="Assets\Scripts\Controllers\InputController.cs" />
      <Compile Include="Assets\Scripts\Controllers\MainMenuController.cs" />
      <Compile Include="Assets\Scripts\Controllers\MenuController.cs" />
-     <Compile Include="Assets\Scripts\Controllers\PlayerController.cs" />
+     <Compile Include="Assets\Scripts\Controllers\PlayerController1.cs" />
+     <Compile Include="Assets\Scripts\CrumblingPlatform.cs" />
      <Compile Include="Assets\Scripts\DPadButtons.cs" />
      <Compile Include="Assets\Scripts\EnemyGreen.cs" />
+     <Compile Include="Assets\Scripts\EventController.cs" />
      <Compile Include="Assets\Scripts\Grapple.cs" />
      <Compile Include="Assets\Scripts\Managers\BackgroundManager.cs" />
      <Compile Include="Assets\Scripts\Managers\CameraManager.cs" />
@@ -68,6 +75,7 @@
      <Compile Include="Assets\Scripts\Managers\VideoManager.cs" />
      <Compile Include="Assets\Scripts\ShurikenController.cs" />
      <Compile Include="Assets\Scripts\TriggerButtons.cs" />
+     <Compile Include="Assets\Scripts\UpwardsPlatformController.cs" />
      <Compile Include="Assets\Scripts\s.cs" />
      <None Include="Assets\StreamingAssets\Profiles\SaveData1.xml" />
      <None Include="Assets\StreamingAssets\Profiles\SaveData2.xml" />

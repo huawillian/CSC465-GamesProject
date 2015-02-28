@@ -1,6 +1,14 @@
 fileFormatVersion: 2
 guid: 719725f07f34f21428ff743c05c4a116
 TextureImporter:
+  fileIDToRecycleName:
+    21300000: placeholders_0
+    21300002: placeholders_1
+    21300004: placeholders_2
+    21300006: placeholders_3
+    21300008: placeholders_4
+    21300010: placeholders_5
+    21300012: placeholders_6
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0

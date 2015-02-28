@@ -42,14 +42,20 @@ public class CameraManager : MonoBehaviour
     public bool fadeIn = false;
     public bool fadeOut = false;
 
+    SceneManager mSceneManager;
+
+    public float smoothTime = 0.5f;
+    private Vector2 velocity;
+
+    public float offset = 0.0f;
+
 	// Use this for initialization
 	void Start ()
     {
-	
+        mSceneManager = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
 	}
-	
-	// Update is called once per frame
-	void Update ()
+
+    void FixedUpdate()
     {
         if (locked)
         {
@@ -59,7 +65,41 @@ public class CameraManager : MonoBehaviour
         {
             setCoordinatesFromCamera();
         }
-	}
+
+        // Set Player Camera position
+        GameObject playerCamera = cameras[numCameras - 1];
+        Vector3 vec = this.transform.position;
+
+        if (!mSceneManager.mPlayerManager.playerController.WallCollide)
+        {
+            vec.x = Mathf.SmoothDamp(playerCamera.transform.position.x,
+                mSceneManager.mPlayerManager.player.transform.position.x + offset / mSceneManager.mPlayerManager.maxSpeed * playerCamera.camera.orthographicSize / 2 + playerCamera.camera.orthographicSize / 2.0f,
+                ref velocity.x,
+                smoothTime / 50.0f);
+        }
+        else
+        {
+            vec.x = Mathf.SmoothDamp(playerCamera.transform.position.x,
+            mSceneManager.mPlayerManager.player.transform.position.x + playerCamera.camera.orthographicSize / 2.0f,
+            ref velocity.x,
+            smoothTime / 5.0f);
+        }
+
+        if (offset > mSceneManager.mPlayerManager.player.rigidbody2D.velocity.x)
+        {
+            offset -= 0.5f;
+        }
+        else if (offset < mSceneManager.mPlayerManager.player.rigidbody2D.velocity.x)
+        {
+            offset += 0.5f;
+        }
+
+
+        vec.y = Mathf.SmoothDamp(playerCamera.transform.position.y,
+            mSceneManager.mPlayerManager.player.transform.position.y + playerCamera.camera.orthographicSize / 2, ref velocity.y, smoothTime / 5.0f);
+        vec.z = playerCamera.transform.position.z;
+        playerCamera.transform.position = vec;
+    }
 
     // Initialization called by Scene Manager
     public void InitializeManager()

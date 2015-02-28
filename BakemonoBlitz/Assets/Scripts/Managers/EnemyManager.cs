@@ -20,12 +20,15 @@ using System.Collections.Generic;
 public class EnemyManager : MonoBehaviour
 {
     private LinkedList<GameObject> enemies = new LinkedList<GameObject>();
+
     private int numEnemies;
 
     // Need to be dragged in from Unity Editor
     public GameObject enemyPrefab1;
     public GameObject enemyPrefab2;
     public GameObject enemyPrefab3;
+
+    public bool lockEnemyCoordinates = false;
 
 	// Use this for initialization
 	void Start ()
@@ -35,6 +38,22 @@ public class EnemyManager : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
+        // Lock Enemy Velocity
+        if (lockEnemyCoordinates)
+        {
+            LinkedListNode<GameObject> node = enemies.First;
+
+            while (node != null)
+            {
+                node.Value.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+                node = node.Next;
+            }
+
+        }
+
+
+
+
 	}
 
     // Initialization called by Scene Manager

@@ -5,7 +5,7 @@ public class MenuController : MonoBehaviour
 {
     SceneManager mSceneManager;
 
-    public bool showMenu = false;
+    public bool lockMenuInput = true;
 
     private int screenWidth, screenHeight;
 
@@ -50,14 +50,15 @@ public class MenuController : MonoBehaviour
     IEnumerator returnToMainMenu()
     {
         mSceneManager.mCameraManager.beginFadeOut();
-        showMenu = false;
+        mSceneManager.state = SceneManager.SceneState.Playing;
+        lockMenuInput = true;
         yield return new WaitForSeconds(3.0f);
         Application.LoadLevel("MainMenuScene");
     }
 
     public void A()
     {
-        if (showMenu)
+        if (!lockMenuInput)
         {
             mSceneManager.mSoundManager.playSound("beep1", this.transform.position);
             selectorIndex++;
@@ -66,7 +67,7 @@ public class MenuController : MonoBehaviour
 
     public void B()
     {
-        if (showMenu)
+        if (!lockMenuInput)
         {
             mSceneManager.mSoundManager.playSound("beep2", this.transform.position);
 
@@ -75,7 +76,8 @@ public class MenuController : MonoBehaviour
                 switch (selectorIndex)
                 {
                     case 0:
-                        showMenu = false;
+                        lockMenuInput = true;
+                        mSceneManager.state = SceneManager.SceneState.Playing;
                         break;
                     case 1:
                         state = Direction.Sound;
@@ -147,7 +149,7 @@ public class MenuController : MonoBehaviour
 
     public void StartButton()
     {
-        if (showMenu)
+        if (!lockMenuInput)
         {
             mSceneManager.mSoundManager.playSound("beep2", this.transform.position);
             reset();
@@ -157,7 +159,7 @@ public class MenuController : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
     {
-        if (showMenu)
+        if (!lockMenuInput)
         {
             if (screenHeight != Screen.height || screenWidth != Screen.width)
             {
@@ -220,7 +222,7 @@ public class MenuController : MonoBehaviour
 
     void OnGUI()
     {
-        if (showMenu)
+        if (!lockMenuInput)
         {
 
             // Make a background box

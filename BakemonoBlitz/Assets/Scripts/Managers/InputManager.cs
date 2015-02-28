@@ -83,6 +83,7 @@ public class InputManager : MonoBehaviour {
             mSceneManager.mHUDManager.A();
             mSceneManager.mMenuController.A();
             mSceneManager.mMainMenuController.A();
+            mSceneManager.mPlayerManager.A();
         }
 
         if (Input.GetKeyUp(KeyCode.Keypad2) || Input.GetButtonUp("A"))
@@ -100,6 +101,7 @@ public class InputManager : MonoBehaviour {
 
             mSceneManager.mMenuController.B();
             mSceneManager.mMainMenuController.B();
+            mSceneManager.mPlayerManager.B();
         }
 
         if (Input.GetKeyUp(KeyCode.Keypad6) || Input.GetButtonUp("B"))
@@ -114,6 +116,8 @@ public class InputManager : MonoBehaviour {
         {
             Debug.Log("X has been pressed");
             X = true;
+
+            mSceneManager.mPlayerManager.X();
         }
 
         if (Input.GetKeyUp(KeyCode.Keypad4) || Input.GetButtonUp("X"))
@@ -128,6 +132,8 @@ public class InputManager : MonoBehaviour {
         {
             Debug.Log("Y has been pressed");
             Y = true;
+
+            mSceneManager.mPlayerManager.Y();
         }
 
         if (Input.GetKeyUp(KeyCode.Keypad8) || Input.GetButtonUp("Y"))
@@ -156,11 +162,20 @@ public class InputManager : MonoBehaviour {
 
     private void checkLT()
     {
-        if (Input.GetAxis("Left Trigger Axis") > 0.0f)
+        if ((Input.GetAxis("Left Trigger Axis") > 0.0f && !LT) || Input.GetKeyDown(KeyCode.Q))
         {
             LT = true;
+
+            mSceneManager.mPlayerManager.LT();
         }
-        else
+
+        if (Input.GetAxis("Left Trigger Axis") == 0.0f)
+        {
+
+            LT = false;
+        }
+
+        if (Input.GetKeyUp(KeyCode.Q))
         {
             LT = false;
         }
@@ -168,11 +183,18 @@ public class InputManager : MonoBehaviour {
 
     private void checkRT()
     {
-        if (Input.GetAxis("Right Trigger Axis") > 0.0f)
+        if ((Input.GetAxis("Right Trigger Axis") > 0.0f && !RT) || Input.GetKeyDown(KeyCode.E))
         {
             RT = true;
+            mSceneManager.mPlayerManager.RT();
         }
-        else
+
+        if (Input.GetAxis("Right Trigger Axis") == 0.0f)
+        {
+            RT = false;
+        }
+
+        if (Input.GetKeyUp(KeyCode.E))
         {
             RT = false;
         }
@@ -180,39 +202,85 @@ public class InputManager : MonoBehaviour {
 
     private void checkLTH()
     {
-        if (LTA > holdThreshold) LTH = true;
-        else LTH = false;
+        if (LTA > holdThreshold)
+        {
+            LTH = true;
+            mSceneManager.mPlayerManager.LTH = true;
+        }
+        else
+        {
+            LTH = false;
+            mSceneManager.mPlayerManager.LTH = false;
+        }
     }
 
     private void checkRTH()
     {
-        if (RTA > holdThreshold) RTH = true;
-        else RTH = false;
+        if (RTA > holdThreshold)
+        {
+            RTH = true;
+            mSceneManager.mPlayerManager.RTH = true;
+        }
+        else
+        {
+            RTH = false;
+            mSceneManager.mPlayerManager.RTH = false;
+        }
     }
 
     private void setLX()
     {
-        if (Input.GetKey(KeyCode.A)) LX = -1.0f;
-        else 
-            if (Input.GetKey(KeyCode.D)) LX = 1.0f;
+        if (Input.GetKey(KeyCode.A))
+        {
+            LX = -1.0f;
+        }
         else
+            if (Input.GetKey(KeyCode.D))
+            {
+                LX = 1.0f;
+            }
+            else
+            {
                 LX = Input.GetAxis("Left Analog Stick X");
+            }
+
+        mSceneManager.mPlayerManager.LX = LX;
+
     }
 
     private void setLY()
     {
-        if (Input.GetKey(KeyCode.S)) LY = -1.0f;
+        if (Input.GetKey(KeyCode.S))
+        {
+            LY = -1.0f;
+        }
         else
-            if (Input.GetKey(KeyCode.W)) LY = 1.0f;
+            if (Input.GetKey(KeyCode.W))
+            {
+                LY = 1.0f;
+            }
             else
+            {
                 LY = (-1.0f) * Input.GetAxis("Left Analog Stick Y");
+            }
+
+        mSceneManager.mPlayerManager.LY = LY;
+
     }
 
     private void setLTA()
     {
-        if (Input.GetKey(KeyCode.Q)) LTA = 1.0f;
+        if (Input.GetKey(KeyCode.Q))
+        {
+            LTA = 1.0f;
+        }
         else
+        {
             LTA = Input.GetAxis("Left Trigger Axis");
+        }
+
+        mSceneManager.mPlayerManager.LTA = LTA;
+
     }
 
     private void setRTA()
