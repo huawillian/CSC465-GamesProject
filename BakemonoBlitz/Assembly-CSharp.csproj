@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Clouds.cs" />
+     <Compile Include="Assets\EnemyController.cs" />
      <Compile Include="Assets\GrappleController.cs" />
      <Compile Include="Assets\ItemController.cs" />
      <Compile Include="Assets\PlayerController.cs" />

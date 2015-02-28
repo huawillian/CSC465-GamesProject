@@ -203,8 +203,8 @@ public class SceneManager : MonoBehaviour
 
 
         yield return new WaitForSeconds(1.5f);
-        /*
-        //state = SceneState.Locked;
+        
+        state = SceneState.Locked;
         mHUDManager.addTextToQueue("Hello Friends...");
         mHUDManager.addTextToQueue("Welcome to Testing the TestScene");
         mHUDManager.addTextToQueue("LALALALALALALALALALA");
@@ -214,10 +214,10 @@ public class SceneManager : MonoBehaviour
             yield return new WaitForSeconds(0.5f);
         }
 
-        //state = SceneState.Playing;
+        state = SceneState.Playing;
 
 
-        */
+        mSoundManager.playSound("sound3", Vector3.zero);
 
 
     }

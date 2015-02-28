@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour
     public bool WallCollideRight;
 
     public bool GroundCollide;
-
+    public bool EnemyCollide;
     public bool FaceRight;
 
     SceneManager mSceneManager;
@@ -39,10 +39,25 @@ public class PlayerController : MonoBehaviour
             if (this.gameObject.transform.position.x > other.gameObject.transform.position.x) WallCollideRight = false;
             else WallCollideRight = true;
         }
-
         if (other.name == "Ground1")
         {
             GroundCollide = true;
+        }
+
+        if (other.name == "Enemy1")
+        {
+            EnemyCollide = true;
+            Destroy(other.gameObject);
+        }
+    }
+
+    void OnTriggerStay2D(Collider2D other)
+    {
+        if (other.name == "Wall1")
+        {
+            WallCollide = true;
+            if (this.gameObject.transform.position.x > other.gameObject.transform.position.x) WallCollideRight = false;
+            else WallCollideRight = true;
         }
     }
 
