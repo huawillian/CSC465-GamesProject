@@ -217,7 +217,7 @@ public class SceneManager : MonoBehaviour
         state = SceneState.Playing;
 
 
-        mSoundManager.playSound("sound3", Vector3.zero);
+        mSoundManager.setBackgroundMusic("sound3");
 
 
     }

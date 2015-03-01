@@ -44,10 +44,15 @@ public class PlayerController : MonoBehaviour
             GroundCollide = true;
         }
 
-        if (other.name == "Enemy1")
+        if (other.name == "Enemy1" && mSceneManager.mPlayerManager.state == PlayerManager.PlayerState.Dashing)
         {
             EnemyCollide = true;
             Destroy(other.gameObject);
+        }
+
+        if (other.name == "Enemy1" && mSceneManager.mPlayerManager.state != PlayerManager.PlayerState.Dashing)
+        {
+            EnemyCollide = true;
         }
     }
 
@@ -71,6 +76,12 @@ public class PlayerController : MonoBehaviour
         if (other.name == "Ground1")
         {
             GroundCollide = false;
+        }
+
+
+        if (other.name == "Enemy1" && mSceneManager.mPlayerManager.state != PlayerManager.PlayerState.Dashing)
+        {
+            EnemyCollide = false;
         }
     }
 }

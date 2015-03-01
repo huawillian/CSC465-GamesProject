@@ -27,19 +27,15 @@ public class SoundManager : MonoBehaviour
     public string[] soundList;
     public GameObject[] soundHolders;
 
-/*
-    IEnumerator Start()
+    public GameObject backgroundMusic;
+    private SceneManager mSceneManager;
+
+
+    void Start()
     {
-        yield return new WaitForSeconds(1);
-        playSound("sound1", Vector3.zero);
-        yield return new WaitForSeconds(1);
-
-        setVolumeSound("sound1", 0.3f);
-        yield return new WaitForSeconds(1);
-
-        setVolumeSounds(1.0f);
+        mSceneManager = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
     }
-*/
+
     // Initialization called by Scene Manager
     public void InitializeManager()
     {
@@ -60,6 +56,15 @@ public class SoundManager : MonoBehaviour
             soundHolders[i].AddComponent<AudioSource>();
             soundHolders[i].transform.parent = this.transform;
         }
+
+        backgroundMusic = new GameObject();
+        backgroundMusic.AddComponent<AudioSource>();
+
+    }
+
+    public void Update()
+    {
+        backgroundMusic.transform.position = mSceneManager.mCameraManager.getCurrentCamera().transform.position;
     }
 
     // Called by other classes to play sound
@@ -163,5 +168,21 @@ public class SoundManager : MonoBehaviour
         {
             Resources.UnloadAsset(clip[i]);
         }
+    }
+
+    public void setBackgroundMusic(string name)
+    {
+        for (int i = 0; i < soundList.Length; i++)
+        {
+            if (soundList[i].Equals(name))
+            {
+                backgroundMusic = soundHolders[i];
+                soundHolders[i].GetComponent<AudioSource>().PlayOneShot(clip[i]);
+                return;
+            }
+        }
+
+        Debug.Log("Sound Not Found: " + name);
+
     }
 }

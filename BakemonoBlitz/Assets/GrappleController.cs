@@ -8,14 +8,18 @@ public class GrappleController : MonoBehaviour
     public bool ThrowRight;
     public Vector3 hookedPos;
 
-    public float grappleExtendDur = 1.0f;
+    public float grappleExtendDur = 0.8f;
+    public float grappleSpeed = 16.0f;
     public float timeThrown = 0.0f;
+
+    public int incre;
 
     // Use this for initialization
     void Start()
     {
         mSceneManager = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
         hookedPos = new Vector3();
+        this.rigidbody2D.gravityScale = 0.0f;
     }
 
     // Update is called once per frame
@@ -31,11 +35,21 @@ public class GrappleController : MonoBehaviour
             case PlayerManager.GrappleState.GrappleExtending:
                 if (ThrowRight)
                 {
-                    this.gameObject.rigidbody2D.velocity = new Vector2(8,8);
+                    //this.gameObject.rigidbody2D.velocity = new Vector2(grappleSpeed, grappleSpeed);
+                    this.gameObject.transform.position = new Vector3(grappleSpeed / 40.0f * incre + mSceneManager.mPlayerManager.playerController.gameObject.transform.position.x,
+                        grappleSpeed / 40.0f * incre + mSceneManager.mPlayerManager.playerController.gameObject.transform.position.y,
+                        this.gameObject.transform.position.z);
+
+                    incre++;
                 }
                 else
                 {
-                    this.gameObject.rigidbody2D.velocity = new Vector2(-8, 8);
+                    //this.gameObject.rigidbody2D.velocity = new Vector2(-grappleSpeed, grappleSpeed);
+                    this.gameObject.transform.position = new Vector3(-grappleSpeed / 40.0f * incre + mSceneManager.mPlayerManager.playerController.gameObject.transform.position.x,
+                        grappleSpeed / 40.0f * incre + mSceneManager.mPlayerManager.playerController.gameObject.transform.position.y,
+                        this.gameObject.transform.position.z);
+
+                    incre++;
                 }
 
                 if (Time.time - timeThrown > grappleExtendDur)
@@ -47,7 +61,9 @@ public class GrappleController : MonoBehaviour
                 this.gameObject.rigidbody2D.velocity = new Vector2(0, 0);
                 break;
             case PlayerManager.GrappleState.GrappleRetracting:
-                this.gameObject.rigidbody2D.velocity = new Vector2((mSceneManager.mPlayerManager.playerController.gameObject.transform.position.x - this.gameObject.transform.position.x) * 5.0f, (mSceneManager.mPlayerManager.playerController.gameObject.transform.position.y - this.gameObject.transform.position.y)* 5.0f);
+                //this.gameObject.rigidbody2D.velocity = new Vector2((mSceneManager.mPlayerManager.playerController.gameObject.transform.position.x - this.gameObject.transform.position.x) * 5.0f, (mSceneManager.mPlayerManager.playerController.gameObject.transform.position.y - this.gameObject.transform.position.y)* 10.0f);
+                this.transform.position = Vector3.MoveTowards(transform.position, mSceneManager.mPlayerManager.playerController.gameObject.transform.position, 30 * Time.deltaTime);
+
                 break;
             default:
                 break;
@@ -61,12 +77,12 @@ public class GrappleController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (swinging)
+        if (swinging && !mSceneManager.mPlayerManager.playerController.EnemyCollide && !mSceneManager.mPlayerManager.playerController.WallCollide && !mSceneManager.mPlayerManager.playerController.GroundCollide)
         {
             float currX;
             float currY;
 
-            if (mSceneManager.mPlayerManager.playerController.FaceRight)
+            if (ThrowRight)
             {
                 currX = Mathf.Cos(5 * Mathf.PI / 4 + (Time.time - timeStamp) / translationTime * Mathf.PI / 2) * radius + this.gameObject.transform.position.x;
                 currY = Mathf.Sin(5 * Mathf.PI / 4 + (Time.time - timeStamp) / translationTime * Mathf.PI / 2) * radius + this.gameObject.transform.position.y;
@@ -86,10 +102,14 @@ public class GrappleController : MonoBehaviour
         timeStamp = Time.time;
         swinging = true;
         radius = Mathf.Sqrt((this.gameObject.transform.position.x - mSceneManager.mPlayerManager.playerController.gameObject.transform.position.x) * (this.gameObject.transform.position.x - mSceneManager.mPlayerManager.playerController.gameObject.transform.position.x) + (this.gameObject.transform.position.y - mSceneManager.mPlayerManager.playerController.gameObject.transform.position.y) * (this.gameObject.transform.position.y - mSceneManager.mPlayerManager.playerController.gameObject.transform.position.y));
+        translationTime = 1.0f * radius / 8.0f;
+
 
         // Exit State, Duration, Collided by Wall, or Collided by Ground
-        while (mSceneManager.mPlayerManager.state == PlayerManager.PlayerState.Swinging)
+        while (mSceneManager.mPlayerManager.state == PlayerManager.PlayerState.Swinging && swinging && mSceneManager.mPlayerManager.RTH && Time.time - timeStamp <= translationTime)
         {
+            yield return new WaitForSeconds(0.01f);
+
             if (mSceneManager.mPlayerManager.playerController.WallCollide || mSceneManager.mPlayerManager.playerController.GroundCollide || (Time.time - timeStamp > translationTime))
             {
                 mSceneManager.mPlayerManager.state = PlayerManager.PlayerState.Idling;
@@ -100,46 +120,88 @@ public class GrappleController : MonoBehaviour
             {
                 if (mSceneManager.mPlayerManager.playerController.WallCollideRight)
                 {
-                    mSceneManager.mPlayerManager.playerController.gameObject.rigidbody2D.AddForce(new Vector2(-1000, 500));
+                    //mSceneManager.mPlayerManager.playerController.gameObject.rigidbody2D.AddForce(new Vector2(-1000, 500));
+                    mSceneManager.mPlayerManager.StartCoroutine("DashUpLeft");
                 }
                 else
                 {
-                    mSceneManager.mPlayerManager.playerController.gameObject.rigidbody2D.AddForce(new Vector2(1000, 500));
+                    //mSceneManager.mPlayerManager.playerController.gameObject.rigidbody2D.AddForce(new Vector2(1000, 500));
+                    mSceneManager.mPlayerManager.StartCoroutine("DashUpRight");
                 }
+
+                swinging = false;
             }
 
             if (mSceneManager.mPlayerManager.playerController.GroundCollide)
             {
-                if (mSceneManager.mPlayerManager.playerController.FaceRight)
+                if (ThrowRight)
                 {
-                    mSceneManager.mPlayerManager.playerController.gameObject.rigidbody2D.AddForce(new Vector2(1000, 0));
+                    mSceneManager.mPlayerManager.playerController.gameObject.rigidbody2D.AddForce(new Vector2(200, 0));
+                    //mSceneManager.mPlayerManager.StartCoroutine("DashUpRight");
                 }
                 else
                 {
-                    mSceneManager.mPlayerManager.playerController.gameObject.rigidbody2D.AddForce(new Vector2(-1000, 0));
+                    mSceneManager.mPlayerManager.playerController.gameObject.rigidbody2D.AddForce(new Vector2(-200, 0));
+                    //mSceneManager.mPlayerManager.StartCoroutine("DashUpLeft");
                 }
+
+                swinging = false;
             }
 
-            if (Time.time - timeStamp > translationTime)
+
+            if (mSceneManager.mPlayerManager.playerController.EnemyCollide)
             {
-                if (mSceneManager.mPlayerManager.playerController.FaceRight)
+                if (ThrowRight)
                 {
-                    mSceneManager.mPlayerManager.playerController.gameObject.rigidbody2D.AddForce(new Vector2(200, 1000));
+                    //mSceneManager.mPlayerManager.playerController.gameObject.rigidbody2D.AddForce(new Vector2(-200, 0));
+                    mSceneManager.mPlayerManager.StartCoroutine("DashUpLeft");
                 }
                 else
                 {
-                    mSceneManager.mPlayerManager.playerController.gameObject.rigidbody2D.AddForce(new Vector2(-200, 1000));
+                    //mSceneManager.mPlayerManager.playerController.gameObject.rigidbody2D.AddForce(new Vector2(200, 0));
+                    mSceneManager.mPlayerManager.StartCoroutine("DashUpRight");
                 }
+
+                swinging = false;
             }
-
-
-
-
-            yield return new WaitForSeconds(0.05f);
         }
 
-        mSceneManager.mPlayerManager.lockPlayerInput = false;
+        // Add Force depend on Angle created by player and grapple
+        if (Time.time - timeStamp > translationTime || !mSceneManager.mPlayerManager.RTH)
+        {
+            if (ThrowRight)
+            {
+                float angleY = Mathf.Cos(5 * Mathf.PI / 4 + (Time.time - timeStamp) / translationTime * Mathf.PI / 2 + 1 / 8 * Mathf.PI);
+                float angleX = -1.0f * Mathf.Sin(5 * Mathf.PI / 4 + (Time.time - timeStamp) / translationTime * Mathf.PI / 2 + 1 / 8 * Mathf.PI);
+
+                if (angleY < 0.0f)
+                {
+                    angleY = 0.2f;
+                    mSceneManager.mPlayerManager.player.rigidbody2D.velocity = new Vector2(mSceneManager.mPlayerManager.player.rigidbody2D.velocity.x, 0);
+                }
+
+                mSceneManager.mPlayerManager.playerController.gameObject.rigidbody2D.AddForce(new Vector2(350 * angleX, 750 * angleY));
+            }
+            else
+            {
+                float angleY = Mathf.Cos(5 * Mathf.PI / 4 + (Time.time - timeStamp) / translationTime * Mathf.PI / 2 + 1 / 8 * Mathf.PI);
+                float angleX = Mathf.Sin(5 * Mathf.PI / 4 + (Time.time - timeStamp) / translationTime * Mathf.PI / 2 + 1 / 8 * Mathf.PI);
+
+                if (angleY < 0.0f)
+                {
+                    angleY = 0.2f;
+                    mSceneManager.mPlayerManager.player.rigidbody2D.velocity = new Vector2(mSceneManager.mPlayerManager.player.rigidbody2D.velocity.x, 0);
+                }
+
+                mSceneManager.mPlayerManager.playerController.gameObject.rigidbody2D.AddForce(new Vector2(350 * angleX, 750 * angleY));
+            }
+        }
+
+
+        mSceneManager.mPlayerManager.state = PlayerManager.PlayerState.Falling;
+        mSceneManager.mPlayerManager.grappleState = PlayerManager.GrappleState.GrappleRetracting;
         swinging = false;
+        mSceneManager.mPlayerManager.lockPlayerInput = false;
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -159,6 +221,11 @@ public class GrappleController : MonoBehaviour
         }
 
         if (other.name == "Ground1")
+        {
+            mSceneManager.mPlayerManager.grappleState = PlayerManager.GrappleState.GrappleRetracting;
+        }
+
+        if (other.name == "Enemy1")
         {
             mSceneManager.mPlayerManager.grappleState = PlayerManager.GrappleState.GrappleRetracting;
         }

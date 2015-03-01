@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 /*
     The Player Manager manages all things having to deal with the player such as allowable movements and actions, items the player is holding, player statistics, and player state. This manager is initialized by the Scene Manager.
@@ -57,6 +58,9 @@ public class PlayerManager : MonoBehaviour
     public float dashTimeStamp = 0.0f;
     public bool longDashReady = false;
 
+    public bool braked = false;
+    public bool wasSpeeding = false;
+
 	// Use this for initialization
 	void Start ()
     {
@@ -89,8 +93,6 @@ public class PlayerManager : MonoBehaviour
         // If we lock Player Input, we set reset everything, and, we don't do the input functions
         if (lockPlayerInput)
         {
-            LTH = false;
-            RTH = false;
             LTA = 0.0f;
             LX = 0.0f;
             LY = 0.0f;
@@ -199,6 +201,8 @@ public class PlayerManager : MonoBehaviour
                 {
                     state = PlayerState.Running;
                 }
+                if (Math.Abs(player.rigidbody2D.velocity.x) > 0.0f) player.rigidbody2D.velocity = player.rigidbody2D.velocity * 0.95f;
+                if (Math.Abs(player.rigidbody2D.velocity.x) < 0.05f) player.rigidbody2D.velocity = new Vector2(0, player.rigidbody2D.velocity.y);
                 // Dash By Input
                 // Jump By Input
                 // Throw By Input
@@ -260,9 +264,6 @@ public class PlayerManager : MonoBehaviour
                 }*/
                 if (!RTH)
                 {
-                    state = PlayerState.Falling;
-                    grappleState = GrappleState.GrappleRetracting;
-                    grappleController.swinging = false;
                 }
                 if (LTH)
                 {
@@ -321,33 +322,65 @@ public class PlayerManager : MonoBehaviour
             longDashReady = false;
         }
 
-        if (state == PlayerState.Dashing && Time.time - dashTimeStamp > dashCooldown / 6 && dashReady && longDashReady)
+        if (state == PlayerState.Dashing && Time.time - dashTimeStamp > dashCooldown / 4 && dashReady && longDashReady)
         {
             dashReady = false;
             longDashReady = false;
             state = PlayerState.Falling;
         }
 
+        if (longDashReady)
+        {
+            player.rigidbody2D.velocity = Vector2.zero;
+        }
+
 	}
 
     void FixedUpdate()
     {
-        if (canRun)
+        if (canRun && !braked)
         {
             if (player.rigidbody2D.velocity.x > maxSpeed)
             {
                 player.rigidbody2D.velocity = new Vector2(maxSpeed, player.rigidbody2D.velocity.y);
+                wasSpeeding = true;
             }
-            else
+            else if (player.rigidbody2D.velocity.x < -maxSpeed)
+            {
+                player.rigidbody2D.velocity = new Vector2(-maxSpeed, player.rigidbody2D.velocity.y);
+                wasSpeeding = true;
+            }
+            else if ((player.rigidbody2D.velocity.x > 0.0f && LX < 0.0f) || (player.rigidbody2D.velocity.x < 0.0f && LX > 0.0f))
+            {
+                player.rigidbody2D.AddForce(new Vector2(LX * maxSpeed * 2.0f, 0));
+
+                if (Math.Abs(player.rigidbody2D.velocity.x) < 1.0f && wasSpeeding)
+                {
+                    braked = true;
+                    wasSpeeding = false;
+                    player.rigidbody2D.velocity = Vector2.zero;
+                    StartCoroutine("SetBraked");
+                }
+            }
+            else if (player.rigidbody2D.velocity.x > 0.0f && LX == 0.0f)
+            {
+                player.rigidbody2D.AddForce(new Vector2(maxSpeed * -0.5f, 0));
+            }
+            else if (player.rigidbody2D.velocity.x < 0.0f && LX == 0.0f)
+            {
+                player.rigidbody2D.AddForce(new Vector2(maxSpeed * 0.5f, 0));
+            }
+            else if (Math.Abs(player.rigidbody2D.velocity.x) < maxSpeed)
             {
                 player.rigidbody2D.AddForce(new Vector2(LX * maxSpeed, 0));
+                wasSpeeding = false;
             }
         }
 
 
         if ((state == PlayerState.Falling || state == PlayerState.Jumping) && longDashReady)
         {
-            player.rigidbody2D.velocity = new Vector2(0, player.rigidbody2D.velocity.y * 0.1f);
+            player.rigidbody2D.velocity = new Vector2(0, player.rigidbody2D.velocity.y * 0.0f);
         }
         else
         if (state == PlayerState.Falling || state == PlayerState.Jumping)
@@ -441,12 +474,13 @@ public class PlayerManager : MonoBehaviour
         {
             grappleState = GrappleState.GrappleExtending;
             grappleController.timeThrown = Time.time;
+            grappleController.incre = 0;
         }
     }
 
-    IEnumerator Dash()
+    public IEnumerator Dash()
     {
-        float dashSpeed = 20.0f;
+        float dashSpeed = 25.0f;
 
         dashReady = false;
 
@@ -510,7 +544,7 @@ public class PlayerManager : MonoBehaviour
 
     }
 
-    IEnumerator LongDash()
+    public IEnumerator LongDash()
     {
         float dashSpeed = 20.0f;
 
@@ -577,7 +611,7 @@ public class PlayerManager : MonoBehaviour
 
     }
 
-    IEnumerator DashUpRight()
+    public IEnumerator DashUpRight()
     {
         for (int i = 0; i < 5; i++)
         {
@@ -587,7 +621,7 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    IEnumerator DashUpRightSmall()
+    public IEnumerator DashUpRightSmall()
     {
         for (int i = 0; i < 5; i++)
         {
@@ -597,7 +631,7 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    IEnumerator DashUpLeft()
+    public IEnumerator DashUpLeft()
     {
         for (int i = 0; i < 5; i++)
         {
@@ -607,14 +641,19 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    IEnumerator DashUpLeftSmall()
+    public IEnumerator DashUpLeftSmall()
     {
         for (int i = 0; i < 5; i++)
         {
             player.rigidbody2D.velocity = new Vector2(-4, 4);
             yield return new WaitForSeconds(0.005f);
-
         }
+    }
+
+    public IEnumerator SetBraked()
+    {
+        yield return new WaitForSeconds(0.5f);
+        braked = false;
     }
 
     // Initialization called by Scene Manager

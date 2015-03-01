@@ -142,6 +142,19 @@ public class CameraManager : MonoBehaviour
         return null;
     }
 
+    public GameObject getCurrentCamera()
+    {
+        foreach (GameObject camera in cameras)
+        {
+            if (camera.tag == "MainCamera")
+            {
+                return camera;
+            }
+        }
+
+        return null;
+    }
+
     // Set Main Camera Camera from string
     public void setCamera(String cameraName)
     {
