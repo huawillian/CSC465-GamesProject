@@ -56,6 +56,10 @@ public class SceneManager : MonoBehaviour
     public enum SceneState { MainMenu, Playing, Paused, Locked, Animating, SceneComplete};
     public SceneState state = SceneState.Playing;
     public float tempVol;
+
+    // Set and place player at these locations at the start of the scene
+    public Vector3 playerStart, playerEnd;
+
     // State:
     // Main Menu - Input to all except the Main Menu Controller is disabled, Main Menu is enabled, Menu is disabled
     // Playing - Everything is normal, Input to the Main Menu is disabled
@@ -72,10 +76,6 @@ public class SceneManager : MonoBehaviour
     // Locked State is initiated/reset to Playing state via script
     // Animating State is set/reset via script 
     // Scene Complete is set/reset via script
-
-
-
-
 
     // Initialize Scene Manager and get reference to all other Managers
     void Awake()
@@ -172,6 +172,11 @@ public class SceneManager : MonoBehaviour
         {
             StartCoroutine("TestSceneScript", 0.0f);
         }
+
+        if (sceneName.StartsWith("Scene"))
+        {
+            StartCoroutine(sceneName + "Script", 0.0f);
+        }
 	}
 
     IEnumerator MainMenuScript()
@@ -179,13 +184,15 @@ public class SceneManager : MonoBehaviour
         state = SceneState.MainMenu;
         mCameraManager.setCamera("Camera1");
 
-
-
         mProfileManager.LoadProfile(0);
         mProfileManager.setResolution(5.0f);
         mProfileManager.setVolume(100.0f);
 
         mMainMenuController.showMenu = false;
+
+        mBackgroundManager.enabled = false;
+
+
 
         mVideoManager.playVideo("starcraft");
         yield return new WaitForSeconds(mSoundManager.getSoundLength("starcraft") - 0.2f);
@@ -200,7 +207,6 @@ public class SceneManager : MonoBehaviour
         state = SceneState.Playing;
         mProfileManager.setResolution(mResolution);
         mProfileManager.setVolume(mVolume);
-
 
         yield return new WaitForSeconds(1.5f);
         
@@ -218,11 +224,77 @@ public class SceneManager : MonoBehaviour
 
 
         mSoundManager.setBackgroundMusic("sound3");
-
-
     }
 
+    IEnumerator Scene1Script()
+    {
+        state = SceneState.Playing;
+        mProfileManager.setResolution(mResolution);
+        mProfileManager.setVolume(mVolume);
 
+        this.mSceneNumber = 1;
+
+        this.playerStart = GameObject.Find("Start").transform.position;
+        this.playerEnd = GameObject.Find("End").transform.position;
+
+        if (mProfileManager.getProfileData(0)._userData.sceneNumber > this.mSceneNumber)
+        {
+            this.mPlayerManager.player.transform.position = playerEnd;
+        }
+        else
+        {
+            this.mPlayerManager.player.transform.position = playerStart;
+
+        }
+
+        yield return new WaitForSeconds(1.5f);
+
+        state = SceneState.Locked;
+        mHUDManager.addTextToQueue("Scene 1. Testing");
+
+        while (this.mHUDManager.texts.Count > 0)
+        {
+            yield return new WaitForSeconds(0.5f);
+        }
+
+        state = SceneState.Playing;
+        mSoundManager.setBackgroundMusic("sound1");
+    }
+
+    IEnumerator Scene2Script()
+    {
+        state = SceneState.Playing;
+        mProfileManager.setResolution(mResolution);
+        mProfileManager.setVolume(mVolume);
+
+        this.mSceneNumber = 2;
+
+        this.playerStart = GameObject.Find("Start").transform.position;
+        this.playerEnd = GameObject.Find("End").transform.position;
+
+        if (mProfileManager.getProfileData(0)._userData.sceneNumber > this.mSceneNumber)
+        {
+            this.mPlayerManager.player.transform.position = playerEnd;
+        }
+        else
+        {
+            this.mPlayerManager.player.transform.position = playerStart;
+
+        }
+
+        yield return new WaitForSeconds(1.5f);
+
+        state = SceneState.Locked;
+        mHUDManager.addTextToQueue("Scene 2. Testing");
+
+        while (this.mHUDManager.texts.Count > 0)
+        {
+            yield return new WaitForSeconds(0.5f);
+        }
+
+        state = SceneState.Playing;
+        mSoundManager.setBackgroundMusic("sound2");
+    }
 
 
 

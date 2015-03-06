@@ -231,7 +231,8 @@ public class ProfileManager : MonoBehaviour
 
                 mSceneManager.mVolume = myData._userData.volume;
                 mSceneManager.mResolution = myData._userData.resolution;
-                mSceneManager.mSceneNumber = myData._userData.sceneNumber;
+                // mSceneManager.mSceneNumber = myData._userData.sceneNumber;
+                // SceneManager will set this...
                 mSceneManager.mCheckpointNumber = myData._userData.checkpointNumber;
 
                 mSceneManager.mProfileNumber = myData._userData.sessionNumber;

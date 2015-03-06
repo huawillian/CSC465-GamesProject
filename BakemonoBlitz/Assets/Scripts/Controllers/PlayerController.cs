@@ -33,24 +33,24 @@ public class PlayerController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.name == "Wall1")
+        if (other.tag == "Wall")
         {
             WallCollide = true;
             if (this.gameObject.transform.position.x > other.gameObject.transform.position.x) WallCollideRight = false;
             else WallCollideRight = true;
         }
-        if (other.name == "Ground1")
+        if (other.tag == "Ground")
         {
             GroundCollide = true;
         }
 
-        if (other.name == "Enemy1" && mSceneManager.mPlayerManager.state == PlayerManager.PlayerState.Dashing)
+        if (other.tag == "Enemy" && mSceneManager.mPlayerManager.state == PlayerManager.PlayerState.Dashing)
         {
             EnemyCollide = true;
             Destroy(other.gameObject);
         }
 
-        if (other.name == "Enemy1" && mSceneManager.mPlayerManager.state != PlayerManager.PlayerState.Dashing)
+        if (other.tag == "Enemy" && mSceneManager.mPlayerManager.state != PlayerManager.PlayerState.Dashing)
         {
             EnemyCollide = true;
         }
@@ -58,7 +58,7 @@ public class PlayerController : MonoBehaviour
 
     void OnTriggerStay2D(Collider2D other)
     {
-        if (other.name == "Wall1")
+        if (other.tag == "Wall")
         {
             WallCollide = true;
             if (this.gameObject.transform.position.x > other.gameObject.transform.position.x) WallCollideRight = false;
@@ -68,18 +68,18 @@ public class PlayerController : MonoBehaviour
 
     void OnTriggerExit2D(Collider2D other)
     {
-        if (other.name == "Wall1")
+        if (other.tag == "Wall")
         {
             WallCollide = false;
         }
 
-        if (other.name == "Ground1")
+        if (other.tag == "Ground")
         {
             GroundCollide = false;
         }
 
 
-        if (other.name == "Enemy1" && mSceneManager.mPlayerManager.state != PlayerManager.PlayerState.Dashing)
+        if (other.tag == "Enemy" && mSceneManager.mPlayerManager.state != PlayerManager.PlayerState.Dashing)
         {
             EnemyCollide = false;
         }

@@ -206,7 +206,7 @@ public class GrappleController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.name == "Ceiling1")
+        if (other.tag == "Ceiling")
         {
             mSceneManager.mPlayerManager.grappleState = PlayerManager.GrappleState.GrappleHooked;
             mSceneManager.mPlayerManager.state = PlayerManager.PlayerState.Swinging;
@@ -215,17 +215,17 @@ public class GrappleController : MonoBehaviour
             StartCoroutine("SwingStart");
         }
 
-        if (other.name == "Wall1")
+        if (other.tag == "Wall")
         {
             mSceneManager.mPlayerManager.grappleState = PlayerManager.GrappleState.GrappleRetracting;
         }
 
-        if (other.name == "Ground1")
+        if (other.tag == "Ground")
         {
             mSceneManager.mPlayerManager.grappleState = PlayerManager.GrappleState.GrappleRetracting;
         }
 
-        if (other.name == "Enemy1")
+        if (other.tag == "Enemy")
         {
             mSceneManager.mPlayerManager.grappleState = PlayerManager.GrappleState.GrappleRetracting;
         }
@@ -233,7 +233,7 @@ public class GrappleController : MonoBehaviour
 
     void OnTriggerStay2D(Collider2D other)
     {
-        if (other.name == "Player" && (mSceneManager.mPlayerManager.grappleState == PlayerManager.GrappleState.GrappleRetracting || mSceneManager.mPlayerManager.grappleState == PlayerManager.GrappleState.GrappleHooked))
+        if (other.tag == "Player" && (mSceneManager.mPlayerManager.grappleState == PlayerManager.GrappleState.GrappleRetracting || mSceneManager.mPlayerManager.grappleState == PlayerManager.GrappleState.GrappleHooked))
         {
             mSceneManager.mPlayerManager.grappleState = PlayerManager.GrappleState.GrappleReady;
         }

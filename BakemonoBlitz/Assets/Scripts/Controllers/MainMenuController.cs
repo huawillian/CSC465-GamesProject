@@ -168,43 +168,62 @@ public class MainMenuController : MonoBehaviour
         float tempRes = resolution;
 
         mSceneManager.mProfileManager.LoadProfile(profileNumber);
+        mSceneManager.mSceneNumber = mSceneManager.mProfileManager.getProfileData(profileNumber)._userData.sceneNumber;
 
         if (tempVol != 100.0f)
         {
             mSceneManager.mProfileManager.setVolume(tempVol);
+            mSceneManager.mProfileManager.SaveProfile(profileNumber);
         }
 
         if (tempRes != 5.0f)
         {
             mSceneManager.mProfileManager.setResolution(tempRes);
+            mSceneManager.mProfileManager.SaveProfile(profileNumber);
         }
-
-        mSceneManager.mProfileManager.SaveProfile(profileNumber);
 
         // Use profile SaveData0 as temp data
         // This will be opened in the New Scene First in order to select which profile data to Load
         mSceneManager.mProfileManager.LoadProfile(0);
+
+        mSceneManager.mSceneNumber = 0;
+        mSceneManager.mCheckpointNumber = 1;
+
         mSceneManager.mProfileNumber = profileNumber;
         mSceneManager.mProfileManager.SaveProfile(0);
 
         mSceneManager.mCameraManager.beginFadeOut();
         yield return new WaitForSeconds(2.5f);
 
+
+
         // Load Scene given profile Number
-        Application.LoadLevel("TestScene");
+        Application.LoadLevel("Scene" + mSceneManager.mProfileManager.getProfileData(profileNumber)._userData.sceneNumber);
     }
 
     IEnumerator loadNewProfile()
     {
         mSceneManager.mCameraManager.beginFadeOut();
         yield return new WaitForSeconds(2.5f);
-        mSceneManager.mSceneNumber = 1;
+        mSceneManager.mSceneNumber = 0;
         mSceneManager.mCheckpointNumber = 1;
         mSceneManager.mProfileNumber = 0;
+
+        mSceneManager.mPlayerManager.gender = "male";
+        mSceneManager.mPlayerManager.health = 3;
+        mSceneManager.mPlayerManager.lives = 5;
+        mSceneManager.mPlayerManager.energy = 100;
+
+        mSceneManager.mPlayerManager.weapon1 = false;
+        mSceneManager.mPlayerManager.weapon2 = false;
+        mSceneManager.mPlayerManager.weapon3 = false;
+
+        mSceneManager.mPlayerManager.gems = 0;
+
         mSceneManager.mProfileManager.SaveProfile(0);
 
         // Load Tutorial scene
-        Application.LoadLevel("TestScene");
+        Application.LoadLevel("Scene1");
     }
 
     IEnumerator quitGame()

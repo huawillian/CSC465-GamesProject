@@ -437,7 +437,7 @@ public class PlayerManager : MonoBehaviour
     {
         if (lockPlayerInput) return;
 
-        if (canDash && dashReady && dashReadyFromGrapple)
+        if (canDash && dashReady && dashReadyFromGrapple && weapon1)
         {
             if (!longDashReady)
             {
@@ -470,7 +470,7 @@ public class PlayerManager : MonoBehaviour
     public void RT()
     {
         if (lockPlayerInput) return;
-        if (canThrow && throwReady)
+        if (canThrow && throwReady && weapon2)
         {
             grappleState = GrappleState.GrappleExtending;
             grappleController.timeThrown = Time.time;
