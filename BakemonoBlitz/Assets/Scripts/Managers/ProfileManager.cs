@@ -260,7 +260,8 @@ public class ProfileManager : MonoBehaviour
     public void setVolume(float vol)
     {
         Debug.Log("Setting volume to: " + vol);
-        AudioListener.volume = vol;
+        mSceneManager.mSoundManager.setVolumeSounds(vol);
+       // AudioListener.volume = vol;
         mSceneManager.mVolume = vol;
         this.myData._userData.volume = vol;
     }

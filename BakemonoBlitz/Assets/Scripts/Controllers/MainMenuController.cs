@@ -341,7 +341,7 @@ public class MainMenuController : MonoBehaviour
             GUI.color = Color.white;
             GUI.skin.box.fontSize = 60;
 
-            GUI.DrawTexture(new Rect(_Title.x, _Title.y, _Title.z, _Title.w), bluebox);
+            //GUI.DrawTexture(new Rect(_Title.x, _Title.y, _Title.z, _Title.w), bluebox);
             GUI.Box(new Rect(_Title.x, _Title.y, _Title.z, _Title.w), "Bakemono Blitz");
             GUI.skin.box.fontSize = 25;
 

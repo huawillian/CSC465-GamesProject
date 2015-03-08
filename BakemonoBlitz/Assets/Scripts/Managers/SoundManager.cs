@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 //  playSound([name], [Vector3 location]);
 //  stopSound([name]);
@@ -30,6 +31,10 @@ public class SoundManager : MonoBehaviour
     public GameObject backgroundMusic;
     private SceneManager mSceneManager;
 
+    public float soundCoefficient = 1.0f;
+    public float soundVolume = 1.0f;
+    public float backgroundMusicCoefficient = 1.0f;
+    public float backgroundMusicVolume = 0.5f;
 
     void Start()
     {
@@ -41,7 +46,7 @@ public class SoundManager : MonoBehaviour
     {
         Debug.Log("Initializing " + this.gameObject.name);
 
-        soundList = new string[] { "sound1", "sound2", "sound3", "scene", "beep1" , "beep2", "starcraft", "lol"};
+        soundList = new string[] { "sound1", "sound2", "sound3", "scene", "beep1", "beep2", "starcraft", "lol", "Yoshida Brothers - Rising", "Saitama Saishuu Heiki - Momentary Life [Remix]" };
         clip = new AudioClip[soundList.Length];
         soundHolders = new GameObject[soundList.Length];
 
@@ -66,6 +71,22 @@ public class SoundManager : MonoBehaviour
     {
         Vector3 camPos = mSceneManager.mCameraManager.getCurrentCamera().transform.position;
         backgroundMusic.transform.position = new Vector3(camPos.x, camPos.y, 0);
+
+        // Set Background Music Volume
+        if (Math.Abs(backgroundMusicVolume - soundVolume * backgroundMusicCoefficient) > 0.01f)
+        {
+            backgroundMusicVolume = soundVolume * backgroundMusicCoefficient;
+
+            for (int i = 0; i < soundList.Length; i++)
+            {
+                if (soundHolders[i] == backgroundMusic)
+                {
+                    soundHolders[i].GetComponent<AudioSource>().volume = backgroundMusicVolume;
+                }
+            }
+
+        }
+
     }
 
     // Called by other classes to play sound
@@ -145,7 +166,7 @@ public class SoundManager : MonoBehaviour
         {
             if (soundList[i].Equals(name))
             {
-                soundHolders[i].GetComponent<AudioSource>().volume = volume;
+                soundHolders[i].GetComponent<AudioSource>().volume = volume / 100.0f * soundCoefficient;
                 return;
             }
         }
@@ -159,8 +180,10 @@ public class SoundManager : MonoBehaviour
 
         for (int i = 0; i < soundList.Length; i++)
         {
-            soundHolders[i].GetComponent<AudioSource>().volume = volume;
+            soundHolders[i].GetComponent<AudioSource>().volume = volume / 100.0f * soundCoefficient;
         }
+
+        soundVolume = soundHolders[0].GetComponent<AudioSource>().volume;
     }
 
     void OnDestroy()
@@ -179,6 +202,7 @@ public class SoundManager : MonoBehaviour
             {
                 backgroundMusic = soundHolders[i];
                 soundHolders[i].GetComponent<AudioSource>().PlayOneShot(clip[i]);
+                loopSound(name);
                 return;
             }
         }

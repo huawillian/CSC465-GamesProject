@@ -16,6 +16,8 @@ using System;
 
 public class PlayerManager : MonoBehaviour
 {
+    private SceneManager mSceneManager;
+
     public string gender;
     public int health, energy, lives, gems, score, time;
     public bool weapon1, weapon2, weapon3;
@@ -64,11 +66,13 @@ public class PlayerManager : MonoBehaviour
 	// Use this for initialization
 	void Start ()
     {
+        this.mSceneManager = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
 	}
 	
 	// Update is called once per frame
 	void Update ()
     {
+        if (mSceneManager.state == SceneManager.SceneState.MainMenu) return;
 
         // Update time
         currentTime = Time.time;
@@ -265,9 +269,14 @@ public class PlayerManager : MonoBehaviour
                 if (!RTH)
                 {
                 }
+
                 if (LTH)
                 {
-                    grappleController.radius -= 0.1f;
+                    grappleController.reelingIn = true;
+                }
+                else
+                {
+                    grappleController.reelingIn = false;
                 }
                 // Will set Player State to falling after completing Swing
                 break;
@@ -668,6 +677,7 @@ public class PlayerManager : MonoBehaviour
             grappleController = GameObject.Find("Grapple").GetComponent<GrappleController>();
             dashReady = true;
             dashReadyFromGrapple = true;
+
         }
     }
 

@@ -28,7 +28,7 @@ using System.Collections;
 public class InputManager : MonoBehaviour {
 
     // FLAGS used by other classes
-    public bool A, B, X, Y, START, LT, RT;
+    public bool A, B, X, Y, START, LT, RT, BACK;
     public float LX, LY;
     public float LTA, RTA;
     public bool LTH, RTH;
@@ -52,6 +52,7 @@ public class InputManager : MonoBehaviour {
         checkX();
         checkY();
         checkStart();
+        checkBack();
         checkLT();
         checkRT();
 
@@ -157,6 +158,21 @@ public class InputManager : MonoBehaviour {
         if (Input.GetKeyUp(KeyCode.Keypad5) || Input.GetButtonUp("Start"))
         {
             START = false;
+        }
+    }
+
+    private void checkBack()
+    {
+        if (Input.GetKeyDown(KeyCode.Keypad7) || Input.GetButtonDown("Back"))
+        {
+            Debug.Log("Back has been pressed");
+            mSceneManager.BackButton();
+            BACK = true;
+        }
+
+        if (Input.GetKeyUp(KeyCode.Keypad7) || Input.GetButtonUp("Back"))
+        {
+            BACK = false;
         }
     }
 

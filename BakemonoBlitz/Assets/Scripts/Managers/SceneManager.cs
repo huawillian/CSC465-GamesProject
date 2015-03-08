@@ -57,6 +57,8 @@ public class SceneManager : MonoBehaviour
     public SceneState state = SceneState.Playing;
     public float tempVol;
 
+    public float pausedVolumeCoefficient = 0.5f;
+
     // Set and place player at these locations at the start of the scene
     public Vector3 playerStart, playerEnd;
 
@@ -181,29 +183,35 @@ public class SceneManager : MonoBehaviour
 
     IEnumerator MainMenuScript()
     {
+        // Set the State to Main Menu, so we don't go to other Scene States
         state = SceneState.MainMenu;
         mCameraManager.setCamera("Camera1");
 
+        // Set Default Scene Properties
         mProfileManager.LoadProfile(0);
         mProfileManager.setResolution(5.0f);
         mProfileManager.setVolume(100.0f);
 
+        // Disable Unecessary Managers
         mMainMenuController.showMenu = false;
-
         mBackgroundManager.enabled = false;
 
 
+        // Play Video Here.
 
-        mVideoManager.playVideo("starcraft");
-        yield return new WaitForSeconds(mSoundManager.getSoundLength("starcraft") - 0.2f);
-        mSoundManager.playSound("lol", Vector3.zero);
-
+        // Fade into game Menu when done with Video
         mCameraManager.beginFadeIn();
         mMainMenuController.showMenu = true;
+
+        // Play Background Music Here.
+        mSoundManager.playSound("Yoshida Brothers - Rising", Vector3.zero);
+        yield return new WaitForSeconds(1.0f);
     }
 
     IEnumerator TestSceneScript()
     {
+        mSoundManager.setBackgroundMusic("Saitama Saishuu Heiki - Momentary Life [Remix]");
+
         state = SceneState.Playing;
         mProfileManager.setResolution(mResolution);
         mProfileManager.setVolume(mVolume);
@@ -221,13 +229,13 @@ public class SceneManager : MonoBehaviour
         }
 
         state = SceneState.Playing;
-
-
-        mSoundManager.setBackgroundMusic("sound3");
     }
 
     IEnumerator Scene1Script()
     {
+        mCameraManager.beginFadeIn();
+        mSoundManager.setBackgroundMusic("Saitama Saishuu Heiki - Momentary Life [Remix]");
+
         state = SceneState.Playing;
         mProfileManager.setResolution(mResolution);
         mProfileManager.setVolume(mVolume);
@@ -258,11 +266,13 @@ public class SceneManager : MonoBehaviour
         }
 
         state = SceneState.Playing;
-        mSoundManager.setBackgroundMusic("sound1");
     }
 
     IEnumerator Scene2Script()
     {
+        mCameraManager.beginFadeIn();
+        mSoundManager.setBackgroundMusic("Saitama Saishuu Heiki - Momentary Life [Remix]");
+
         state = SceneState.Playing;
         mProfileManager.setResolution(mResolution);
         mProfileManager.setVolume(mVolume);
@@ -293,7 +303,6 @@ public class SceneManager : MonoBehaviour
         }
 
         state = SceneState.Playing;
-        mSoundManager.setBackgroundMusic("sound2");
     }
 
 
@@ -413,15 +422,32 @@ public class SceneManager : MonoBehaviour
         {
             case SceneState.Playing:
                 tempVol = mVolume;
-                this.mProfileManager.setVolume(mVolume * 0.25f);
+                this.mProfileManager.setVolume(mVolume * pausedVolumeCoefficient);
                 state = SceneState.Paused;
                 break;
             case SceneState.Paused:
-                this.mProfileManager.setVolume(tempVol);
+                if (tempVol == mVolume / pausedVolumeCoefficient)
+                {
+                    this.mProfileManager.setVolume(tempVol);
+                }
                 state = SceneState.Playing;
                 break;
             default:
                 break;
         }
+    }
+
+
+    IEnumerator RestartLevel()
+    {
+        state = SceneState.Animating;
+        mCameraManager.beginFadeOut();
+        yield return new WaitForSeconds(3.0f);
+        Application.LoadLevel(Application.loadedLevelName);
+    }
+
+    public void BackButton()
+    {
+        StartCoroutine("RestartLevel");
     }
 }

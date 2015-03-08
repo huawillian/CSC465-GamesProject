@@ -8,11 +8,14 @@ public class GrappleController : MonoBehaviour
     public bool ThrowRight;
     public Vector3 hookedPos;
 
-    public float grappleExtendDur = 0.8f;
-    public float grappleSpeed = 16.0f;
+    public float grappleExtendDur = 0.20f;
+    public float grappleSpeed = 12.0f;
     public float timeThrown = 0.0f;
-
+    public float reelingSpeed = 0.075f;
+    public float retractingSpeed = 17.5f;
     public int incre;
+
+    public bool reelingIn;
 
     // Use this for initialization
     void Start()
@@ -20,6 +23,7 @@ public class GrappleController : MonoBehaviour
         mSceneManager = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
         hookedPos = new Vector3();
         this.rigidbody2D.gravityScale = 0.0f;
+        reelingIn = false;
     }
 
     // Update is called once per frame
@@ -31,6 +35,7 @@ public class GrappleController : MonoBehaviour
                 ThrowRight = mSceneManager.mPlayerManager.playerController.FaceRight;
                 mSceneManager.mPlayerManager.throwReady = true;
                 this.transform.position = mSceneManager.mPlayerManager.playerController.gameObject.transform.position;
+                this.renderer.enabled = false;
                 break;
             case PlayerManager.GrappleState.GrappleExtending:
                 if (ThrowRight)
@@ -56,18 +61,29 @@ public class GrappleController : MonoBehaviour
                 {
                     mSceneManager.mPlayerManager.grappleState = PlayerManager.GrappleState.GrappleRetracting;
                 }
+                this.renderer.enabled = true;
                 break;
             case PlayerManager.GrappleState.GrappleHooked:
                 this.gameObject.rigidbody2D.velocity = new Vector2(0, 0);
                 break;
             case PlayerManager.GrappleState.GrappleRetracting:
                 //this.gameObject.rigidbody2D.velocity = new Vector2((mSceneManager.mPlayerManager.playerController.gameObject.transform.position.x - this.gameObject.transform.position.x) * 5.0f, (mSceneManager.mPlayerManager.playerController.gameObject.transform.position.y - this.gameObject.transform.position.y)* 10.0f);
-                this.transform.position = Vector3.MoveTowards(transform.position, mSceneManager.mPlayerManager.playerController.gameObject.transform.position, 30 * Time.deltaTime);
+                this.transform.position = Vector3.MoveTowards(transform.position, mSceneManager.mPlayerManager.playerController.gameObject.transform.position, retractingSpeed * Time.deltaTime);
 
                 break;
             default:
                 break;
         }
+
+        if (ThrowRight)
+        {
+            this.transform.rotation = new Quaternion(0, 0, 0, 0);
+        }
+        else
+        {
+            this.transform.rotation = new Quaternion(0, 180, 0, 0);
+        }
+
     }
 
     public float radius = 5.0f;
@@ -84,15 +100,20 @@ public class GrappleController : MonoBehaviour
 
             if (ThrowRight)
             {
-                currX = Mathf.Cos(5 * Mathf.PI / 4 + (Time.time - timeStamp) / translationTime * Mathf.PI / 2) * radius + this.gameObject.transform.position.x;
-                currY = Mathf.Sin(5 * Mathf.PI / 4 + (Time.time - timeStamp) / translationTime * Mathf.PI / 2) * radius + this.gameObject.transform.position.y;
+                currX = Mathf.Cos(5.0f * Mathf.PI / 4 + (Time.time - timeStamp) / translationTime * Mathf.PI / 2.0f) * radius + this.gameObject.transform.position.x;
+                currY = Mathf.Sin(5.0f * Mathf.PI / 4 + (Time.time - timeStamp) / translationTime * Mathf.PI / 2.0f) * radius + this.gameObject.transform.position.y;
             }
             else
             {
-                currX = Mathf.Cos(7 * Mathf.PI / 4 - (Time.time - timeStamp) / translationTime * Mathf.PI / 2) * radius + this.gameObject.transform.position.x;
-                currY = Mathf.Sin(7 * Mathf.PI / 4 - (Time.time - timeStamp) / translationTime * Mathf.PI / 2) * radius + this.gameObject.transform.position.y;
+                currX = Mathf.Cos(7.0f * Mathf.PI / 4 - (Time.time - timeStamp) / translationTime * Mathf.PI / 2.0f) * radius + this.gameObject.transform.position.x;
+                currY = Mathf.Sin(7.0f * Mathf.PI / 4 - (Time.time - timeStamp) / translationTime * Mathf.PI / 2.0f) * radius + this.gameObject.transform.position.y;
             }
             mSceneManager.mPlayerManager.playerController.gameObject.transform.position = new Vector3(currX, currY, 0);
+
+            if (reelingIn)
+            {
+                radius -= reelingSpeed;
+            }
         }
     }
 
