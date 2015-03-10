@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
+
 
 /*
     To implement the features described in the previous section, we create the following classes:
@@ -32,6 +34,7 @@ public class InputManager : MonoBehaviour {
     public float LX, LY;
     public float LTA, RTA;
     public bool LTH, RTH;
+    public bool LXH, LYH;
 
     private float holdThreshold = 0.25f;
 
@@ -65,12 +68,41 @@ public class InputManager : MonoBehaviour {
         // Check holding down for LT and RT
         checkLTH();
         checkRTH();
+
+        // Check holding down for LX and LY
+        checkLXH();
+        checkLYH();
 	}
 
     // Initialization called by Scene Manager
     public void InitializeManager()
     {
         Debug.Log("Initializing " + this.gameObject.name);
+        StartCoroutine("MenuInput");
+    }
+
+    IEnumerator MenuInput()
+    {
+
+        while(true)
+        {
+            if(LYH)
+            {
+                // Call Menu increment pointer
+                if (LY > 0.0f)
+                {
+                    if(!mSceneManager.mMenuController.lockMenuInput) mSceneManager.mMenuController.moveDown();
+                    if (mSceneManager.mMainMenuController.showMenu) mSceneManager.mMainMenuController.moveDown();
+                }
+                else
+                {
+                    if (!mSceneManager.mMenuController.lockMenuInput) mSceneManager.mMenuController.moveUp();
+                    if (mSceneManager.mMainMenuController.showMenu) mSceneManager.mMainMenuController.moveUp();
+                }
+
+            }
+            yield return new WaitForSeconds(0.1f);
+        }
     }
 
     // Helper Methods
@@ -241,6 +273,30 @@ public class InputManager : MonoBehaviour {
         {
             RTH = false;
             mSceneManager.mPlayerManager.RTH = false;
+        }
+    }
+
+    private void checkLXH()
+    {
+        if (Math.Abs(LX) > holdThreshold)
+        {
+            LXH = true;
+        }
+        else
+        {
+            LXH = false;
+        }
+    }
+
+    private void checkLYH()
+    {
+        if (Math.Abs(LY) > holdThreshold)
+        {
+            LYH = true;
+        }
+        else
+        {
+            LYH = false;
         }
     }
 

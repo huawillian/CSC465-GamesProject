@@ -63,6 +63,8 @@ public class PlayerManager : MonoBehaviour
     public bool braked = false;
     public bool wasSpeeding = false;
 
+    public bool invincible = false;
+
 	// Use this for initialization
 	void Start ()
     {
@@ -70,9 +72,24 @@ public class PlayerManager : MonoBehaviour
 	}
 	
 	// Update is called once per frame
-	void Update ()
+	void FixedUpdate ()
     {
         if (mSceneManager.state == SceneManager.SceneState.MainMenu) return;
+
+        if (!lockPlayerCoordinates && (mSceneManager.state == SceneManager.SceneState.Locked || mSceneManager.state == SceneManager.SceneState.SceneComplete || mSceneManager.state == SceneManager.SceneState.Paused))
+        {
+            lockPlayerCoordinates = true;
+            lockedPlayerVel = player.rigidbody2D.velocity;
+            player.rigidbody2D.isKinematic = true;
+
+        }
+
+        if (lockPlayerCoordinates && !((mSceneManager.state == SceneManager.SceneState.Locked || mSceneManager.state == SceneManager.SceneState.SceneComplete || mSceneManager.state == SceneManager.SceneState.Paused)))
+        {
+            lockPlayerCoordinates = false;
+            player.rigidbody2D.isKinematic = false;
+            player.rigidbody2D.velocity = lockedPlayerVel;
+        }
 
         // Update time
         currentTime = Time.time;
@@ -82,7 +99,6 @@ public class PlayerManager : MonoBehaviour
         if (lockPlayerCoordinates)
         {
             player.gameObject.transform.position = new Vector3(x,y,z);
-            player.rigidbody2D.velocity = lockedPlayerVel;
         }
         else
         {
@@ -90,8 +106,6 @@ public class PlayerManager : MonoBehaviour
             x = player.gameObject.transform.position.x;
             y = player.gameObject.transform.position.y;
             z = player.gameObject.transform.position.z;
-
-            lockedPlayerVel = player.rigidbody2D.velocity;
         }
 
         // If we lock Player Input, we set reset everything, and, we don't do the input functions
@@ -206,7 +220,7 @@ public class PlayerManager : MonoBehaviour
                     state = PlayerState.Running;
                 }
                 if (Math.Abs(player.rigidbody2D.velocity.x) > 0.0f) player.rigidbody2D.velocity = player.rigidbody2D.velocity * 0.95f;
-                if (Math.Abs(player.rigidbody2D.velocity.x) < 0.05f) player.rigidbody2D.velocity = new Vector2(0, player.rigidbody2D.velocity.y);
+                if (Math.Abs(player.rigidbody2D.velocity.x) < 1.0f) player.rigidbody2D.velocity = new Vector2(0, player.rigidbody2D.velocity.y);
                 // Dash By Input
                 // Jump By Input
                 // Throw By Input
@@ -282,7 +296,7 @@ public class PlayerManager : MonoBehaviour
                 break;
             case PlayerState.WallSliding:
                 
-                if (playerController.WallCollide && playerController.WallCollideRight && LX < 0.0f)
+                /*if (playerController.WallCollide && playerController.WallCollideRight && LX < 0.0f)
                 {
                     state = PlayerState.Falling;
                     break;
@@ -292,7 +306,7 @@ public class PlayerManager : MonoBehaviour
                 {
                     state = PlayerState.Falling;
                     break;
-                }
+                }*/
 
                 if (playerController.WallCollide && !playerController.GroundCollide)
                 {
@@ -343,10 +357,6 @@ public class PlayerManager : MonoBehaviour
             player.rigidbody2D.velocity = Vector2.zero;
         }
 
-	}
-
-    void FixedUpdate()
-    {
         if (canRun && !braked)
         {
             if (player.rigidbody2D.velocity.x > maxSpeed)
@@ -394,13 +404,33 @@ public class PlayerManager : MonoBehaviour
         else
         if (state == PlayerState.Falling || state == PlayerState.Jumping)
         {
-            player.rigidbody2D.AddForce(new Vector2(LX * maxSpeed, 0));
+            player.rigidbody2D.AddForce(new Vector2(LX * maxSpeed / 1.25f, 0));
         }
 
         if (state == PlayerState.WallSliding)
         {
             player.rigidbody2D.velocity = new Vector2(player.rigidbody2D.velocity.x, player.rigidbody2D.velocity.y * 0.5f);
         }
+
+        if (player.rigidbody2D.velocity.x > maxSpeed)
+        {
+            player.rigidbody2D.velocity = new Vector2(maxSpeed, player.rigidbody2D.velocity.y);
+        }
+        else if (player.rigidbody2D.velocity.x < -maxSpeed)
+        {
+            player.rigidbody2D.velocity = new Vector2(-maxSpeed, player.rigidbody2D.velocity.y);
+        }
+
+        if (player.rigidbody2D.velocity.y > maxSpeed)
+        {
+            player.rigidbody2D.velocity = new Vector2(player.rigidbody2D.velocity.x, maxSpeed);
+        }
+        else if (player.rigidbody2D.velocity.y < -maxSpeed)
+        {
+            player.rigidbody2D.velocity = new Vector2(-player.rigidbody2D.velocity.x, maxSpeed);
+        }
+
+
     }
 
 
@@ -413,17 +443,21 @@ public class PlayerManager : MonoBehaviour
         {
             if (state == PlayerState.WallSliding)
             {
-
-                if (playerController.WallCollideRight)
-                {
-                    StartCoroutine("DashUpLeft");
-                }
+                if (LY < 0) state = PlayerState.Falling;
                 else
                 {
-                    StartCoroutine("DashUpRight");
+
+                    if (playerController.WallCollideRight)
+                    {
+                        StartCoroutine("DashUpLeft");
+                    }
+                    else
+                    {
+                        StartCoroutine("DashUpRight");
+                    }
+                    jumpReady = false;
+                    state = PlayerState.Jumping;
                 }
-                jumpReady = false;
-                state = PlayerState.Jumping;
             }
             else
             {
@@ -622,11 +656,13 @@ public class PlayerManager : MonoBehaviour
 
     public IEnumerator DashUpRight()
     {
-        for (int i = 0; i < 5; i++)
-        {
-            player.rigidbody2D.velocity = new Vector2(7,7);
-            yield return new WaitForSeconds(0.005f);
+        float timeStart = Time.time;
+        float dashDuration = 0.2f;
 
+        while(Time.time - timeStart < dashDuration)
+        {
+            player.rigidbody2D.velocity = new Vector2(7, 6);
+            yield return new WaitForSeconds(0.005f);
         }
     }
 
@@ -642,11 +678,13 @@ public class PlayerManager : MonoBehaviour
 
     public IEnumerator DashUpLeft()
     {
-        for (int i = 0; i < 5; i++)
-        {
-            player.rigidbody2D.velocity = new Vector2(-7, 7);
-            yield return new WaitForSeconds(0.005f);
+        float timeStart = Time.time;
+        float dashDuration = 0.2f;
 
+        while (Time.time - timeStart < dashDuration)
+        {
+            player.rigidbody2D.velocity = new Vector2(-7, 6);
+            yield return new WaitForSeconds(0.005f);
         }
     }
 
@@ -661,8 +699,31 @@ public class PlayerManager : MonoBehaviour
 
     public IEnumerator SetBraked()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.2f);
         braked = false;
+    }
+
+    public IEnumerator SetInvincible()
+    {
+        invincible = true;
+
+        for (int i = 0; i < 10; i++)
+        {
+            player.gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            yield return new WaitForSeconds(0.1f);
+            player.gameObject.GetComponent<SpriteRenderer>().enabled = true;
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        for (int i = 0; i < 10; i++)
+        {
+            player.gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            yield return new WaitForSeconds(0.05f);
+            player.gameObject.GetComponent<SpriteRenderer>().enabled = true;
+            yield return new WaitForSeconds(0.05f);
+        }
+
+        yield return new WaitForSeconds(0.1f);
     }
 
     // Initialization called by Scene Manager
@@ -677,7 +738,6 @@ public class PlayerManager : MonoBehaviour
             grappleController = GameObject.Find("Grapple").GetComponent<GrappleController>();
             dashReady = true;
             dashReadyFromGrapple = true;
-
         }
     }
 

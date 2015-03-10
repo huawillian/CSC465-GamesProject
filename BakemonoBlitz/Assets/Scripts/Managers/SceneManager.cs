@@ -53,7 +53,7 @@ public class SceneManager : MonoBehaviour
     // Debug variables, used to create button
     Rect _Save, _Load, _SaveMSG, _LoadMSG;
 
-    public enum SceneState { MainMenu, Playing, Paused, Locked, Animating, SceneComplete};
+    public enum SceneState { MainMenu, Playing, Paused, Locked, Animating, SceneComplete, GameOver, Retry};
     public SceneState state = SceneState.Playing;
     public float tempVol;
 
@@ -327,7 +327,6 @@ public class SceneManager : MonoBehaviour
                 this.mHUDManager.lockHUDSpeech = false;
 
                 this.mPlayerManager.enabled = true;
-                this.mPlayerManager.lockPlayerCoordinates = false;
                 this.mPlayerManager.lockPlayerInput = false;
 
                 this.mEnemyManager.enabled = true;
@@ -344,7 +343,6 @@ public class SceneManager : MonoBehaviour
                 mMenuController.lockMenuInput = false;
                 this.mHUDManager.lockHUDSpeech = true;
 
-                this.mPlayerManager.lockPlayerCoordinates = true;
                 this.mPlayerManager.lockPlayerInput = true;
 
                 this.mEnemyManager.lockEnemyCoordinates = true;
@@ -358,7 +356,6 @@ public class SceneManager : MonoBehaviour
                 this.mHUDManager.enabled = true;
                 this.mHUDManager.disableHUD = true;
 
-                this.mPlayerManager.lockPlayerCoordinates = true;
                 this.mPlayerManager.lockPlayerInput = true;
 
                 this.mEnemyManager.lockEnemyCoordinates = true;
@@ -373,7 +370,6 @@ public class SceneManager : MonoBehaviour
                 this.mHUDManager.enabled = true;
                 this.mHUDManager.disableHUD = false;
 
-                this.mPlayerManager.lockPlayerCoordinates = false;
                 this.mPlayerManager.lockPlayerInput = true;
 
                 this.mEnemyManager.lockEnemyCoordinates = true;
@@ -389,7 +385,6 @@ public class SceneManager : MonoBehaviour
                 this.mHUDManager.enabled = false;
                 this.mHUDManager.disableHUD = false;
 
-                this.mPlayerManager.lockPlayerCoordinates = true;
                 this.mPlayerManager.lockPlayerInput = true;
 
                 this.mEnemyManager.lockEnemyCoordinates = true;

@@ -55,6 +55,10 @@ public class CameraManager : MonoBehaviour
         mSceneManager = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
 	}
 
+    void Update()
+    {
+    }
+
     void FixedUpdate()
     {
         if (locked)
@@ -64,44 +68,67 @@ public class CameraManager : MonoBehaviour
         else
         {
             setCoordinatesFromCamera();
-        }
 
-
-        if (Application.loadedLevelName != "MainMenuScene")
-        {
-            // Set Player Camera position
-            GameObject playerCamera = cameras[numCameras - 1];
-            Vector3 vec = this.transform.position;
-
-            if (!mSceneManager.mPlayerManager.playerController.WallCollide)
+            if (Application.loadedLevelName != "MainMenuScene")
             {
+                // Set Player Camera position
+                GameObject playerCamera = cameras[numCameras - 1];
+                Vector3 vec = this.transform.position;
+
                 vec.x = Mathf.SmoothDamp(playerCamera.transform.position.x,
-                    mSceneManager.mPlayerManager.player.transform.position.x + offset / mSceneManager.mPlayerManager.maxSpeed * playerCamera.camera.orthographicSize / 2 + playerCamera.camera.orthographicSize / 2.0f,
+                    mSceneManager.mPlayerManager.player.transform.position.x + 
+                    offset / mSceneManager.mPlayerManager.maxSpeed * playerCamera.camera.orthographicSize,
                     ref velocity.x,
                     smoothTime / 50.0f);
-            }
-            else
-            {
-                vec.x = Mathf.SmoothDamp(playerCamera.transform.position.x,
-                mSceneManager.mPlayerManager.player.transform.position.x + playerCamera.camera.orthographicSize / 2.0f,
-                ref velocity.x,
-                smoothTime / 5.0f);
+
+                if (Math.Abs(offset - mSceneManager.mPlayerManager.player.rigidbody2D.velocity.x) < 0.1)
+                {
+                    offset = mSceneManager.mPlayerManager.player.rigidbody2D.velocity.x;
+                }
+                else
+                if (Math.Abs(offset - mSceneManager.mPlayerManager.player.rigidbody2D.velocity.x) < 0.5)
+                {
+                    if (offset > mSceneManager.mPlayerManager.player.rigidbody2D.velocity.x)
+                    {
+                        offset -= 0.1f;
+                    }
+                    else if (offset < mSceneManager.mPlayerManager.player.rigidbody2D.velocity.x)
+                    {
+                        offset += 0.1f;
+                    }
+                }
+                else
+                {
+                    if (offset > mSceneManager.mPlayerManager.player.rigidbody2D.velocity.x)
+                    {
+                        offset -= 0.5f;
+                    }
+                    else if (offset < mSceneManager.mPlayerManager.player.rigidbody2D.velocity.x)
+                    {
+                        offset += 0.5f;
+                    }
+                }
+
+
+                vec.y = Mathf.SmoothDamp(playerCamera.transform.position.y,
+                    mSceneManager.mPlayerManager.player.transform.position.y + playerCamera.camera.orthographicSize / 2, ref velocity.y, smoothTime / 5.0f);
+                vec.z = playerCamera.transform.position.z;
+
+                if (vec.x < GameObject.Find("Start").gameObject.transform.position.x + playerCamera.GetComponent<Camera>().orthographicSize)
+                {
+                    vec.x = GameObject.Find("Start").gameObject.transform.position.x + playerCamera.GetComponent<Camera>().orthographicSize;
+                }
+
+                if (vec.x > GameObject.Find("End").gameObject.transform.position.x - playerCamera.GetComponent<Camera>().orthographicSize)
+                {
+                    vec.x = GameObject.Find("End").gameObject.transform.position.x - playerCamera.GetComponent<Camera>().orthographicSize;
+                }
+
+
+
+                playerCamera.transform.position = vec;
             }
 
-            if (offset > mSceneManager.mPlayerManager.player.rigidbody2D.velocity.x)
-            {
-                offset -= 0.5f;
-            }
-            else if (offset < mSceneManager.mPlayerManager.player.rigidbody2D.velocity.x)
-            {
-                offset += 0.5f;
-            }
-
-
-            vec.y = Mathf.SmoothDamp(playerCamera.transform.position.y,
-                mSceneManager.mPlayerManager.player.transform.position.y + playerCamera.camera.orthographicSize / 2, ref velocity.y, smoothTime / 5.0f);
-            vec.z = playerCamera.transform.position.z;
-            playerCamera.transform.position = vec;
         }
     }
 

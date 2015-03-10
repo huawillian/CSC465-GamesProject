@@ -9,10 +9,10 @@ public class GrappleController : MonoBehaviour
     public Vector3 hookedPos;
 
     public float grappleExtendDur = 0.20f;
-    public float grappleSpeed = 12.0f;
+    public float grappleSpeed = 14.0f;
     public float timeThrown = 0.0f;
-    public float reelingSpeed = 0.075f;
-    public float retractingSpeed = 17.5f;
+    public float reelingSpeed = 0.13f;
+    public float retractingSpeed = 35.0f;
     public int incre;
 
     public bool reelingIn;
@@ -86,10 +86,11 @@ public class GrappleController : MonoBehaviour
 
     }
 
-    public float radius = 5.0f;
+    public float radius = 6.0f;
     public bool swinging = false;
     float timeStamp = 0.0f;
     float translationTime = 1.0f;
+    public float minimumRadius = 2.3f;
 
     void FixedUpdate()
     {
@@ -110,7 +111,7 @@ public class GrappleController : MonoBehaviour
             }
             mSceneManager.mPlayerManager.playerController.gameObject.transform.position = new Vector3(currX, currY, 0);
 
-            if (reelingIn)
+            if (reelingIn && radius >= minimumRadius + 0.2f)
             {
                 radius -= reelingSpeed;
             }
@@ -127,13 +128,16 @@ public class GrappleController : MonoBehaviour
 
 
         // Exit State, Duration, Collided by Wall, or Collided by Ground
-        while (mSceneManager.mPlayerManager.state == PlayerManager.PlayerState.Swinging && swinging && mSceneManager.mPlayerManager.RTH && Time.time - timeStamp <= translationTime)
+        while (mSceneManager.mPlayerManager.state == PlayerManager.PlayerState.Swinging && swinging && mSceneManager.mPlayerManager.RTH && Time.time - timeStamp <= translationTime && radius >= minimumRadius)
         {
             yield return new WaitForSeconds(0.01f);
 
+            translationTime = 1.0f * radius / 8.0f;
+
+
             if (mSceneManager.mPlayerManager.playerController.WallCollide || mSceneManager.mPlayerManager.playerController.GroundCollide || (Time.time - timeStamp > translationTime))
             {
-                mSceneManager.mPlayerManager.state = PlayerManager.PlayerState.Idling;
+                mSceneManager.mPlayerManager.state = PlayerManager.PlayerState.Jumping;
                 mSceneManager.mPlayerManager.grappleState = PlayerManager.GrappleState.GrappleRetracting;
             }
 
@@ -200,8 +204,8 @@ public class GrappleController : MonoBehaviour
                     angleY = 0.2f;
                     mSceneManager.mPlayerManager.player.rigidbody2D.velocity = new Vector2(mSceneManager.mPlayerManager.player.rigidbody2D.velocity.x, 0);
                 }
-
-                mSceneManager.mPlayerManager.playerController.gameObject.rigidbody2D.AddForce(new Vector2(350 * angleX, 750 * angleY));
+                mSceneManager.mPlayerManager.player.rigidbody2D.velocity = new Vector2(0,0);
+                mSceneManager.mPlayerManager.playerController.gameObject.rigidbody2D.AddForce(new Vector2(700 * angleX, 700 * angleY));
             }
             else
             {
@@ -214,7 +218,8 @@ public class GrappleController : MonoBehaviour
                     mSceneManager.mPlayerManager.player.rigidbody2D.velocity = new Vector2(mSceneManager.mPlayerManager.player.rigidbody2D.velocity.x, 0);
                 }
 
-                mSceneManager.mPlayerManager.playerController.gameObject.rigidbody2D.AddForce(new Vector2(350 * angleX, 750 * angleY));
+                mSceneManager.mPlayerManager.player.rigidbody2D.velocity = new Vector2(0, 0);
+                mSceneManager.mPlayerManager.playerController.gameObject.rigidbody2D.AddForce(new Vector2(700 * angleX, 700 * angleY));
             }
         }
 

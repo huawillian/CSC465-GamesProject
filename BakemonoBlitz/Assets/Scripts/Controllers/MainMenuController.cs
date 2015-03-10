@@ -44,7 +44,7 @@ public class MainMenuController : MonoBehaviour
         volume = mSceneManager.mVolume;
     }
 
-    public void A()
+    public void B()
     {
         if (showMenu)
         {
@@ -53,7 +53,7 @@ public class MainMenuController : MonoBehaviour
         }
     }
 
-    public void B()
+    public void A()
     {
         if (showMenu)
         {
@@ -576,6 +576,53 @@ public class MainMenuController : MonoBehaviour
                 GUI.Box(new Rect(_No.x, _No.y, _No.z, _No.w), "No");
             }
 
+        }
+    }
+
+    public void moveUp()
+    {
+        if (showMenu)
+        {
+            Debug.Log("MoveUp");
+            mSceneManager.mSoundManager.playSound("beep1", this.transform.position);
+            // Check selector
+            switch (state)
+            {
+                case MainMenuState.Menu:
+                    if (selectorIndex < menuNum - 1) selectorIndex++;
+                    break;
+                case MainMenuState.NewGame:
+                    if (selectorIndex < newGameNum - 1) selectorIndex++;
+                    break;
+                case MainMenuState.LoadGame:
+                    if (selectorIndex < loadGameNum - 1) selectorIndex++;
+                    break;
+                case MainMenuState.Settings:
+                    if (selectorIndex < settingsNum - 1) selectorIndex++;
+                    break;
+                case MainMenuState.SettingsSound:
+                    if (selectorIndex < soundNum - 1) selectorIndex++;
+                    break;
+                case MainMenuState.SettingsVideo:
+                    if (selectorIndex < videoNum - 1) selectorIndex++;
+                    break;
+                case MainMenuState.QuitGame:
+                    if (selectorIndex < quitGameNum - 1) selectorIndex++;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    public void moveDown()
+    {
+        if (showMenu)
+        {
+            Debug.Log("MoveDown");
+
+            mSceneManager.mSoundManager.playSound("beep1", this.transform.position);
+            if (selectorIndex > 0) selectorIndex--;
         }
     }
 

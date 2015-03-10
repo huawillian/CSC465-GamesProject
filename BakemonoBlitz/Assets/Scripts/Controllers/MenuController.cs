@@ -56,16 +56,55 @@ public class MenuController : MonoBehaviour
         Application.LoadLevel("MainMenuScene");
     }
 
-    public void A()
+    public void B()
     {
         if (!lockMenuInput)
         {
-            mSceneManager.mSoundManager.playSound("beep1", this.transform.position);
-            selectorIndex++;
+            moveUp();
         }
     }
 
-    public void B()
+    public void moveUp()
+    {
+        if (!lockMenuInput)
+        {
+            Debug.Log("MoveUp");
+            mSceneManager.mSoundManager.playSound("beep1", this.transform.position);
+            switch (state)
+            {
+                case Direction.Menu:
+                    if (selectorIndex < menuNum - 1) selectorIndex++;
+                    break;
+                case Direction.Sound:
+                    if (selectorIndex < soundNum - 1) selectorIndex++;
+                    break;
+                case Direction.Video:
+                    if (selectorIndex < videoNum - 1) selectorIndex++;
+                    break;
+                case Direction.SaveProfile:
+                    if (selectorIndex < saveNum - 1) selectorIndex++;
+                    break;
+                case Direction.Exit:
+                    if (selectorIndex < exitNum - 1) selectorIndex++;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    public void moveDown()
+    {
+        if (!lockMenuInput)
+        {
+            Debug.Log("MoveDown");
+
+            mSceneManager.mSoundManager.playSound("beep1", this.transform.position);
+            if(selectorIndex > 0) selectorIndex--;
+        }
+    }
+
+    public void A()
     {
         if (!lockMenuInput)
         {
@@ -161,6 +200,7 @@ public class MenuController : MonoBehaviour
     {
         if (!lockMenuInput)
         {
+
             if (screenHeight != Screen.height || screenWidth != Screen.width)
             {
                 screenHeight = Screen.height;

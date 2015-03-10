@@ -48,7 +48,7 @@ public class BackgroundManager : MonoBehaviour
         {
             if (horSet)
             {
-                horizon[i].transform.position = new Vector3((mSceneManager.mPlayerManager.x - playerOrigPosx) * 0.4f + horizonOrigPosx[i], horizon[i].transform.position.y, horizon[i].transform.position.z);
+                horizon[i].transform.position = new Vector3((GameObject.FindGameObjectWithTag("MainCamera").transform.position.x - playerOrigPosx) * 0.4f + horizonOrigPosx[i], horizon[i].transform.position.y, horizon[i].transform.position.z);
             }
         }
 	}
