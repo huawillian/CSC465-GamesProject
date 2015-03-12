@@ -121,16 +121,24 @@ public class GrappleController : MonoBehaviour
     IEnumerator SwingStart()
     {
         mSceneManager.mPlayerManager.lockPlayerInput = true;
-        timeStamp = Time.time;
-        swinging = true;
-        radius = Mathf.Sqrt((this.gameObject.transform.position.x - mSceneManager.mPlayerManager.playerController.gameObject.transform.position.x) * (this.gameObject.transform.position.x - mSceneManager.mPlayerManager.playerController.gameObject.transform.position.x) + (this.gameObject.transform.position.y - mSceneManager.mPlayerManager.playerController.gameObject.transform.position.y) * (this.gameObject.transform.position.y - mSceneManager.mPlayerManager.playerController.gameObject.transform.position.y));
-        translationTime = 1.0f * radius / 8.0f;
 
+        radius = Mathf.Sqrt((this.gameObject.transform.position.x - mSceneManager.mPlayerManager.playerController.gameObject.transform.position.x) * (this.gameObject.transform.position.x - mSceneManager.mPlayerManager.playerController.gameObject.transform.position.x) + (this.gameObject.transform.position.y - mSceneManager.mPlayerManager.playerController.gameObject.transform.position.y) * (this.gameObject.transform.position.y - mSceneManager.mPlayerManager.playerController.gameObject.transform.position.y));
+
+
+        timeStamp = Time.time;
+        translationTime = 1.0f * radius / 8.0f;
+        swinging = true;
 
         // Exit State, Duration, Collided by Wall, or Collided by Ground
-        while (mSceneManager.mPlayerManager.state == PlayerManager.PlayerState.Swinging && swinging && mSceneManager.mPlayerManager.RTH && Time.time - timeStamp <= translationTime && radius >= minimumRadius)
+        while (mSceneManager.mPlayerManager.state == PlayerManager.PlayerState.Swinging && swinging && mSceneManager.mPlayerManager.RTH && Time.time - timeStamp <= translationTime && radius > 0.5f)
         {
+
             yield return new WaitForSeconds(0.01f);
+
+            if (radius < minimumRadius)
+            {
+                    radius += reelingSpeed * 2.0f;
+            }
 
             translationTime = 1.0f * radius / 8.0f;
 
@@ -146,12 +154,12 @@ public class GrappleController : MonoBehaviour
                 if (mSceneManager.mPlayerManager.playerController.WallCollideRight)
                 {
                     //mSceneManager.mPlayerManager.playerController.gameObject.rigidbody2D.AddForce(new Vector2(-1000, 500));
-                    mSceneManager.mPlayerManager.StartCoroutine("DashUpLeft");
+                    mSceneManager.mPlayerManager.StartCoroutine("DashUpLeftSmall");
                 }
                 else
                 {
                     //mSceneManager.mPlayerManager.playerController.gameObject.rigidbody2D.AddForce(new Vector2(1000, 500));
-                    mSceneManager.mPlayerManager.StartCoroutine("DashUpRight");
+                    mSceneManager.mPlayerManager.StartCoroutine("DashUpRightSmall");
                 }
 
                 swinging = false;

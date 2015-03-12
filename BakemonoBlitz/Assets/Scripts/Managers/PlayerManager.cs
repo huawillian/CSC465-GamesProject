@@ -55,7 +55,7 @@ public class PlayerManager : MonoBehaviour
     public bool canRun, canDash, canJump, canThrow, canSlide;
     public bool throwReady, dashReady, jumpReady, reelReady, dashReadyFromGrapple;
 
-    public float maxSpeed = 25.0f;
+    public float maxSpeed = 20.0f;
     public float dashCooldown = 3.0f;
     public float dashTimeStamp = 0.0f;
     public bool longDashReady = false;
@@ -224,6 +224,8 @@ public class PlayerManager : MonoBehaviour
                 // Dash By Input
                 // Jump By Input
                 // Throw By Input
+                player.rigidbody2D.gravityScale = 2.0f;
+
                 break;
             case PlayerState.Running:
                 if (player.rigidbody2D.velocity.y < 0.0f)
@@ -238,6 +240,8 @@ public class PlayerManager : MonoBehaviour
                 // Dash By Input
                 // Jump By Input
                 // Throw By Input
+                player.rigidbody2D.gravityScale = 2.0f;
+
                 break;
             case PlayerState.Jumping:
                 if (player.rigidbody2D.velocity.y < 0.0f || (!playerController.GroundCollide && player.rigidbody2D.velocity.y == 0.0f))
@@ -247,6 +251,8 @@ public class PlayerManager : MonoBehaviour
                 }
                 // Dash By Input
                 // Throw By Input
+                player.rigidbody2D.gravityScale = 2.0f;
+
                 break;
             case PlayerState.Falling:
                 if (player.rigidbody2D.velocity.y == 0.0f)
@@ -257,6 +263,8 @@ public class PlayerManager : MonoBehaviour
                 // Dash By Input
                 // Throw By Input
                 // Slide By Input
+                player.rigidbody2D.gravityScale = 2.0f;
+
                 break;
             case PlayerState.Dashing:
                 /*
@@ -271,7 +279,8 @@ public class PlayerManager : MonoBehaviour
                     state = PlayerState.Idling;
                     break;
                 }
-                 */ 
+                 */
+                player.rigidbody2D.gravityScale = 0.25f;
                 break;
             case PlayerState.Swinging:
                 /*
@@ -327,16 +336,12 @@ public class PlayerManager : MonoBehaviour
 
         if (state == PlayerState.Falling)
         {
-            if ((playerController.WallCollide && playerController.WallCollideRight && LX > 0.0f) || (playerController.WallCollide && !playerController.WallCollideRight && LX < 0.0f)) state = PlayerState.WallSliding;
-        }
+            // Initiate WallSlide
+            //if ((playerController.WallCollide && playerController.WallCollideRight && LX > 0.0f) || (playerController.WallCollide && !playerController.WallCollideRight && LX < 0.0f)) 
+            //    state = PlayerState.WallSliding;
 
-
-        if ((state == PlayerState.Dashing && playerController.EnemyCollide))
-        {
-            longDashReady = true;
-            playerController.EnemyCollide = false;
-            dashReady = true;
-            state = PlayerState.Dashing;
+            if (playerController.WallCollide && !playerController.GroundCollide)
+                state = PlayerState.WallSliding;
         }
 
         if(state != PlayerState.Dashing && Time.time - dashTimeStamp > dashCooldown && !dashReady && !longDashReady)
@@ -345,17 +350,20 @@ public class PlayerManager : MonoBehaviour
             longDashReady = false;
         }
 
-        if (state == PlayerState.Dashing && Time.time - dashTimeStamp > dashCooldown / 4 && dashReady && longDashReady)
+        if (state == PlayerState.Dashing && Time.time - dashTimeStamp > dashCooldown / 3.0f && longDashReady)
         {
             dashReady = false;
             longDashReady = false;
             state = PlayerState.Falling;
         }
 
+
+
+        /*
         if (longDashReady)
         {
             player.rigidbody2D.velocity = Vector2.zero;
-        }
+        }*/
 
         if (canRun && !braked)
         {
@@ -399,7 +407,7 @@ public class PlayerManager : MonoBehaviour
 
         if ((state == PlayerState.Falling || state == PlayerState.Jumping) && longDashReady)
         {
-            player.rigidbody2D.velocity = new Vector2(0, player.rigidbody2D.velocity.y * 0.0f);
+            //player.rigidbody2D.velocity = new Vector2(0, player.rigidbody2D.velocity.y * 0.0f);
         }
         else
         if (state == PlayerState.Falling || state == PlayerState.Jumping)
@@ -412,20 +420,20 @@ public class PlayerManager : MonoBehaviour
             player.rigidbody2D.velocity = new Vector2(player.rigidbody2D.velocity.x, player.rigidbody2D.velocity.y * 0.5f);
         }
 
-        if (player.rigidbody2D.velocity.x > maxSpeed)
+        if (player.rigidbody2D.velocity.x > maxSpeed && state != PlayerState.Dashing)
         {
             player.rigidbody2D.velocity = new Vector2(maxSpeed, player.rigidbody2D.velocity.y);
         }
-        else if (player.rigidbody2D.velocity.x < -maxSpeed)
+        else if (player.rigidbody2D.velocity.x < -maxSpeed && state != PlayerState.Dashing)
         {
             player.rigidbody2D.velocity = new Vector2(-maxSpeed, player.rigidbody2D.velocity.y);
         }
 
-        if (player.rigidbody2D.velocity.y > maxSpeed)
+        if (player.rigidbody2D.velocity.y > maxSpeed && state != PlayerState.Dashing)
         {
             player.rigidbody2D.velocity = new Vector2(player.rigidbody2D.velocity.x, maxSpeed);
         }
-        else if (player.rigidbody2D.velocity.y < -maxSpeed)
+        else if (player.rigidbody2D.velocity.y < -maxSpeed && state != PlayerState.Dashing)
         {
             player.rigidbody2D.velocity = new Vector2(-player.rigidbody2D.velocity.x, maxSpeed);
         }
@@ -443,7 +451,18 @@ public class PlayerManager : MonoBehaviour
         {
             if (state == PlayerState.WallSliding)
             {
-                if (LY < 0) state = PlayerState.Falling;
+                if (LY < 0)
+                {
+                    state = PlayerState.Falling;
+                    if (playerController.WallCollideRight)
+                    {
+                        StartCoroutine("DashUpLeftSmall");
+                    }
+                    else
+                    {
+                        StartCoroutine("DashUpRight");
+                    }
+                }
                 else
                 {
 
@@ -484,14 +503,12 @@ public class PlayerManager : MonoBehaviour
         {
             if (!longDashReady)
             {
-                StartCoroutine("Dash");
+                StartCoroutine("Dash2");
             }
             else
             {
-                StartCoroutine("LongDash");
+                StartCoroutine("LongDash2");
             }
-            state = PlayerState.Dashing;
-            dashTimeStamp = Time.time;
         }
 
     }
@@ -521,137 +538,215 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    public IEnumerator Dash()
+    public IEnumerator Dash2()
     {
-        float dashSpeed = 25.0f;
+        float dashSpeed = 15.0f;
+        float dashDuration = 0.2f;
 
-        dashReady = false;
+        float curX;
+        float curY;
 
         if (LX == 0.0f && playerController.FaceRight && LY == 0.0f)
         {
-            for (int i = 0; i < 5; i++)
-            {
-                player.rigidbody2D.velocity = new Vector2(dashSpeed, 0);
-                yield return new WaitForSeconds(0.01f);
-            }
+            curX = dashSpeed;
+            curY = 0;
         }
-        else if (LX == 0.0f && !playerController.FaceRight && LY == 0.0f)
+        else
+        if (LX == 0.0f && !playerController.FaceRight && LY == 0.0f)
         {
-            for (int i = 0; i < 5; i++)
-            {
-                player.rigidbody2D.velocity = new Vector2(-dashSpeed, 0);
-                yield return new WaitForSeconds(0.01f);
-            }
+            curX = -dashSpeed;
+            curY = 0;
         }
         else
         {
-            float curX = LX;
-            float curY = LY;
+            curX = LX;
+            curY = LY;
 
-            for (int i = 0; i < 5; i++)
+            float angleDash = Mathf.Atan(Math.Abs(curY)/Math.Abs(curX));
+
+            if (curX < 0.0f)
             {
-                player.rigidbody2D.velocity = new Vector2(curX * dashSpeed, curY * dashSpeed);
-                yield return new WaitForSeconds(0.01f);
+                curX = Mathf.Cos(angleDash) * dashSpeed * -1.0f;
             }
+            else
+            {
+                curX = Mathf.Cos(angleDash) * dashSpeed;
+            }
+
+            if (curY < 0.0f)
+            {
+                curY = Mathf.Sin(angleDash) * dashSpeed * -1.0f;
+            }
+            else
+            {
+                curY = Mathf.Sin(angleDash) * dashSpeed;
+            }
+
         }
 
-        if (playerController.WallCollide)
+        if (curX > 0.0f && curX < player.rigidbody2D.velocity.x) curX = player.rigidbody2D.velocity.x + 5.0f;
+        if (curX < 0.0f && curX > player.rigidbody2D.velocity.x) curX = player.rigidbody2D.velocity.x - 5.0f;
+
+        player.rigidbody2D.velocity = Vector2.zero;
+
+        float timeStart = Time.time;
+        state = PlayerState.Dashing;
+        dashTimeStamp = Time.time;
+        dashReady = false;
+
+        while (Time.time - timeStart < dashDuration)
         {
-            if (playerController.WallCollideRight)
-                StartCoroutine("DashUpLeftSmall");
-            else
-                StartCoroutine("DashUpRightSmall");
+            player.rigidbody2D.velocity = new Vector2(curX, curY);
+
+            if (playerController.WallCollide)
+            {
+                if (playerController.WallCollideRight)
+                    StartCoroutine("DashUpLeftSmall");
+                else
+                    StartCoroutine("DashUpRightSmall");
+                break;
+            }
+            else if (playerController.GroundCollide)
+            {
+                /*
+                if (playerController.FaceRight)
+                    StartCoroutine("DashUpRightSmall");
+                else
+                    StartCoroutine("DashUpLeftSmall");
+                break;
+                 * */
+            }
+            else if (playerController.EnemyCollide)
+            {
+                longDashReady = true;
+                playerController.EnemyCollide = false;
+                dashReady = true;
+            }
+
+            yield return new WaitForSeconds(0.005f);
         }
-        else if (playerController.GroundCollide)
-        {
-            if (playerController.FaceRight)
-                StartCoroutine("DashUpRightSmall");
-            else
-                StartCoroutine("DashUpLeftSmall");
-        }
-        else
+
+        if (longDashReady && dashReady)
         {
             player.rigidbody2D.velocity = player.rigidbody2D.velocity * 0.1f;
         }
+        else
+        {
+            player.rigidbody2D.velocity = player.rigidbody2D.velocity * 0.75f;
+            player.rigidbody2D.velocity = new Vector2(player.rigidbody2D.velocity.x, player.rigidbody2D.velocity.y * 0.25f);
+        }
 
-        yield return new WaitForSeconds(0.1f);
-
-        if (!longDashReady)
+        if (!(longDashReady))
         {
             state = PlayerState.Falling;
         }
         else
         {
             state = PlayerState.Dashing;
+            dashTimeStamp = Time.time;
         }
-
     }
 
-    public IEnumerator LongDash()
+    public IEnumerator LongDash2()
     {
-        float dashSpeed = 20.0f;
-
+        float dashSpeed = 25.0f;
+        float dashDuration = 0.2f;
         dashReady = false;
         longDashReady = false;
 
+        float curX;
+        float curY;
+
         if (LX == 0.0f && playerController.FaceRight && LY == 0.0f)
         {
-            for (int i = 0; i < 5; i++)
-            {
-                player.rigidbody2D.velocity = new Vector2(dashSpeed * 2f, 0);
-                yield return new WaitForSeconds(0.01f);
-            }
-        }
-        else if (LX == 0.0f && !playerController.FaceRight && LY == 0.0f)
-        {
-            for (int i = 0; i < 5; i++)
-            {
-                player.rigidbody2D.velocity = new Vector2(-dashSpeed * 2f, 0);
-                yield return new WaitForSeconds(0.01f);
-            }
+            curX = dashSpeed;
+            curY = 0;
         }
         else
-        {
-            float curX = LX;
-            float curY = LY;
-            for (int i = 0; i < 5; i++)
+            if (LX == 0.0f && !playerController.FaceRight && LY == 0.0f)
             {
-                player.rigidbody2D.velocity = new Vector2(curX * dashSpeed * 2f, curY * dashSpeed * 2f);
-                yield return new WaitForSeconds(0.01f);
+                curX = -dashSpeed;
+                curY = 0;
             }
-        }
-
-        if (playerController.WallCollide)
-        {
-            if (playerController.WallCollideRight)
-                StartCoroutine("DashUpLeftSmall");
             else
-                StartCoroutine("DashUpRightSmall");
-        }
-        else if (playerController.GroundCollide)
+            {
+                curX = LX;
+                curY = LY;
+
+                float angleDash = Mathf.Atan(Math.Abs(curY) / Math.Abs(curX));
+
+                if (curX < 0.0f)
+                {
+                    curX = Mathf.Cos(angleDash) * dashSpeed * -1.0f;
+                }
+                else
+                {
+                    curX = Mathf.Cos(angleDash) * dashSpeed;
+                }
+
+                if (curY < 0.0f)
+                {
+                    curY = Mathf.Sin(angleDash) * dashSpeed * -1.0f;
+                }
+                else
+                {
+                    curY = Mathf.Sin(angleDash) * dashSpeed;
+                }
+            }
+
+        if (curX < player.rigidbody2D.velocity.x) curX = player.rigidbody2D.velocity.x + 5.0f;
+
+        player.rigidbody2D.velocity = Vector2.zero;
+
+        float timeStart = Time.time;
+        state = PlayerState.Dashing;
+        dashTimeStamp = Time.time;
+        dashReady = false;
+
+        while (Time.time - timeStart < dashDuration)
         {
-            if (playerController.FaceRight)
-                StartCoroutine("DashUpRightSmall");
-            else
-                StartCoroutine("DashUpLeftSmall");
+            player.rigidbody2D.velocity = new Vector2(curX, curY);
+
+            if (playerController.WallCollide)
+            {
+                if (playerController.WallCollideRight)
+                    StartCoroutine("DashUpLeftSmall");
+                else
+                    StartCoroutine("DashUpRightSmall");
+                break;
+            }
+            else if (playerController.GroundCollide)
+            {
+                /*
+                if (playerController.FaceRight)
+                    StartCoroutine("DashUpRightSmall");
+                else
+                    StartCoroutine("DashUpLeftSmall");
+                break;
+                 * */
+            }
+
+            if (playerController.EnemyCollide)
+            {
+                longDashReady = true;
+                playerController.EnemyCollide = false;
+                dashReady = true;
+            }
+
+            yield return new WaitForSeconds(0.005f);
         }
-        else
-        {
-            player.rigidbody2D.velocity = player.rigidbody2D.velocity * 0.1f;
-        }
 
+        player.rigidbody2D.velocity = player.rigidbody2D.velocity * 0.1f;
 
-        yield return new WaitForSeconds(0.1f);
-
-        if (!longDashReady)
+        if (!(longDashReady))
         {
             state = PlayerState.Falling;
         }
         else
         {
             state = PlayerState.Dashing;
+            dashTimeStamp = Time.time;
         }
-
     }
 
     public IEnumerator DashUpRight()
