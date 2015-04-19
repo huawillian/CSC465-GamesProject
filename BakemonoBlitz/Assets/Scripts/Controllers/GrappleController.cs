@@ -240,7 +240,7 @@ public class GrappleController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Ceiling")
+        if (other.tag == "Ceiling" || other.gameObject.name == "GrapplingPlatform" || other.gameObject.name == "PlatformTemplate")
         {
             mSceneManager.mPlayerManager.grappleState = PlayerManager.GrappleState.GrappleHooked;
             mSceneManager.mPlayerManager.state = PlayerManager.PlayerState.Swinging;

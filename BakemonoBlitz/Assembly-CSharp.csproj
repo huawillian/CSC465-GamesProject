@@ -47,6 +47,9 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\ChainController.cs" />
+     <Compile Include="Assets\DashController.cs" />
+     <Compile Include="Assets\GrapplingPlatformController.cs" />
+     <Compile Include="Assets\PlatformTemplate.cs" />
      <Compile Include="Assets\Scripts\Controllers\Clouds.cs" />
      <Compile Include="Assets\Scripts\Controllers\CrumblingPlatform.cs" />
      <Compile Include="Assets\Scripts\Controllers\EnemyController.cs" />
@@ -78,6 +81,7 @@
      <Compile Include="Assets\Scripts\Old\ShurikenController.cs" />
      <Compile Include="Assets\Scripts\Old\TriggerButtons.cs" />
      <Compile Include="Assets\Scripts\Old\s.cs" />
+     <Compile Include="Assets\VicinityScript.cs" />
      <None Include="Assets\StreamingAssets\Profiles\SaveData1.xml" />
      <None Include="Assets\StreamingAssets\Profiles\SaveData2.xml" />
      <None Include="Assets\StreamingAssets\Profiles\SaveData3.xml" />

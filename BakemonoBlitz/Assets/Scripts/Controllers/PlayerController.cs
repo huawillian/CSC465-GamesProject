@@ -102,17 +102,6 @@ public class PlayerController : MonoBehaviour
         {
             GroundCollide = true;
         }
-
-        if (other.tag == "Enemy" && mSceneManager.mPlayerManager.state == PlayerManager.PlayerState.Dashing)
-        {
-            EnemyCollide = true;
-            Destroy(other.gameObject);
-        }
-
-        if (other.tag == "Enemy" && mSceneManager.mPlayerManager.state != PlayerManager.PlayerState.Dashing)
-        {
-            EnemyCollide = true;
-        }
     }
 
     void OnTriggerStay2D(Collider2D other)

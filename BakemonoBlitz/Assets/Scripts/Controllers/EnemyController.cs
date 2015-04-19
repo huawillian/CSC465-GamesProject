@@ -10,7 +10,6 @@ public class EnemyController : MonoBehaviour
 	void Start ()
     {
         this.mSceneManager = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
-
 	}
 	
 	// Update is called once per frame

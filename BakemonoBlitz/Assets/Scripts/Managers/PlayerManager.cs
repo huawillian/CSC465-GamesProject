@@ -83,7 +83,7 @@ public class PlayerManager : MonoBehaviour
             player.rigidbody2D.isKinematic = true;
 
         }
-
+        
         if (lockPlayerCoordinates && !((mSceneManager.state == SceneManager.SceneState.Locked || mSceneManager.state == SceneManager.SceneState.SceneComplete || mSceneManager.state == SceneManager.SceneState.Paused)))
         {
             lockPlayerCoordinates = false;
@@ -501,6 +501,7 @@ public class PlayerManager : MonoBehaviour
 
         if (canDash && dashReady && dashReadyFromGrapple && weapon1)
         {
+            /*
             if (!longDashReady)
             {
                 StartCoroutine("Dash2");
@@ -508,6 +509,18 @@ public class PlayerManager : MonoBehaviour
             else
             {
                 StartCoroutine("LongDash2");
+            }
+             */
+            if (playerController.GetComponentInChildren<DashController>().dashState == DashController.DashState.DashReady)
+            {
+                playerController.GetComponentInChildren<DashController>().StartCoroutine("Dash");
+            }
+
+            if (playerController.GetComponentInChildren<DashController>().dashState == DashController.DashState.DashLong || playerController.GetComponentInChildren<DashController>().dashState == DashController.DashState.DashExit)
+            {
+                playerController.GetComponentInChildren<DashController>().StopCoroutine("Dash");
+                playerController.gameObject.rigidbody2D.velocity = Vector2.zero;
+                playerController.GetComponentInChildren<DashController>().StartCoroutine("Dash");
             }
         }
 
