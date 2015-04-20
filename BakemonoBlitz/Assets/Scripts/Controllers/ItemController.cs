@@ -46,7 +46,7 @@ public class ItemController : MonoBehaviour
             if (this.gameObject.name == "RedGem") StartCoroutine("RedGem");
             if (this.gameObject.name == "Dango") StartCoroutine("Dango");
             if (this.gameObject.name == "Kunai") StartCoroutine("Kunai");
-            if (this.gameObject.name == "Grapple") StartCoroutine("Grapple");
+            if (this.gameObject.name == "GrappleItem") StartCoroutine("Grapple");
             if (this.gameObject.name == "Sword") StartCoroutine("Sword");
 
             this.gameObject.GetComponent<BoxCollider2D>().enabled = false;
