@@ -35,9 +35,11 @@ public class GrappleController : MonoBehaviour
                 ThrowRight = mSceneManager.mPlayerManager.playerController.FaceRight;
                 mSceneManager.mPlayerManager.throwReady = true;
                 this.transform.position = mSceneManager.mPlayerManager.playerController.gameObject.transform.position;
+                this.gameObject.GetComponent<BoxCollider2D>().enabled = false;
                 this.renderer.enabled = false;
                 break;
             case PlayerManager.GrappleState.GrappleExtending:
+                this.gameObject.GetComponent<BoxCollider2D>().enabled = true;
                 if (ThrowRight)
                 {
                     //this.gameObject.rigidbody2D.velocity = new Vector2(grappleSpeed, grappleSpeed);

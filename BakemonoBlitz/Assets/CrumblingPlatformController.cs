@@ -2,7 +2,7 @@
 using System.Collections;
 using System;
 
-public class GrapplingPlatformController : MonoBehaviour
+public class CrumblingPlatformController : MonoBehaviour
 {
     SceneManager mSceneManager;
     GameObject player;
@@ -75,6 +75,16 @@ public class GrapplingPlatformController : MonoBehaviour
         {
             physical = true;
         }
+
+        if (playerTriggerCollider.bounds.center.y - playerTriggerCollider.bounds.extents.y > platformTriggerCollider.bounds.center.y &&
+            playerTriggerCollider.bounds.center.y - playerTriggerCollider.bounds.extents.y < platformTriggerCollider.bounds.center.y + platformTriggerCollider.bounds.extents.y &&
+            playerCollided &&
+            !crumbling &&
+            (mSceneManager.mPlayerManager.state == PlayerManager.PlayerState.Idling || mSceneManager.mPlayerManager.state == PlayerManager.PlayerState.Falling || mSceneManager.mPlayerManager.state == PlayerManager.PlayerState.Running || mSceneManager.mPlayerManager.state == PlayerManager.PlayerState.Damaged))
+        {
+            StartCoroutine("CrumblingExit");
+        }
+
     }
 
     void OnTriggerEnter2D(Collider2D col)
@@ -82,11 +92,6 @@ public class GrapplingPlatformController : MonoBehaviour
         if (col.gameObject.tag == "Player")
         {
             playerCollided = true;
-        }
-
-        if (col.gameObject.name == "Grapple" && (mSceneManager.mPlayerManager.state == PlayerManager.PlayerState.Swinging || mSceneManager.mPlayerManager.grappleState == PlayerManager.GrappleState.GrappleExtending || mSceneManager.mPlayerManager.grappleState == PlayerManager.GrappleState.GrappleHooked) && !crumbling)
-        {
-            StartCoroutine("CrumblingExit");
         }
     }
 

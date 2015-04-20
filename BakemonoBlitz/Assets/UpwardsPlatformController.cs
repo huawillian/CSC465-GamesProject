@@ -2,7 +2,7 @@
 using System.Collections;
 using System;
 
-public class GrapplingPlatformController : MonoBehaviour
+public class UpwardsPlatformController : MonoBehaviour
 {
     SceneManager mSceneManager;
     GameObject player;
@@ -83,11 +83,6 @@ public class GrapplingPlatformController : MonoBehaviour
         {
             playerCollided = true;
         }
-
-        if (col.gameObject.name == "Grapple" && (mSceneManager.mPlayerManager.state == PlayerManager.PlayerState.Swinging || mSceneManager.mPlayerManager.grappleState == PlayerManager.GrappleState.GrappleExtending || mSceneManager.mPlayerManager.grappleState == PlayerManager.GrappleState.GrappleHooked) && !crumbling)
-        {
-            StartCoroutine("CrumblingExit");
-        }
     }
 
     void OnTriggerStay2D(Collider2D col)
@@ -106,42 +101,5 @@ public class GrapplingPlatformController : MonoBehaviour
         }
     }
 
-    IEnumerator CrumblingExit()
-    {
-        crumbling = true;
-
-        if (image.GetComponent<SpriteRenderer>().sprite == greenImage)
-        {
-            image.GetComponent<SpriteRenderer>().sprite = yellowImage;
-
-            for (int i = 0; i < 10; i++)
-            {
-                image.GetComponent<SpriteRenderer>().sprite = greyImage;
-                yield return new WaitForSeconds(0.1f);
-                image.GetComponent<SpriteRenderer>().sprite = yellowImage;
-                yield return new WaitForSeconds(0.1f);
-            }
-
-            image.GetComponent<SpriteRenderer>().sprite = redImage;
-        }
-
-        for (int i = 0; i < 10; i++)
-        {
-            image.GetComponent<SpriteRenderer>().sprite = greyImage;
-            yield return new WaitForSeconds(0.05f);
-            image.GetComponent<SpriteRenderer>().sprite = redImage;
-            yield return new WaitForSeconds(0.05f);
-        }
-
-        image.GetComponent<SpriteRenderer>().sprite = greyImage;
-        yield return new WaitForSeconds(0.5f);
-
-        mSceneManager.mStageManager.removeDynamic(this.gameObject);
-
-        Destroy(this.gameObject);
-
-    }
-
-
-
 }
+

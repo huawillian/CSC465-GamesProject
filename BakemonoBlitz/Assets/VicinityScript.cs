@@ -20,23 +20,86 @@ public class VicinityScript : MonoBehaviour
     {
         if (col.gameObject.tag == "Player")
         {
-            parentObject.GetComponent<PlatformTemplate>().vicinity = true;
+            if (parentObject.name == "UpwardsPlatform")
+            {
+                parentObject.GetComponent<UpwardsPlatformController>().vicinity = true;
+            }
+
+            if (parentObject.name == "PlatformTemplate")
+            {
+                parentObject.GetComponent<PlatformTemplate>().vicinity = true;
+            }
+
+            if (parentObject.name == "MovingPlatform")
+            {
+                parentObject.GetComponent<MovingPlatformController>().vicinity = true;
+            }
+
+            if (parentObject.name == "CrumblingPlatform")
+            {
+                parentObject.GetComponent<CrumblingPlatformController>().vicinity = true;
+            }
+
+            if (parentObject.name == "GrapplingPlatform")
+            {
+                parentObject.GetComponent<GrapplingPlatformController>().vicinity = true;
+            }
         }
     }
 
     void OnTriggerStay2D(Collider2D col)
     {
-        if (col.gameObject.tag == "Player")
+        if (parentObject.name == "UpwardsPlatform")
+        {
+            parentObject.GetComponent<UpwardsPlatformController>().vicinity = true;
+        }
+
+        if (parentObject.name == "PlatformTemplate")
         {
             parentObject.GetComponent<PlatformTemplate>().vicinity = true;
+        }
+
+        if (parentObject.name == "MovingPlatform")
+        {
+            parentObject.GetComponent<MovingPlatformController>().vicinity = true;
+        }
+
+        if (parentObject.name == "CrumblingPlatform")
+        {
+            parentObject.GetComponent<CrumblingPlatformController>().vicinity = true;
+        }
+
+        if (parentObject.name == "GrapplingPlatform")
+        {
+            parentObject.GetComponent<GrapplingPlatformController>().vicinity = true;
         }
     }
 
     void OnTriggerExit2D(Collider2D col)
     {
-        if (col.gameObject.tag == "Player")
+        if (parentObject.name == "UpwardsPlatform")
+        {
+            parentObject.GetComponent<UpwardsPlatformController>().vicinity = false;
+        }
+
+        if (parentObject.name == "PlatformTemplate")
         {
             parentObject.GetComponent<PlatformTemplate>().vicinity = false;
+        }
+
+        if (parentObject.name == "MovingPlatform")
+        {
+            parentObject.GetComponent<MovingPlatformController>().vicinity = false;
+        }
+
+        if (parentObject.name == "CrumblingPlatform")
+        {
+            parentObject.GetComponent<CrumblingPlatformController>().vicinity = false;
+        }
+
+        if (parentObject.name == "GrapplingPlatform")
+        {
+            parentObject.GetComponent<GrapplingPlatformController>().vicinity = false;
         }
     }
 }

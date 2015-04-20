@@ -2,7 +2,7 @@
 using System.Collections;
 using System;
 
-public class GrapplingPlatformController : MonoBehaviour
+public class MovingPlatformController : MonoBehaviour
 {
     SceneManager mSceneManager;
     GameObject player;
@@ -21,6 +21,12 @@ public class GrapplingPlatformController : MonoBehaviour
     public Sprite yellowImage;
     public Sprite redImage;
     public Sprite greyImage;
+
+    // Patrol Coordinates
+    GameObject patrolA;
+    GameObject patrolB;
+    public Vector3 patrolACoordinates;
+    public Vector3 patrolBCoordinates;
 
     // Use this for initialization
     void Start()
@@ -52,6 +58,44 @@ public class GrapplingPlatformController : MonoBehaviour
         }
 
         this.gameObject.GetComponent<SpriteRenderer>().enabled = false;
+
+        foreach (Transform t in this.transform)
+        {
+            if (t.name == "PatrolA")
+                patrolA = t.gameObject;
+
+            if (t.name == "PatrolB")
+                patrolB = t.gameObject;
+        }
+
+        patrolACoordinates = patrolA.transform.position;
+        patrolBCoordinates = patrolB.transform.position;
+
+        StartCoroutine("StartPatrol");
+    }
+
+
+    // Methods to Patrol the Object
+    IEnumerator StartPatrol()
+    {
+        while (true)
+        {
+            yield return StartCoroutine(MoveObject(transform, patrolACoordinates, patrolBCoordinates, 3.0f));
+            yield return StartCoroutine(MoveObject(transform, patrolBCoordinates, patrolACoordinates, 3.0f));
+        }
+    }
+
+    IEnumerator MoveObject(Transform thisTransform, Vector3 startPos, Vector3 endPos, float time)
+    {
+        // Patrol only if player hasn't been found
+        double i = 0.0d;
+        double rate = 1.0d / time;
+        while (i < 1.0d)
+        {
+            i += Time.deltaTime * rate;
+            thisTransform.position = Vector3.Lerp(startPos, endPos, (float)i);
+            yield return null;
+        }
     }
 
 
@@ -75,6 +119,7 @@ public class GrapplingPlatformController : MonoBehaviour
         {
             physical = true;
         }
+
     }
 
     void OnTriggerEnter2D(Collider2D col)
@@ -82,11 +127,6 @@ public class GrapplingPlatformController : MonoBehaviour
         if (col.gameObject.tag == "Player")
         {
             playerCollided = true;
-        }
-
-        if (col.gameObject.name == "Grapple" && (mSceneManager.mPlayerManager.state == PlayerManager.PlayerState.Swinging || mSceneManager.mPlayerManager.grappleState == PlayerManager.GrappleState.GrappleExtending || mSceneManager.mPlayerManager.grappleState == PlayerManager.GrappleState.GrappleHooked) && !crumbling)
-        {
-            StartCoroutine("CrumblingExit");
         }
     }
 
@@ -105,43 +145,4 @@ public class GrapplingPlatformController : MonoBehaviour
             playerCollided = false;
         }
     }
-
-    IEnumerator CrumblingExit()
-    {
-        crumbling = true;
-
-        if (image.GetComponent<SpriteRenderer>().sprite == greenImage)
-        {
-            image.GetComponent<SpriteRenderer>().sprite = yellowImage;
-
-            for (int i = 0; i < 10; i++)
-            {
-                image.GetComponent<SpriteRenderer>().sprite = greyImage;
-                yield return new WaitForSeconds(0.1f);
-                image.GetComponent<SpriteRenderer>().sprite = yellowImage;
-                yield return new WaitForSeconds(0.1f);
-            }
-
-            image.GetComponent<SpriteRenderer>().sprite = redImage;
-        }
-
-        for (int i = 0; i < 10; i++)
-        {
-            image.GetComponent<SpriteRenderer>().sprite = greyImage;
-            yield return new WaitForSeconds(0.05f);
-            image.GetComponent<SpriteRenderer>().sprite = redImage;
-            yield return new WaitForSeconds(0.05f);
-        }
-
-        image.GetComponent<SpriteRenderer>().sprite = greyImage;
-        yield return new WaitForSeconds(0.5f);
-
-        mSceneManager.mStageManager.removeDynamic(this.gameObject);
-
-        Destroy(this.gameObject);
-
-    }
-
-
-
 }

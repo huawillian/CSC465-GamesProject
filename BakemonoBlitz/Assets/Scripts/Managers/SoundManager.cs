@@ -46,7 +46,7 @@ public class SoundManager : MonoBehaviour
     {
         Debug.Log("Initializing " + this.gameObject.name);
 
-        soundList = new string[] { "sound1", "sound2", "sound3", "scene", "beep1", "beep2", "starcraft", "lol", "Yoshida Brothers - Rising", "Saitama Saishuu Heiki - Momentary Life [Remix]" };
+        soundList = new string[] { "sound1", "sound2", "sound3", "scene", "beep1", "beep2", "starcraft", "lol", "Yoshida Brothers - Rising", "Saitama Saishuu Heiki - Momentary Life [Remix]", "coin", "oneup" };
         clip = new AudioClip[soundList.Length];
         soundHolders = new GameObject[soundList.Length];
 

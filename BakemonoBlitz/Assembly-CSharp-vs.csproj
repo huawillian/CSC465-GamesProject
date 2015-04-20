@@ -47,8 +47,10 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\ChainController.cs" />
+     <Compile Include="Assets\CrumblingPlatformController.cs" />
      <Compile Include="Assets\DashController.cs" />
      <Compile Include="Assets\GrapplingPlatformController.cs" />
+     <Compile Include="Assets\MovingPlatformController.cs" />
      <Compile Include="Assets\PlatformTemplate.cs" />
      <Compile Include="Assets\Scripts\Controllers\Clouds.cs" />
      <Compile Include="Assets\Scripts\Controllers\CrumblingPlatform.cs" />
@@ -59,7 +61,6 @@
      <Compile Include="Assets\Scripts\Controllers\MainMenuController.cs" />
      <Compile Include="Assets\Scripts\Controllers\MenuController.cs" />
      <Compile Include="Assets\Scripts\Controllers\PlayerController.cs" />
-     <Compile Include="Assets\Scripts\Controllers\UpwardsPlatformController.cs" />
      <Compile Include="Assets\Scripts\Managers\BackgroundManager.cs" />
      <Compile Include="Assets\Scripts\Managers\CameraManager.cs" />
      <Compile Include="Assets\Scripts\Managers\EnemyManager.cs" />
@@ -81,6 +82,7 @@
      <Compile Include="Assets\Scripts\Old\ShurikenController.cs" />
      <Compile Include="Assets\Scripts\Old\TriggerButtons.cs" />
      <Compile Include="Assets\Scripts\Old\s.cs" />
+     <Compile Include="Assets\UpwardsPlatformController.cs" />
      <Compile Include="Assets\VicinityScript.cs" />
      <None Include="Assets\StreamingAssets\Profiles\SaveData1.xml" />
      <None Include="Assets\StreamingAssets\Profiles\SaveData2.xml" />

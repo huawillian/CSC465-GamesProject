@@ -63,7 +63,7 @@ public class EnemyGreen : MonoBehaviour
 			double rate = 1.0d / time;
 			while (i < 1.0d)
 			{
-				i += Time.deltaTime * rate;
+				i += Time.fixedDeltaTime * rate;
 				thisTransform.position = Vector3.Lerp (startPos, endPos, (float)i);
 				yield return null;
 			}
