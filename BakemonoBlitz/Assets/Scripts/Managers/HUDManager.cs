@@ -43,6 +43,13 @@ public class HUDManager : MonoBehaviour
 
     public Texture2D tex;
 
+    public Texture2D livesTexture;
+    public Texture2D hp0Texture;
+    public Texture2D hp1Texture;
+    public Texture2D hp2Texture;
+    public Texture2D hp3Texture;
+    public Texture2D gemsTexture;
+
 	// Use this for initialization
 	void Start ()
     {
@@ -67,24 +74,52 @@ public class HUDManager : MonoBehaviour
     void OnGUI()
     {
         // Make a background box
-        GUI.backgroundColor = Color.black;
+        GUI.backgroundColor = Color.clear;
         GUI.color = Color.white;
-        GUI.skin.box.fontSize = 15;
+        GUI.skin.box.fontSize = 30;
+        GUI.skin.box.alignment = TextAnchor.UpperLeft;
+        GUI.skin.box.fontStyle = FontStyle.Bold;
 
         if (!disableHUD)
         {
-            // Draw Health
-            GUI.Box(new Rect(getPositionX(1), getPositionY(1), getPositionX(14), getPositionY(4)), "HEALTH: " + health);
-            // Draw Energy
-            GUI.Box(new Rect(getPositionX(1), getPositionY(6), getPositionX(14), getPositionY(4)), "ENERGY: " + energy);
             // Draw Lives
-            GUI.Box(new Rect(getPositionX(1), getPositionY(11), getPositionX(14), getPositionY(4)), "LIVES: " + lives);
+            GUI.Box(new Rect(getPositionX(1), getPositionY(1), getPositionX(12), getPositionY(8)), "LIVES: ");
+
+            for (int i = 0; i < lives; i++)
+            {
+                GUI.DrawTexture(new Rect(getPositionX(11.0f + i * 4.0f), getPositionY(1), 40, 40), livesTexture);
+            }
+
+            // Draw Health
+            GUI.Box(new Rect(getPositionX(1), getPositionY(10), getPositionX(12), getPositionY(8)), "HP: ");
+
+            switch (health)
+            {
+                case 0:
+                    GUI.DrawTexture(new Rect(getPositionX(11.0f), getPositionY(10.0f), 88, 40), hp0Texture);
+                    break;
+                case 1:
+                    GUI.DrawTexture(new Rect(getPositionX(11.0f), getPositionY(10.0f), 88, 40), hp1Texture);
+                    break;
+                case 2:
+                    GUI.DrawTexture(new Rect(getPositionX(11.0f), getPositionY(10.0f), 88, 40), hp2Texture);
+                    break;
+                case 3:
+                    GUI.DrawTexture(new Rect(getPositionX(11.0f), getPositionY(10.0f), 88, 40), hp3Texture);
+                    break;
+                default:
+                    GUI.DrawTexture(new Rect(getPositionX(11.0f), getPositionY(10.0f), 88, 40), hp3Texture);
+                    break;
+            }
+
             // Draw Gems
-            GUI.Box(new Rect(screenWidth / 2 - getPositionX(7), getPositionY(1), getPositionX(14), getPositionY(4)), "GEMS: " + gems);
+            GUI.Box(new Rect(screenWidth / 2 - getPositionX(4), getPositionY(5), getPositionX(14), getPositionY(8)), "     " + gems);
+            GUI.DrawTexture(new Rect(screenWidth / 2 - getPositionX(4), getPositionY(1.0f), 40, 80), gemsTexture);
+
             // Draw Score
-            GUI.Box(new Rect(screenWidth - getPositionX(15), getPositionY(1), getPositionX(14), getPositionY(4)), "SCORE: " + score);
+            GUI.Box(new Rect(screenWidth - getPositionX(20), getPositionY(1), getPositionX(16), getPositionY(8)), "SCORE: " + score);
             // Draw Time
-            GUI.Box(new Rect(screenWidth - getPositionX(15), getPositionY(6), getPositionX(14), getPositionY(4)), "TIME: " + time);
+            GUI.Box(new Rect(screenWidth - getPositionX(20), getPositionY(10), getPositionX(16), getPositionY(8)), "TIME: " + time);
         }
 
         if (showingTextbox)
@@ -106,12 +141,12 @@ public class HUDManager : MonoBehaviour
     }
 
     // Return position depending on percentage
-    private float getPositionX(float percX)
+    public float getPositionX(float percX)
     {
         return percX / 100 * screenWidth;
     }
 
-    private float getPositionY(float percY)
+    public float getPositionY(float percY)
     {
         return percY / 100 * screenHeight;
     }

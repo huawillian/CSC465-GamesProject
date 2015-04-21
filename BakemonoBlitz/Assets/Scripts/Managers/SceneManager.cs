@@ -62,6 +62,19 @@ public class SceneManager : MonoBehaviour
     // Set and place player at these locations at the start of the scene
     public Vector3 playerStart, playerEnd;
 
+    // Used to display Game over animation
+    public bool displayGameOver = false;
+    public Texture2D gameOverTexture;
+
+    // Used to display loading stage animation
+    public bool displayLoadingStage = false;
+    public Texture2D loadingSceneTexture;
+    public Texture2D livesTexture;
+    public Texture2D playerTexture1;
+    public Texture2D playerTexture2;
+    public Texture2D playerTexture3;
+    public int loadingStageIncrement = 0;
+
     // State:
     // Main Menu - Input to all except the Main Menu Controller is disabled, Main Menu is enabled, Menu is disabled
     // Playing - Everything is normal, Input to the Main Menu is disabled
@@ -147,6 +160,44 @@ public class SceneManager : MonoBehaviour
         
         }
 
+        if (displayGameOver)
+        {
+            GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), gameOverTexture);
+        }
+
+        if (displayLoadingStage)
+        {
+            GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), loadingSceneTexture);
+            // Make a background box
+            GUI.backgroundColor = Color.clear;
+            GUI.color = Color.white;
+            GUI.skin.box.fontSize = 30;
+            GUI.skin.box.alignment = TextAnchor.UpperLeft;
+            GUI.skin.box.fontStyle = FontStyle.Bold;
+
+            switch (loadingStageIncrement)
+            {
+                case 0:
+                    GUI.Box(new Rect(mHUDManager.getPositionX(40), mHUDManager.getPositionY(25), mHUDManager.getPositionX(90), mHUDManager.getPositionY(30)), "Loading " + Application.loadedLevelName + ".");
+                    GUI.DrawTexture(new Rect(mHUDManager.getPositionX(60), mHUDManager.getPositionY(40), 40, 40), playerTexture1);
+                    break;
+                case 1:
+                    GUI.Box(new Rect(mHUDManager.getPositionX(40), mHUDManager.getPositionY(25), mHUDManager.getPositionX(90), mHUDManager.getPositionY(30)), "Loading " + Application.loadedLevelName + "..");
+                    GUI.DrawTexture(new Rect(mHUDManager.getPositionX(60), mHUDManager.getPositionY(40), 40, 40), playerTexture2);
+                    break;
+                case 2:
+                    GUI.Box(new Rect(mHUDManager.getPositionX(40), mHUDManager.getPositionY(25), mHUDManager.getPositionX(90), mHUDManager.getPositionY(30)), "Loading " + Application.loadedLevelName + "...");
+                    GUI.DrawTexture(new Rect(mHUDManager.getPositionX(60), mHUDManager.getPositionY(40), 40, 40), playerTexture3);
+                    break;
+                default:
+                    break;
+            }
+
+            GUI.DrawTexture(new Rect(mHUDManager.getPositionX(40), mHUDManager.getPositionY(40), 40, 40), livesTexture);
+            GUI.Box(new Rect(mHUDManager.getPositionX(40) + 40.0f, mHUDManager.getPositionY(40), mHUDManager.getPositionX(15), mHUDManager.getPositionY(15)), " x " + mPlayerManager.lives);
+
+
+        }
 
     }
 	// Use this for initialization
@@ -233,6 +284,8 @@ public class SceneManager : MonoBehaviour
 
     IEnumerator Scene1Script()
     {
+        yield return StartCoroutine("LoadingLevelAnimation");
+
         mCameraManager.beginFadeIn();
         mSoundManager.setBackgroundMusic("Saitama Saishuu Heiki - Momentary Life [Remix]");
 
@@ -399,7 +452,28 @@ public class SceneManager : MonoBehaviour
                 break;
         }
 
+        // Check if Player has run out of lives or hp
+        if (mPlayerManager.health == -1)
+        {
+            mPlayerManager.lives--;
+
+            if(mPlayerManager.lives != -1)
+            {
+                mPlayerManager.health = 3;
+                mProfileManager.SaveProfile(0);
+                StartCoroutine("RestartLevel");
+            }
+        }
+
+        if (mPlayerManager.lives == -1)
+        {
+            mPlayerManager.lives = -2;
+            StartCoroutine("GameOverAnimation");
+        }
+
     }
+
+
 
     // Load Properties
     void LoadSceneProperties(int profileNumber)
@@ -410,6 +484,54 @@ public class SceneManager : MonoBehaviour
         mProfileManager.setVolume(mVolume);
         mCameraManager.setResolution(mResolution);        
     }
+
+    IEnumerator GameOverAnimation()
+    {
+        mSoundManager.setVolumeSounds(10.0f);
+        mHUDManager.enabled = false;
+        state = SceneState.Animating;
+        mCameraManager.beginFadeOut();
+        yield return new WaitForSeconds(3.0f);
+        displayGameOver = true;
+        mCameraManager.beginFadeIn();
+        yield return new WaitForSeconds(3.0f);
+        mCameraManager.beginFadeOut();
+        yield return new WaitForSeconds(3.0f);
+        displayGameOver = false;
+        Application.LoadLevel("MainMenuScene");
+    }
+
+    IEnumerator LoadingLevelAnimation()
+    {
+        SceneState originalState = this.state;
+        bool originalHUD = mHUDManager.enabled;
+
+        mHUDManager.enabled = false;
+        state = SceneState.Animating;
+        mCameraManager.beginFadeIn();
+        displayLoadingStage = true;
+        StartCoroutine("LoadingLevelAnimationHelper");
+        yield return new WaitForSeconds(3.0f);
+        mCameraManager.beginFadeOut();
+        yield return new WaitForSeconds(1.0f);
+        displayLoadingStage = false;
+        StopCoroutine("LoadingLevelAnimationHelper");
+
+        state = originalState;
+        mHUDManager.enabled = originalHUD;
+    }
+
+    IEnumerator LoadingLevelAnimationHelper()
+    {
+        while (displayLoadingStage)
+        {
+            loadingStageIncrement++;
+            loadingStageIncrement = loadingStageIncrement % 3;
+            yield return new WaitForSeconds(0.33f);
+        }
+    }
+
+
 
     public void StartButton()
     {

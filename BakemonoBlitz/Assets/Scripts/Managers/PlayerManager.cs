@@ -23,7 +23,8 @@ public class PlayerManager : MonoBehaviour
     public bool weapon1, weapon2, weapon3;
     public float x, y, z;
 
-    private float startTime;
+    public float startTime;
+    public float savedTime;
     private float currentTime;
 
     public bool lockPlayerCoordinates = false;
@@ -93,7 +94,7 @@ public class PlayerManager : MonoBehaviour
 
         // Update time
         currentTime = Time.time;
-        time = (int)(currentTime - startTime);
+        time = (int)(currentTime - startTime + savedTime);
 
         // Lock Player coordinates
         if (lockPlayerCoordinates)
@@ -435,7 +436,7 @@ public class PlayerManager : MonoBehaviour
         }
         else if (player.rigidbody2D.velocity.y < -maxSpeed && state != PlayerState.Dashing)
         {
-            player.rigidbody2D.velocity = new Vector2(-player.rigidbody2D.velocity.x, maxSpeed);
+            player.rigidbody2D.velocity = new Vector2(player.rigidbody2D.velocity.x, -maxSpeed);
         }
 
 

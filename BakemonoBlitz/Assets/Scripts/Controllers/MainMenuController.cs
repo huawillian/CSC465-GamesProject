@@ -211,8 +211,9 @@ public class MainMenuController : MonoBehaviour
 
         mSceneManager.mPlayerManager.gender = "male";
         mSceneManager.mPlayerManager.health = 3;
-        mSceneManager.mPlayerManager.lives = 5;
+        mSceneManager.mPlayerManager.lives = 3;
         mSceneManager.mPlayerManager.energy = 100;
+        mSceneManager.mPlayerManager.time = 0;
 
         mSceneManager.mPlayerManager.weapon1 = false;
         mSceneManager.mPlayerManager.weapon2 = false;
