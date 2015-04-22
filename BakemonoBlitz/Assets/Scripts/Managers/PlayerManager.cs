@@ -482,6 +482,7 @@ public class PlayerManager : MonoBehaviour
             else
             {
                 player.rigidbody2D.AddForce(new Vector2(0, 400));
+                GameObject.Find("SmokeController").GetComponent<SmokeController>().StartCoroutine("TwoSmokeGeneratorStart");
                 jumpReady = false;
                 state = PlayerState.Jumping;
             }

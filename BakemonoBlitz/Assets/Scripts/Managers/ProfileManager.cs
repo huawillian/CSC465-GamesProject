@@ -136,6 +136,7 @@ public class ProfileManager : MonoBehaviour
             myData._userData.z = mPlayerManager.z;
             myData._userData.gems = mPlayerManager.gems;
             myData._userData.time = mPlayerManager.time;
+            myData._userData.score = mPlayerManager.score;
 
             myData._userData.volume = mSceneManager.mVolume;
             myData._userData.resolution = mSceneManager.mResolution;
@@ -228,7 +229,7 @@ public class ProfileManager : MonoBehaviour
                 mPlayerManager.z = myData._userData.z;
 
                 mPlayerManager.gems = myData._userData.gems;
-
+                mPlayerManager.score = myData._userData.score;
                 mPlayerManager.time = (int) myData._userData.time;
                 mPlayerManager.startTime = Time.time;
                 mPlayerManager.savedTime = (int)myData._userData.time;
@@ -307,7 +308,7 @@ public class UserData
         public float z; // #.##...
 
         public int gems; // #
-
+        public int score; 
         public float time;
 
         public float volume; // #.##...

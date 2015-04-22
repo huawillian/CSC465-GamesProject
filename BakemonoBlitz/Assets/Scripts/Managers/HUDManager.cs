@@ -117,9 +117,9 @@ public class HUDManager : MonoBehaviour
             GUI.DrawTexture(new Rect(screenWidth / 2 - getPositionX(4), getPositionY(1.0f), 40, 80), gemsTexture);
 
             // Draw Score
-            GUI.Box(new Rect(screenWidth - getPositionX(20), getPositionY(1), getPositionX(16), getPositionY(8)), "SCORE: " + score);
+            GUI.Box(new Rect(screenWidth - getPositionX(25), getPositionY(1), getPositionX(22), getPositionY(8)), "SCORE: " + score);
             // Draw Time
-            GUI.Box(new Rect(screenWidth - getPositionX(20), getPositionY(10), getPositionX(16), getPositionY(8)), "TIME: " + time);
+            GUI.Box(new Rect(screenWidth - getPositionX(25), getPositionY(10), getPositionX(22), getPositionY(8)), "TIME: " + time);
         }
 
         if (showingTextbox)

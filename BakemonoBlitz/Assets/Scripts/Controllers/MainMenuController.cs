@@ -214,6 +214,7 @@ public class MainMenuController : MonoBehaviour
         mSceneManager.mPlayerManager.lives = 3;
         mSceneManager.mPlayerManager.energy = 100;
         mSceneManager.mPlayerManager.time = 0;
+        mSceneManager.mPlayerManager.score = 0;
 
         mSceneManager.mPlayerManager.weapon1 = false;
         mSceneManager.mPlayerManager.weapon2 = false;

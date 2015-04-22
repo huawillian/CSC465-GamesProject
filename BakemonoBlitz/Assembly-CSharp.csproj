@@ -91,6 +91,9 @@
      <Compile Include="Assets\Scripts\Old\TriggerButtons.cs" />
      <Compile Include="Assets\Scripts\Old\s.cs" />
      <Compile Include="Assets\ShadowController.cs" />
+     <Compile Include="Assets\SmallSmokeController.cs" />
+     <Compile Include="Assets\SmokeController.cs" />
+     <Compile Include="Assets\TwoSmallSmokeController.cs" />
      <Compile Include="Assets\UpwardsPlatformController.cs" />
      <Compile Include="Assets\VicinityScript.cs" />
      <None Include="Assets\StreamingAssets\Profiles\SaveData1.xml" />

@@ -11,7 +11,7 @@ public class GrappleController : MonoBehaviour
     public float grappleExtendDur = 0.20f;
     public float grappleSpeed = 14.0f;
     public float timeThrown = 0.0f;
-    public float reelingSpeed = 0.13f;
+    public float reelingSpeed = 0.8f;
     public float retractingSpeed = 35.0f;
     public int incre;
 
