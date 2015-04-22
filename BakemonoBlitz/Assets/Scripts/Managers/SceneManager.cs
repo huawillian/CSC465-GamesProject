@@ -455,7 +455,17 @@ public class SceneManager : MonoBehaviour
         // Check if Player has run out of lives or hp
         if (mPlayerManager.health == -1)
         {
-            mPlayerManager.lives--;
+            state = SceneState.Animating;
+            mCameraManager.lockCameraPositions();
+
+            BoxCollider2D[] colliders =  mPlayerManager.player.gameObject.GetComponents<BoxCollider2D>();
+
+            for (int i = 0; i < colliders.Length; i++)
+            {
+                colliders[i].enabled = false;
+            }
+
+                mPlayerManager.lives--;
 
             if(mPlayerManager.lives != -1)
             {

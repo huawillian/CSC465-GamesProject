@@ -48,10 +48,17 @@
   <ItemGroup>
      <Compile Include="Assets\ChainController.cs" />
      <Compile Include="Assets\CrumblingPlatformController.cs" />
+     <Compile Include="Assets\DamageController.cs" />
      <Compile Include="Assets\DashController.cs" />
+     <Compile Include="Assets\EnemyTemplate.cs" />
+     <Compile Include="Assets\FlamingSkullController.cs" />
      <Compile Include="Assets\GrapplingPlatformController.cs" />
+     <Compile Include="Assets\GreenFloatingHeadController.cs" />
+     <Compile Include="Assets\KappaController.cs" />
      <Compile Include="Assets\MovingPlatformController.cs" />
      <Compile Include="Assets\PlatformTemplate.cs" />
+     <Compile Include="Assets\ProjectileController.cs" />
+     <Compile Include="Assets\RedFloatingHeadController.cs" />
      <Compile Include="Assets\Scripts\Controllers\Clouds.cs" />
      <Compile Include="Assets\Scripts\Controllers\CrumblingPlatform.cs" />
      <Compile Include="Assets\Scripts\Controllers\EnemyController.cs" />

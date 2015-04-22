@@ -22,6 +22,11 @@ public class GrapplingPlatformController : MonoBehaviour
     public Sprite redImage;
     public Sprite greyImage;
 
+    // Disappearing variables
+    float duration = 0.35f;
+    float durationInv;
+    float timer = 0f;
+
     // Use this for initialization
     void Start()
     {
@@ -52,6 +57,9 @@ public class GrapplingPlatformController : MonoBehaviour
         }
 
         this.gameObject.GetComponent<SpriteRenderer>().enabled = false;
+
+        // Set duration to invisible
+        durationInv = 1f / (duration != 0f ? duration : 1f);
     }
 
 
@@ -110,10 +118,8 @@ public class GrapplingPlatformController : MonoBehaviour
     {
         crumbling = true;
 
-        if (image.GetComponent<SpriteRenderer>().sprite == greenImage)
+        if (image.GetComponent<SpriteRenderer>().sprite == yellowImage)
         {
-            image.GetComponent<SpriteRenderer>().sprite = yellowImage;
-
             for (int i = 0; i < 10; i++)
             {
                 image.GetComponent<SpriteRenderer>().sprite = greyImage;
@@ -136,10 +142,43 @@ public class GrapplingPlatformController : MonoBehaviour
         image.GetComponent<SpriteRenderer>().sprite = greyImage;
         yield return new WaitForSeconds(0.5f);
 
-        mSceneManager.mStageManager.removeDynamic(this.gameObject);
+        physicalCollider.enabled = false;
 
+        StartCoroutine("CrumblingExitAnimation");
+    }
+
+    IEnumerator CrumblingExitAnimation()
+    {
+        timer = 0.0f;
+        float timestampExit = Time.time;
+
+        StartCoroutine(MoveObject(transform, this.gameObject.transform.position, new Vector3(this.gameObject.transform.position.x, this.gameObject.transform.position.y - 3, this.gameObject.transform.position.z), 1.0f));
+
+        while (Time.time - timestampExit < duration)
+        {
+            float alpha = Mathf.Lerp(1f, 0f, timer * durationInv);
+            timer += 0.03f;
+            renderer.material.color = new Color(renderer.material.color.a, renderer.material.color.g, renderer.material.color.b, alpha);
+            this.gameObject.transform.rotation = Quaternion.Euler(0, 0, timer / duration * 50.0f);
+            yield return new WaitForSeconds(0.03f);
+        }
+
+        mSceneManager.mStageManager.removeDynamic(this.gameObject);
         Destroy(this.gameObject);
 
+    }
+
+    IEnumerator MoveObject(Transform thisTransform, Vector3 startPos, Vector3 endPos, float time)
+    {
+        // Patrol only if player hasn't been found
+        double i = 0.0d;
+        double rate = 1.0d / time;
+        while (i < 1.0d)
+        {
+            i += Time.deltaTime * rate;
+            thisTransform.position = Vector3.Lerp(startPos, endPos, (float)i);
+            yield return null;
+        }
     }
 
 

@@ -44,62 +44,78 @@ public class VicinityScript : MonoBehaviour
             {
                 parentObject.GetComponent<GrapplingPlatformController>().vicinity = true;
             }
+
+            if (parentObject.name == "Kappa")
+            {
+                parentObject.GetComponent<KappaController>().playerFound = true;
+            }
         }
     }
 
     void OnTriggerStay2D(Collider2D col)
     {
-        if (parentObject.name == "UpwardsPlatform")
+        if (col.gameObject.tag == "Player")
         {
-            parentObject.GetComponent<UpwardsPlatformController>().vicinity = true;
-        }
+            if (parentObject.name == "UpwardsPlatform")
+            {
+                parentObject.GetComponent<UpwardsPlatformController>().vicinity = true;
+            }
 
-        if (parentObject.name == "PlatformTemplate")
-        {
-            parentObject.GetComponent<PlatformTemplate>().vicinity = true;
-        }
+            if (parentObject.name == "PlatformTemplate")
+            {
+                parentObject.GetComponent<PlatformTemplate>().vicinity = true;
+            }
 
-        if (parentObject.name == "MovingPlatform")
-        {
-            parentObject.GetComponent<MovingPlatformController>().vicinity = true;
-        }
+            if (parentObject.name == "MovingPlatform")
+            {
+                parentObject.GetComponent<MovingPlatformController>().vicinity = true;
+            }
 
-        if (parentObject.name == "CrumblingPlatform")
-        {
-            parentObject.GetComponent<CrumblingPlatformController>().vicinity = true;
-        }
+            if (parentObject.name == "CrumblingPlatform")
+            {
+                parentObject.GetComponent<CrumblingPlatformController>().vicinity = true;
+            }
 
-        if (parentObject.name == "GrapplingPlatform")
-        {
-            parentObject.GetComponent<GrapplingPlatformController>().vicinity = true;
+            if (parentObject.name == "GrapplingPlatform")
+            {
+                parentObject.GetComponent<GrapplingPlatformController>().vicinity = true;
+            }
+
+            if (parentObject.name == "Kappa")
+            {
+                parentObject.GetComponent<KappaController>().playerFound = true;
+            }
         }
     }
 
     void OnTriggerExit2D(Collider2D col)
     {
-        if (parentObject.name == "UpwardsPlatform")
+        if (col.gameObject.tag == "Player")
         {
-            parentObject.GetComponent<UpwardsPlatformController>().vicinity = false;
-        }
+            if (parentObject.name == "UpwardsPlatform")
+            {
+                parentObject.GetComponent<UpwardsPlatformController>().vicinity = false;
+            }
 
-        if (parentObject.name == "PlatformTemplate")
-        {
-            parentObject.GetComponent<PlatformTemplate>().vicinity = false;
-        }
+            if (parentObject.name == "PlatformTemplate")
+            {
+                parentObject.GetComponent<PlatformTemplate>().vicinity = false;
+            }
 
-        if (parentObject.name == "MovingPlatform")
-        {
-            parentObject.GetComponent<MovingPlatformController>().vicinity = false;
-        }
+            if (parentObject.name == "MovingPlatform")
+            {
+                parentObject.GetComponent<MovingPlatformController>().vicinity = false;
+            }
 
-        if (parentObject.name == "CrumblingPlatform")
-        {
-            parentObject.GetComponent<CrumblingPlatformController>().vicinity = false;
-        }
+            if (parentObject.name == "CrumblingPlatform")
+            {
+                parentObject.GetComponent<CrumblingPlatformController>().vicinity = false;
+            }
 
-        if (parentObject.name == "GrapplingPlatform")
-        {
-            parentObject.GetComponent<GrapplingPlatformController>().vicinity = false;
+            if (parentObject.name == "GrapplingPlatform")
+            {
+                parentObject.GetComponent<GrapplingPlatformController>().vicinity = false;
+            }
         }
     }
 }

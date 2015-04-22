@@ -217,8 +217,9 @@ public class DashController : MonoBehaviour
         }
 
         // Reset enemies killed in current dash chain
-        if (dashState == DashState.DashReady)
+        if (dashState == DashState.DashReady && chainedDashHits != 0)
         {
+            mSceneManager.mPlayerManager.score += chainedDashHits * chainedDashHits * 10;
             chainedDashHits = 0;
         }
 	}
@@ -226,10 +227,35 @@ public class DashController : MonoBehaviour
     void OnTriggerEnter2D(Collider2D other)
     {
 
-        if (other.tag == "Enemy" && mSceneManager.mPlayerManager.state == PlayerManager.PlayerState.Dashing)
+        if (other.tag == "Enemy" && mSceneManager.mPlayerManager.state == PlayerManager.PlayerState.Dashing && !mSceneManager.mPlayerManager.playerController.EnemyCollide)
         {
-            mSceneManager.mPlayerManager.playerController.EnemyCollide = true;
-            Destroy(other.gameObject);
+            if (other.gameObject.name == "GreenFloatingHead")
+            {
+                mSceneManager.mPlayerManager.score += 10;
+                mSceneManager.mPlayerManager.playerController.EnemyCollide = true;
+                other.gameObject.GetComponent<GreenFloatingHeadController>().StartCoroutine("DestroyScript");
+            }
+
+            if (other.gameObject.name == "RedFloatingHead")
+            {
+                mSceneManager.mPlayerManager.score += 20;
+                mSceneManager.mPlayerManager.playerController.EnemyCollide = true;
+                other.gameObject.GetComponent<RedFloatingHeadController>().StartCoroutine("DestroyScript");
+            }
+
+            if (other.gameObject.name == "Kappa")
+            {
+                mSceneManager.mPlayerManager.score += 50;
+                mSceneManager.mPlayerManager.playerController.EnemyCollide = true;
+                other.gameObject.GetComponent<KappaController>().StartCoroutine("DestroyScript");
+            }
+
+            if (other.gameObject.name == "FlamingSkull")
+            {
+                mSceneManager.mPlayerManager.score += 30;
+                mSceneManager.mPlayerManager.playerController.EnemyCollide = true;
+                other.gameObject.GetComponent<FlamingSkullController>().StartCoroutine("DestroyScript");
+            }
         }
 
         if (other.tag == "Enemy" && mSceneManager.mPlayerManager.state != PlayerManager.PlayerState.Dashing)
@@ -241,10 +267,35 @@ public class DashController : MonoBehaviour
     void OnTriggerStay2D(Collider2D other)
     {
 
-        if (other.tag == "Enemy" && mSceneManager.mPlayerManager.state == PlayerManager.PlayerState.Dashing)
+        if (other.tag == "Enemy" && mSceneManager.mPlayerManager.state == PlayerManager.PlayerState.Dashing && !mSceneManager.mPlayerManager.playerController.EnemyCollide)
         {
-            mSceneManager.mPlayerManager.playerController.EnemyCollide = true;
-            Destroy(other.gameObject);
+            if (other.gameObject.name == "GreenFloatingHead")
+            {
+                mSceneManager.mPlayerManager.score += 10;
+                mSceneManager.mPlayerManager.playerController.EnemyCollide = true;
+                other.gameObject.GetComponent<GreenFloatingHeadController>().StartCoroutine("DestroyScript");
+            }
+
+            if (other.gameObject.name == "RedFloatingHead")
+            {
+                mSceneManager.mPlayerManager.score += 20;
+                mSceneManager.mPlayerManager.playerController.EnemyCollide = true;
+                other.gameObject.GetComponent<RedFloatingHeadController>().StartCoroutine("DestroyScript");
+            }
+
+            if (other.gameObject.name == "Kappa")
+            {
+                mSceneManager.mPlayerManager.score += 50;
+                mSceneManager.mPlayerManager.playerController.EnemyCollide = true;
+                other.gameObject.GetComponent<KappaController>().StartCoroutine("DestroyScript");
+            }
+
+            if (other.gameObject.name == "FlamingSkull")
+            {
+                mSceneManager.mPlayerManager.score += 30;
+                mSceneManager.mPlayerManager.playerController.EnemyCollide = true;
+                other.gameObject.GetComponent<FlamingSkullController>().StartCoroutine("DestroyScript");
+            }
         }
 
         if (other.tag == "Enemy" && mSceneManager.mPlayerManager.state != PlayerManager.PlayerState.Dashing)

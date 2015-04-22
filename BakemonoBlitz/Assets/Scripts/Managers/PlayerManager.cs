@@ -630,6 +630,7 @@ public class PlayerManager : MonoBehaviour
         }
 
         yield return new WaitForSeconds(0.1f);
+        invincible = false;
     }
 
     // Initialization called by Scene Manager
