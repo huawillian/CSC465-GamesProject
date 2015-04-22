@@ -505,13 +505,17 @@ public class PlayerManager : MonoBehaviour
             if (playerController.GetComponentInChildren<DashController>().dashState == DashController.DashState.DashReady)
             {
                 playerController.GetComponentInChildren<DashController>().StartCoroutine("Dash");
+                GameObject.Find("DashingLineController").GetComponent<DashingLineController>().StartCoroutine("DashAnimationStart");
+
             }
 
             if (playerController.GetComponentInChildren<DashController>().dashState == DashController.DashState.DashLong || playerController.GetComponentInChildren<DashController>().dashState == DashController.DashState.DashExit)
             {
                 playerController.GetComponentInChildren<DashController>().StopCoroutine("Dash");
+                GameObject.Find("DashingLineController").GetComponent<DashingLineController>().StopCoroutine("DashAnimationStart");
                 playerController.gameObject.rigidbody2D.velocity = Vector2.zero;
                 playerController.GetComponentInChildren<DashController>().StartCoroutine("Dash");
+                GameObject.Find("DashingLineController").GetComponent<DashingLineController>().StartCoroutine("DashAnimationStart");
             }
         }
 

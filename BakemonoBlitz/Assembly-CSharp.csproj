@@ -50,6 +50,7 @@
      <Compile Include="Assets\CrumblingPlatformController.cs" />
      <Compile Include="Assets\DamageController.cs" />
      <Compile Include="Assets\DashController.cs" />
+     <Compile Include="Assets\DashingLineController.cs" />
      <Compile Include="Assets\EnemyTemplate.cs" />
      <Compile Include="Assets\FlamingSkullController.cs" />
      <Compile Include="Assets\GrapplingPlatformController.cs" />
@@ -89,6 +90,7 @@
      <Compile Include="Assets\Scripts\Old\ShurikenController.cs" />
      <Compile Include="Assets\Scripts\Old\TriggerButtons.cs" />
      <Compile Include="Assets\Scripts\Old\s.cs" />
+     <Compile Include="Assets\ShadowController.cs" />
      <Compile Include="Assets\UpwardsPlatformController.cs" />
      <Compile Include="Assets\VicinityScript.cs" />
      <None Include="Assets\StreamingAssets\Profiles\SaveData1.xml" />
