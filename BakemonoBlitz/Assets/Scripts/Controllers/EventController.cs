@@ -12,6 +12,13 @@ public class EventController : MonoBehaviour
     public bool levelComplete3 = false;
     public int tempTimer = 0;
 
+    //GUI variables
+    public Font font;
+    public Texture2D tex;
+    public Texture2D gemWord;
+    public Texture2D scoreWord;
+    public Texture2D timeWord;
+
     // Use this for initialization
     void Start()
     {
@@ -29,40 +36,47 @@ public class EventController : MonoBehaviour
             GUI.skin.box.fontSize = 50;
             GUI.skin.box.alignment = TextAnchor.UpperLeft;
             GUI.skin.box.fontStyle = FontStyle.Bold;
+            GUI.skin.box.font = font;
+            GUI.DrawTexture(new Rect(mSceneManager.mHUDManager.getPositionX(15), mSceneManager.mHUDManager.getPositionY(20), mSceneManager.mHUDManager.getPositionX(70), mSceneManager.mHUDManager.getPositionY(60)), tex);
+
 
             if (levelComplete1)
             {
-                GUI.Box(new Rect(mSceneManager.mHUDManager.getPositionX(30),
+                GUI.skin.box.fontSize = 90;
+                GUI.skin.box.alignment = TextAnchor.MiddleCenter;
+
+                
+                GUI.Box(new Rect(mSceneManager.mHUDManager.getPositionX(10),
                     mSceneManager.mHUDManager.getPositionY(25), 
-                    mSceneManager.mHUDManager.getPositionX(90),
+                    mSceneManager.mHUDManager.getPositionX(80),
                     mSceneManager.mHUDManager.getPositionY(40)), 
                     "LEVEL COMPLETED!");
+                GUI.skin.box.alignment = TextAnchor.UpperLeft;
+
             }
             else if(levelComplete2)
             {
-                GUI.Box(new Rect(mSceneManager.mHUDManager.getPositionX(40),
+                GUI.skin.box.alignment = TextAnchor.UpperCenter;
+
+                GUI.Box(new Rect(mSceneManager.mHUDManager.getPositionX(0),
                     mSceneManager.mHUDManager.getPositionY(20),
-                    mSceneManager.mHUDManager.getPositionX(90),
+                    mSceneManager.mHUDManager.getPositionX(100),
                     mSceneManager.mHUDManager.getPositionY(40)),
                     "BONUS");
 
-                GUI.Box(new Rect(mSceneManager.mHUDManager.getPositionX(30),
-                    mSceneManager.mHUDManager.getPositionY(35),
-                    mSceneManager.mHUDManager.getPositionX(90),
-                    mSceneManager.mHUDManager.getPositionY(40)),
-                    "TIMER: " + tempTimer);
+                GUI.skin.box.alignment = TextAnchor.UpperLeft;
 
-                GUI.Box(new Rect(mSceneManager.mHUDManager.getPositionX(30),
-                    mSceneManager.mHUDManager.getPositionY(50),
-                    mSceneManager.mHUDManager.getPositionX(90),
-                    mSceneManager.mHUDManager.getPositionY(40)),
-                    "GEMS: " + mSceneManager.mPlayerManager.gems);
+                GUI.DrawTexture(new Rect(mSceneManager.mHUDManager.getPositionX(25), mSceneManager.mHUDManager.getPositionY(35), 150, 65), timeWord);
+                GUI.Box(new Rect(mSceneManager.mHUDManager.getPositionX(55), mSceneManager.mHUDManager.getPositionY(35), 150, 65),
+                    " " + tempTimer);
 
-                GUI.Box(new Rect(mSceneManager.mHUDManager.getPositionX(30),
-                    mSceneManager.mHUDManager.getPositionY(65),
-                    mSceneManager.mHUDManager.getPositionX(90),
-                    mSceneManager.mHUDManager.getPositionY(40)),
-                    "SCORE: " + mSceneManager.mPlayerManager.score);
+                GUI.DrawTexture(new Rect(mSceneManager.mHUDManager.getPositionX(25), mSceneManager.mHUDManager.getPositionY(45), 150, 65), gemWord);
+                GUI.Box(new Rect(mSceneManager.mHUDManager.getPositionX(55), mSceneManager.mHUDManager.getPositionY(45), 150, 65),
+                    " " + mSceneManager.mPlayerManager.gems);
+
+                GUI.DrawTexture(new Rect(mSceneManager.mHUDManager.getPositionX(25), mSceneManager.mHUDManager.getPositionY(60), 180, 65), scoreWord);
+                GUI.Box(new Rect(mSceneManager.mHUDManager.getPositionX(55), mSceneManager.mHUDManager.getPositionY(60), 150, 65),
+                    " " + mSceneManager.mPlayerManager.score);
 
             }
             else if (levelComplete3)
@@ -70,11 +84,15 @@ public class EventController : MonoBehaviour
                 GUI.skin.box.fontSize = 100;
                 GUI.skin.box.alignment = TextAnchor.MiddleCenter;
 
+                
                 GUI.Box(new Rect(mSceneManager.mHUDManager.getPositionX(0),
                     mSceneManager.mHUDManager.getPositionY(0),
                     mSceneManager.mHUDManager.getPositionX(100),
                     mSceneManager.mHUDManager.getPositionY(100)),
-                    "SCORE: " + mSceneManager.mPlayerManager.score);
+                    "Score: " + mSceneManager.mPlayerManager.score + "");
+
+                GUI.skin.box.alignment = TextAnchor.UpperLeft;
+
             }
         }
     }

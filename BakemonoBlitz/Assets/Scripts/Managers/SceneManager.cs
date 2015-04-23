@@ -171,7 +171,7 @@ public class SceneManager : MonoBehaviour
             // Make a background box
             GUI.backgroundColor = Color.clear;
             GUI.color = Color.white;
-            GUI.skin.box.fontSize = 30;
+            GUI.skin.box.fontSize = 35;
             GUI.skin.box.alignment = TextAnchor.UpperLeft;
             GUI.skin.box.fontStyle = FontStyle.Bold;
 

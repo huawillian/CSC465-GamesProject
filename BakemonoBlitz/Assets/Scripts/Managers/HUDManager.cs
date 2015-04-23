@@ -51,6 +51,13 @@ public class HUDManager : MonoBehaviour
     public Texture2D hp3Texture;
     public Texture2D gemsTexture;
 
+    public Texture2D healthWord;
+    public Texture2D livesWord;
+    public Texture2D scoreWord;
+    public Texture2D timeWord;
+
+    public Font font;
+
 	// Use this for initialization
 	void Start ()
     {
@@ -80,11 +87,12 @@ public class HUDManager : MonoBehaviour
         GUI.skin.box.fontSize = 30;
         GUI.skin.box.alignment = TextAnchor.UpperLeft;
         GUI.skin.box.fontStyle = FontStyle.Bold;
+        GUI.skin.box.font = font;
 
         if (!disableHUD)
         {
             // Draw Lives
-            GUI.Box(new Rect(getPositionX(1), getPositionY(1), getPositionX(12), getPositionY(8)), "LIVES: ");
+            GUI.DrawTexture(new Rect(getPositionX(1), getPositionY(1), getPositionX(9), 40), livesWord);
 
             for (int i = 0; i < lives; i++)
             {
@@ -92,7 +100,7 @@ public class HUDManager : MonoBehaviour
             }
 
             // Draw Health
-            GUI.Box(new Rect(getPositionX(1), getPositionY(10), getPositionX(12), getPositionY(8)), "HP: ");
+            GUI.DrawTexture(new Rect(getPositionX(1), getPositionY(10), getPositionX(9), 40), healthWord);
 
             switch (health)
             {
@@ -114,13 +122,16 @@ public class HUDManager : MonoBehaviour
             }
 
             // Draw Gems
-            GUI.Box(new Rect(screenWidth / 2 - getPositionX(4), getPositionY(5), getPositionX(14), getPositionY(8)), "     " + gems);
+            GUI.Box(new Rect(screenWidth / 2 - getPositionX(4), getPositionY(5), getPositionX(14), getPositionY(8)), "       " + gems);
             GUI.DrawTexture(new Rect(screenWidth / 2 - getPositionX(4), getPositionY(1.0f), 40, 80), gemsTexture);
 
             // Draw Score
-            GUI.Box(new Rect(screenWidth - getPositionX(25), getPositionY(1), getPositionX(22), getPositionY(8)), "SCORE: " + score);
+            //GUI.Box(new Rect(screenWidth - getPositionX(25), getPositionY(1), getPositionX(22), getPositionY(8)), "SCORE: " + score);
+            GUI.DrawTexture(new Rect(screenWidth - getPositionX(25), getPositionY(1), 110, 40), scoreWord);
+            GUI.Box(new Rect(screenWidth - getPositionX(25) + 110, getPositionY(1), 110, 50), " " + score);
             // Draw Time
-            GUI.Box(new Rect(screenWidth - getPositionX(25), getPositionY(10), getPositionX(22), getPositionY(8)), "TIME: " + time);
+            GUI.DrawTexture(new Rect(screenWidth - getPositionX(25), getPositionY(10), 110, 40), timeWord);
+            GUI.Box(new Rect(screenWidth - getPositionX(25) + 110, getPositionY(10), 110, 50), " " + time);
         }
 
         if (showingTextbox)
@@ -130,7 +141,7 @@ public class HUDManager : MonoBehaviour
 
             GUI.skin.box.fontSize = 33;
             GUI.skin.box.wordWrap = true;
-            GUI.Box(new Rect(getPositionX(14) + getPositionY(26), getPositionY(7), getPositionX(60), getPositionY(26)), text);
+            GUI.Box(new Rect(getPositionX(14) + getPositionY(26), getPositionY(7), getPositionX(55), getPositionY(26)), text);
             GUI.skin.box.fontSize = 15;
         }
 
