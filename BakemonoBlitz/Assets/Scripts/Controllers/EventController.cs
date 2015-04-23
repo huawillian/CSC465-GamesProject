@@ -204,7 +204,7 @@ public class EventController : MonoBehaviour
         this.gameObject.GetComponent<BoxCollider2D>().enabled = false;
 
         mSceneManager.state = SceneManager.SceneState.Locked;
-        mSceneManager.mHUDManager.addTextToQueue("You have touched Event Speech!");
+        mSceneManager.mHUDManager.addTextToQueue("You have touched Event Speech! You have touched Event Speech! You have touched Event Speech! You have touched Event Speech! You have touched Event Speech! You have touched Event Speech! You have touched Event Speech! You have touched Event Speech!");
         mSceneManager.mHUDManager.addTextToQueue("Now releasing Lock!");
 
         while (mSceneManager.mHUDManager.texts.Count > 0)

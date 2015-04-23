@@ -46,6 +46,7 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Animation.cs" />
      <Compile Include="Assets\ChainController.cs" />
      <Compile Include="Assets\CrumblingPlatformController.cs" />
      <Compile Include="Assets\DamageController.cs" />

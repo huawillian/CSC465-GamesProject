@@ -44,7 +44,7 @@ public class DamageController : MonoBehaviour
 
         yield return new WaitForSeconds(damagedDuration);
 
-        mSceneManager.mPlayerManager.state = originalState;
+        mSceneManager.mPlayerManager.state = PlayerManager.PlayerState.Idling;
         this.gameObject.GetComponent<BoxCollider2D>().enabled = true;
 
     }

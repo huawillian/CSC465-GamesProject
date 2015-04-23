@@ -179,15 +179,15 @@ public class SceneManager : MonoBehaviour
             {
                 case 0:
                     GUI.Box(new Rect(mHUDManager.getPositionX(40), mHUDManager.getPositionY(25), mHUDManager.getPositionX(90), mHUDManager.getPositionY(30)), "Loading " + Application.loadedLevelName + ".");
-                    GUI.DrawTexture(new Rect(mHUDManager.getPositionX(60), mHUDManager.getPositionY(40), 40, 40), playerTexture1);
+                    GUI.DrawTexture(new Rect(mHUDManager.getPositionX(60), mHUDManager.getPositionY(40), 60, 70), playerTexture1);
                     break;
                 case 1:
                     GUI.Box(new Rect(mHUDManager.getPositionX(40), mHUDManager.getPositionY(25), mHUDManager.getPositionX(90), mHUDManager.getPositionY(30)), "Loading " + Application.loadedLevelName + "..");
-                    GUI.DrawTexture(new Rect(mHUDManager.getPositionX(60), mHUDManager.getPositionY(40), 40, 40), playerTexture2);
+                    GUI.DrawTexture(new Rect(mHUDManager.getPositionX(60), mHUDManager.getPositionY(40), 60, 70), playerTexture2);
                     break;
                 case 2:
                     GUI.Box(new Rect(mHUDManager.getPositionX(40), mHUDManager.getPositionY(25), mHUDManager.getPositionX(90), mHUDManager.getPositionY(30)), "Loading " + Application.loadedLevelName + "...");
-                    GUI.DrawTexture(new Rect(mHUDManager.getPositionX(60), mHUDManager.getPositionY(40), 40, 40), playerTexture3);
+                    GUI.DrawTexture(new Rect(mHUDManager.getPositionX(60), mHUDManager.getPositionY(40), 60, 70), playerTexture3);
                     break;
                 default:
                     break;
@@ -308,15 +308,7 @@ public class SceneManager : MonoBehaviour
 
         }
 
-        yield return new WaitForSeconds(1.5f);
-
-        state = SceneState.Locked;
-        mHUDManager.addTextToQueue("Scene 1. Testing");
-
-        while (this.mHUDManager.texts.Count > 0)
-        {
-            yield return new WaitForSeconds(0.5f);
-        }
+        yield return new WaitForSeconds(3.0f);
 
         state = SceneState.Playing;
     }

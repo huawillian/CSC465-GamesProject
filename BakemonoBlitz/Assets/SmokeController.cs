@@ -34,11 +34,11 @@ public class SmokeController : MonoBehaviour
             {
                 if (player.GetComponent<PlayerController>().WallCollideRight)
                 {
-                    Instantiate(smallSmoke, new Vector3(player.transform.position.x + player.collider2D.bounds.extents.x, player.transform.position.y + player.collider2D.bounds.extents.y, 0), Quaternion.identity);
+                    Instantiate(smallSmoke, new Vector3(player.transform.position.x + player.collider2D.bounds.extents.x, player.transform.position.y, 0), Quaternion.identity);
                 }
                 else
                 {
-                    Instantiate(smallSmoke, new Vector3(player.transform.position.x - player.collider2D.bounds.extents.x, player.transform.position.y + player.collider2D.bounds.extents.y, 0), Quaternion.identity);
+                    Instantiate(smallSmoke, new Vector3(player.transform.position.x - player.collider2D.bounds.extents.x, player.transform.position.y, 0), Quaternion.identity);
                 }
             }
             yield return new WaitForSeconds(0.1f);

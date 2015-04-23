@@ -439,6 +439,11 @@ public class PlayerManager : MonoBehaviour
             player.rigidbody2D.velocity = new Vector2(player.rigidbody2D.velocity.x, -maxSpeed);
         }
 
+        if (state == PlayerState.Damaged && player.GetComponent<PlayerController>().GroundCollide)
+        {
+            state = PlayerState.Idling;
+        }
+
 
     }
 

@@ -87,6 +87,17 @@ public class PlayerController : MonoBehaviour
                 renderer.sprite = Chaining;
             }
 
+            if (WallCollide)
+            {
+                if (WallCollideRight)
+                {
+                    FaceRight = true;
+                }
+                else
+                {
+                    FaceRight = false;
+                }
+            }
 
 	}
 
@@ -102,6 +113,11 @@ public class PlayerController : MonoBehaviour
         {
             GroundCollide = true;
         }
+
+        if (other.tag == "Dynamic Platform" && (mSceneManager.mPlayerManager.state == PlayerManager.PlayerState.Idling || mSceneManager.mPlayerManager.state == PlayerManager.PlayerState.Running))
+        {
+            GroundCollide = true;
+        }
     }
 
     void OnTriggerStay2D(Collider2D other)
@@ -111,6 +127,16 @@ public class PlayerController : MonoBehaviour
             WallCollide = true;
             if (this.gameObject.transform.position.x > other.gameObject.transform.position.x) WallCollideRight = false;
             else WallCollideRight = true;
+        }
+
+        if (other.tag == "Ground")
+        {
+            GroundCollide = true;
+        }
+
+        if (other.tag == "Dynamic Platform" && (mSceneManager.mPlayerManager.state == PlayerManager.PlayerState.Idling || mSceneManager.mPlayerManager.state == PlayerManager.PlayerState.Running))
+        {
+            GroundCollide = true;
         }
     }
 

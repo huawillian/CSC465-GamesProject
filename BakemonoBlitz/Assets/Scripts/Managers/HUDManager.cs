@@ -42,6 +42,7 @@ public class HUDManager : MonoBehaviour
     public LinkedList<string> texts = new LinkedList<string>();
 
     public Texture2D tex;
+    public Texture2D tex2;
 
     public Texture2D livesTexture;
     public Texture2D hp0Texture;
@@ -124,11 +125,12 @@ public class HUDManager : MonoBehaviour
 
         if (showingTextbox)
         {
-            GUI.DrawTexture(new Rect(getPositionX(5), getPositionY(3), getPositionX(90), getPositionY(30)), tex);
+            GUI.DrawTexture(new Rect(getPositionX(10), getPositionY(5), getPositionX(80), getPositionY(30)), tex);
+            GUI.DrawTexture(new Rect(getPositionX(12), getPositionY(7), getPositionY(26), getPositionY(26)), tex2);
 
-            GUI.skin.box.fontSize = 25;
+            GUI.skin.box.fontSize = 33;
             GUI.skin.box.wordWrap = true;
-            GUI.Box(new Rect(getPositionX(5), getPositionY(3), getPositionX(90), getPositionY(30)), text);
+            GUI.Box(new Rect(getPositionX(14) + getPositionY(26), getPositionY(7), getPositionX(60), getPositionY(26)), text);
             GUI.skin.box.fontSize = 15;
         }
 
@@ -214,7 +216,7 @@ public class HUDManager : MonoBehaviour
                 pressedA = false;
                 break;
             }
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.01f);
         }
 
         removeTextFromQueue();
@@ -224,6 +226,9 @@ public class HUDManager : MonoBehaviour
 
     public void A()
     {
-        pressedA = true;
+        if (showingTextbox)
+        {
+            pressedA = true;
+        }
     }
 }
