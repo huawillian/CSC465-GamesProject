@@ -35,6 +35,20 @@ public class BackgroundManager : MonoBehaviour
     {
         mSceneManager = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
         player = GameObject.Find("Player");
+        Debug.Log("Initializing " + this.gameObject.name);
+        images = GameObject.FindGameObjectsWithTag("Background");
+        horizon = GameObject.FindGameObjectsWithTag("Horizon");
+        horizonOrigPosx = new float[horizon.Length];
+        horizonOrigPosy = new float[horizon.Length];
+
+        for (int i = 0; i < horizon.Length; i++)
+        {
+
+            horizonOrigPosx[i] = horizon[i].transform.position.x;
+            horizonOrigPosy[i] = horizon[i].transform.position.y;
+        }
+
+        horSet = true;
 
         StartCoroutine("playClouds");
 
@@ -70,19 +84,6 @@ public class BackgroundManager : MonoBehaviour
     // Initialization called by Scene Manager
     public void InitializeManager()
     {
-        Debug.Log("Initializing " + this.gameObject.name);
-        images = GameObject.FindGameObjectsWithTag("Background");
-        horizon = GameObject.FindGameObjectsWithTag("Horizon");
-        horizonOrigPosx = new float[horizon.Length];
-        horizonOrigPosy = new float[horizon.Length];
 
-        for (int i = 0; i < horizon.Length; i++ )
-        {
-
-            horizonOrigPosx[i] = horizon[i].transform.position.x;
-            horizonOrigPosy[i] = horizon[i].transform.position.y;
-        }
-
-        horSet = true;
     }
 }

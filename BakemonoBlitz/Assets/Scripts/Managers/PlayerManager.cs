@@ -66,10 +66,21 @@ public class PlayerManager : MonoBehaviour
 
     public bool invincible = false;
 
+    void Awake()
+    {
+        player = GameObject.Find("Player");
+        playerController = player.GetComponent<PlayerController>();
+    }
+
 	// Use this for initialization
 	void Start ()
     {
         this.mSceneManager = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
+        Debug.Log("Initializing " + this.gameObject.name);
+
+        grappleController = GameObject.Find("Grapple").GetComponent<GrappleController>();
+        dashReady = true;
+        dashReadyFromGrapple = true;
 	}
 	
 	// Update is called once per frame
@@ -646,16 +657,7 @@ public class PlayerManager : MonoBehaviour
     // Initialization called by Scene Manager
     public void InitializeManager()
     {
-        Debug.Log("Initializing " + this.gameObject.name);
 
-        if (!(Application.loadedLevelName == "MainMenuScene"))
-        {
-            player = GameObject.Find("Player");
-            playerController = player.GetComponent<PlayerController>();
-            grappleController = GameObject.Find("Grapple").GetComponent<GrappleController>();
-            dashReady = true;
-            dashReadyFromGrapple = true;
-        }
     }
 
 }

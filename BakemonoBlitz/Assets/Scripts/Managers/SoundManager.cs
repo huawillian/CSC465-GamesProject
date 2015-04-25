@@ -39,18 +39,13 @@ public class SoundManager : MonoBehaviour
     void Start()
     {
         mSceneManager = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
-    }
-
-    // Initialization called by Scene Manager
-    public void InitializeManager()
-    {
         Debug.Log("Initializing " + this.gameObject.name);
 
         soundList = new string[] { "sound1", "sound2", "sound3", "scene", "beep1", "beep2", "starcraft", "lol", "Yoshida Brothers - Rising", "Saitama Saishuu Heiki - Momentary Life [Remix]", "coin", "oneup" };
         clip = new AudioClip[soundList.Length];
         soundHolders = new GameObject[soundList.Length];
 
-        for(int i=0; i<soundList.Length; i++)
+        for (int i = 0; i < soundList.Length; i++)
         {
             // Load Sound
             Debug.Log(soundList[i]);
@@ -64,6 +59,12 @@ public class SoundManager : MonoBehaviour
 
         backgroundMusic = new GameObject();
         backgroundMusic.AddComponent<AudioSource>();
+
+    }
+
+    // Initialization called by Scene Manager
+    public void InitializeManager()
+    {
 
     }
 
@@ -183,7 +184,7 @@ public class SoundManager : MonoBehaviour
             soundHolders[i].GetComponent<AudioSource>().volume = volume / 100.0f * soundCoefficient;
         }
 
-        soundVolume = soundHolders[0].GetComponent<AudioSource>().volume;
+        soundVolume = volume;
     }
 
     void OnDestroy()

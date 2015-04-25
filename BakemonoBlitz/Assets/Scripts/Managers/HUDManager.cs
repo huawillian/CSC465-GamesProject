@@ -27,6 +27,8 @@ using System.Collections.Generic;
 public class HUDManager : MonoBehaviour
 {
     PlayerManager mPlayerManager;
+    SceneManager mSceneManager;
+
     public int health, energy, lives, gems, score, time;
 
     private int screenWidth, screenHeight;
@@ -61,6 +63,9 @@ public class HUDManager : MonoBehaviour
 	// Use this for initialization
 	void Start ()
     {
+        Debug.Log("Initializing " + this.gameObject.name);
+        mPlayerManager = GameObject.Find("Player Manager").GetComponent<PlayerManager>();
+        mSceneManager = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
 
 	}
 	
@@ -89,7 +94,7 @@ public class HUDManager : MonoBehaviour
         GUI.skin.box.fontStyle = FontStyle.Bold;
         GUI.skin.box.font = font;
 
-        if (!disableHUD)
+        if (!disableHUD && mSceneManager.state != SceneManager.SceneState.MainMenu)
         {
             // Draw Lives
             GUI.DrawTexture(new Rect(getPositionX(1), getPositionY(1), getPositionX(9), 40), livesWord);
@@ -167,8 +172,7 @@ public class HUDManager : MonoBehaviour
     // Initialization called by Scene Manager
     public void InitializeManager()
     {
-        Debug.Log("Initializing " + this.gameObject.name);
-        mPlayerManager = GameObject.Find("Player Manager").GetComponent<PlayerManager>();
+
     }
 
     public void showTextbox(string someText)

@@ -75,6 +75,9 @@ public class SceneManager : MonoBehaviour
     public Texture2D playerTexture3;
     public int loadingStageIncrement = 0;
 
+    public Texture2D teamLogoTexture;
+    public bool displayLogo = false;
+
     // State:
     // Main Menu - Input to all except the Main Menu Controller is disabled, Main Menu is enabled, Menu is disabled
     // Playing - Everything is normal, Input to the Main Menu is disabled
@@ -195,8 +198,13 @@ public class SceneManager : MonoBehaviour
 
             GUI.DrawTexture(new Rect(mHUDManager.getPositionX(40), mHUDManager.getPositionY(40), 40, 40), livesTexture);
             GUI.Box(new Rect(mHUDManager.getPositionX(40) + 40.0f, mHUDManager.getPositionY(40), mHUDManager.getPositionX(15), mHUDManager.getPositionY(15)), " x " + mPlayerManager.lives);
+        }
 
-
+        if (displayLogo)
+        {
+            GUI.skin.box.alignment = TextAnchor.MiddleCenter;
+            GUI.DrawTexture(new Rect(0, 0, mHUDManager.getPositionX(100), mHUDManager.getPositionY(100)), loadingSceneTexture);
+            GUI.DrawTexture(new Rect(mHUDManager.getPositionX(10), mHUDManager.getPositionY(20), mHUDManager.getPositionX(80), mHUDManager.getPositionY(100)), teamLogoTexture);
         }
 
     }
@@ -230,12 +238,13 @@ public class SceneManager : MonoBehaviour
         {
             StartCoroutine(sceneName + "Script", 0.0f);
         }
+
+        mHUDManager.disableHUD = true;
+
 	}
 
     IEnumerator MainMenuScript()
     {
-        // Set the State to Main Menu, so we don't go to other Scene States
-        state = SceneState.MainMenu;
         mCameraManager.setCamera("Camera1");
 
         // Set Default Scene Properties
@@ -248,11 +257,20 @@ public class SceneManager : MonoBehaviour
         mBackgroundManager.enabled = false;
 
 
-        // Play Video Here.
+        mCameraManager.beginFadeIn();
+        displayLogo = true;
+        yield return new WaitForSeconds(1.0f);
+        mCameraManager.beginFadeOut();
+        yield return new WaitForSeconds(3.0f);
+        displayLogo = false;
+
+        // Set the State to Main Menu, so we don't go to other Scene States
+        state = SceneState.MainMenu;
 
         // Fade into game Menu when done with Video
         mCameraManager.beginFadeIn();
         mMainMenuController.showMenu = true;
+
 
         // Play Background Music Here.
         mSoundManager.playSound("Yoshida Brothers - Rising", Vector3.zero);

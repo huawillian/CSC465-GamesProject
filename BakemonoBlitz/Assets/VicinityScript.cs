@@ -49,6 +49,11 @@ public class VicinityScript : MonoBehaviour
             {
                 parentObject.GetComponent<KappaController>().playerFound = true;
             }
+
+            if (parentObject.name == "AggressiveFloatingHead")
+            {
+                parentObject.GetComponent<AggressiveFloatingHeadController>().playerFound = true;
+            }
         }
     }
 
@@ -84,6 +89,11 @@ public class VicinityScript : MonoBehaviour
             if (parentObject.name == "Kappa")
             {
                 parentObject.GetComponent<KappaController>().playerFound = true;
+            }
+
+            if (parentObject.name == "AggressiveFloatingHead")
+            {
+                parentObject.GetComponent<AggressiveFloatingHeadController>().playerFound = true;
             }
         }
     }

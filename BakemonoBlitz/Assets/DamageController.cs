@@ -22,11 +22,30 @@ public class DamageController : MonoBehaviour
     
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Enemy" && mSceneManager.mPlayerManager.state != PlayerManager.PlayerState.Dashing && !mSceneManager.mPlayerManager.invincible && mSceneManager.mPlayerManager.state != PlayerManager.PlayerState.Damaged)
+        if (other.tag == "Enemy" && mSceneManager.mPlayerManager.state != PlayerManager.PlayerState.Dashing && !mSceneManager.mPlayerManager.invincible && mSceneManager.mPlayerManager.state != PlayerManager.PlayerState.Damaged && other.gameObject.name != "AggressiveFloatingHead")
         {
             this.gameObject.GetComponent<BoxCollider2D>().enabled = false;
             collidedEnemy = other.gameObject;
             StartCoroutine("PlayerDamagedScript");
+        }
+
+        if (other.gameObject.name == "AggressiveFloatingHead")
+        {
+
+            Vector3 posDiff = mSceneManager.mPlayerManager.player.gameObject.transform.position - other.gameObject.transform.position;
+            mSceneManager.mPlayerManager.player.rigidbody2D.AddForce(new Vector2(posDiff.x * 500, posDiff.y * 500));
+
+        }
+    }
+
+    void OnTriggerEnterStay2D(Collider2D other)
+    {
+        if (other.gameObject.name == "AggressiveFloatingHead")
+        {
+
+            Vector3 posDiff = mSceneManager.mPlayerManager.player.gameObject.transform.position - other.gameObject.transform.position;
+            mSceneManager.mPlayerManager.player.rigidbody2D.AddForce(new Vector2(posDiff.x * 500, posDiff.y * 500));
+
         }
     }
 

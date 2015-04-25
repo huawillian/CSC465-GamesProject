@@ -256,6 +256,13 @@ public class DashController : MonoBehaviour
                 mSceneManager.mPlayerManager.playerController.EnemyCollide = true;
                 other.gameObject.GetComponent<FlamingSkullController>().StartCoroutine("DestroyScript");
             }
+
+            if (other.gameObject.name == "AggressiveFloatingHead")
+            {
+                mSceneManager.mPlayerManager.score += 25;
+                mSceneManager.mPlayerManager.playerController.EnemyCollide = true;
+                other.gameObject.GetComponent<AggressiveFloatingHeadController>().StartCoroutine("DestroyScript");
+            }
         }
 
         if (other.tag == "Enemy" && mSceneManager.mPlayerManager.state != PlayerManager.PlayerState.Dashing)
@@ -295,6 +302,13 @@ public class DashController : MonoBehaviour
                 mSceneManager.mPlayerManager.score += 30;
                 mSceneManager.mPlayerManager.playerController.EnemyCollide = true;
                 other.gameObject.GetComponent<FlamingSkullController>().StartCoroutine("DestroyScript");
+            }
+
+            if (other.gameObject.name == "AggressiveFloatingHead")
+            {
+                mSceneManager.mPlayerManager.score += 25;
+                mSceneManager.mPlayerManager.playerController.EnemyCollide = true;
+                other.gameObject.GetComponent<AggressiveFloatingHeadController>().StartCoroutine("DestroyScript");
             }
         }
 
