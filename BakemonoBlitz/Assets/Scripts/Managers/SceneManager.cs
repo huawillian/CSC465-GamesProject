@@ -39,7 +39,7 @@ public class SceneManager : MonoBehaviour
     public int mSceneNumber = 1;
     public int mCheckpointNumber = 1;
     public float mVolume = 100.0f;
-    public float mResolution = 5.0f;
+    public float mResolution = 4.0f;
 
     public MenuController mMenuController;
     public MainMenuController mMainMenuController;
@@ -55,9 +55,6 @@ public class SceneManager : MonoBehaviour
 
     public enum SceneState { MainMenu, Playing, Paused, Locked, Animating, SceneComplete, GameOver, Retry};
     public SceneState state = SceneState.Playing;
-    public float tempVol;
-
-    public float pausedVolumeCoefficient = 0.5f;
 
     // Set and place player at these locations at the start of the scene
     public Vector3 playerStart, playerEnd;
@@ -249,7 +246,7 @@ public class SceneManager : MonoBehaviour
 
         // Set Default Scene Properties
         mProfileManager.LoadProfile(0);
-        mProfileManager.setResolution(5.0f);
+        mProfileManager.setResolution(4.0f);
         mProfileManager.setVolume(100.0f);
 
         // Disable Unecessary Managers
@@ -477,7 +474,12 @@ public class SceneManager : MonoBehaviour
 
                 mPlayerManager.lives--;
 
-            if(mPlayerManager.lives != -1)
+            if (mPlayerManager.lives <= -1)
+            {
+                mPlayerManager.health = -2;
+                StartCoroutine("GameOverAnimation");
+            }
+            else
             {
                 mPlayerManager.health = 3;
                 mProfileManager.SaveProfile(0);
@@ -485,11 +487,7 @@ public class SceneManager : MonoBehaviour
             }
         }
 
-        if (mPlayerManager.lives == -1)
-        {
-            mPlayerManager.lives = -2;
-            StartCoroutine("GameOverAnimation");
-        }
+
 
     }
 
@@ -551,22 +549,14 @@ public class SceneManager : MonoBehaviour
         }
     }
 
-
-
     public void StartButton()
     {
         switch (state)
         {
             case SceneState.Playing:
-                tempVol = mVolume;
-                this.mProfileManager.setVolume(mVolume * pausedVolumeCoefficient);
                 state = SceneState.Paused;
                 break;
             case SceneState.Paused:
-                if (tempVol == mVolume / pausedVolumeCoefficient)
-                {
-                    this.mProfileManager.setVolume(tempVol);
-                }
                 state = SceneState.Playing;
                 break;
             default:

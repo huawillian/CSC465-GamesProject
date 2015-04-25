@@ -66,6 +66,9 @@ public class PlayerManager : MonoBehaviour
 
     public bool invincible = false;
 
+    public int maxLives = 5;
+    public int maxHealth = 3;
+
     void Awake()
     {
         player = GameObject.Find("Player");
@@ -450,11 +453,15 @@ public class PlayerManager : MonoBehaviour
             player.rigidbody2D.velocity = new Vector2(player.rigidbody2D.velocity.x, -maxSpeed);
         }
 
-        if (state == PlayerState.Damaged && player.GetComponent<PlayerController>().GroundCollide)
+        if (lives > maxLives)
         {
-            state = PlayerState.Idling;
+            lives = maxLives;
         }
 
+        if (health > maxHealth)
+        {
+            health = maxHealth;
+        }
 
     }
 

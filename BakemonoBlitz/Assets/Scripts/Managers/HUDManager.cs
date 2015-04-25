@@ -43,8 +43,11 @@ public class HUDManager : MonoBehaviour
 
     public LinkedList<string> texts = new LinkedList<string>();
 
+    // Displaying Speech pictures
     public Texture2D tex;
     public Texture2D tex2;
+    public Texture2D tex3;
+    public bool texSelector = false;
 
     public Texture2D livesTexture;
     public Texture2D hp0Texture;
@@ -66,7 +69,7 @@ public class HUDManager : MonoBehaviour
         Debug.Log("Initializing " + this.gameObject.name);
         mPlayerManager = GameObject.Find("Player Manager").GetComponent<PlayerManager>();
         mSceneManager = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
-
+        StartCoroutine("AlternateSpeechPicture");
 	}
 	
 	// Update is called once per frame
@@ -83,6 +86,15 @@ public class HUDManager : MonoBehaviour
         time = mPlayerManager.time;
 
 	}
+
+    IEnumerator AlternateSpeechPicture()
+    {
+        while (true)
+        {
+            texSelector = !texSelector;
+            yield return new WaitForSeconds(0.5f);
+        }
+    }
 
     void OnGUI()
     {
@@ -142,7 +154,15 @@ public class HUDManager : MonoBehaviour
         if (showingTextbox)
         {
             GUI.DrawTexture(new Rect(getPositionX(10), getPositionY(5), getPositionX(80), getPositionY(30)), tex);
-            GUI.DrawTexture(new Rect(getPositionX(12), getPositionY(7), getPositionY(26), getPositionY(26)), tex2);
+
+            if (texSelector)
+            {
+                GUI.DrawTexture(new Rect(getPositionX(12), getPositionY(7), getPositionY(26), getPositionY(26)), tex2);
+            }
+            else
+            {
+                GUI.DrawTexture(new Rect(getPositionX(12), getPositionY(7), getPositionY(26), getPositionY(26)), tex3);
+            }
 
             GUI.skin.box.fontSize = 33;
             GUI.skin.box.wordWrap = true;

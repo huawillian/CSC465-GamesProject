@@ -98,8 +98,17 @@ public class AggressiveFloatingHeadController : MonoBehaviour {
             Vector3 distDiff = player.transform.position - this.transform.position;
             distDiff = Vector3.Normalize(distDiff);
             
+            this.rigidbody2D.velocity = distDiff * 6.0f;
 
-            this.rigidbody2D.velocity = distDiff * 5.0f;
+            if (this.rigidbody2D.velocity.x > 0)
+            {
+                this.gameObject.transform.rotation = new Quaternion(0, 0, 0, 0);
+            }
+            else
+            {
+                this.gameObject.transform.rotation = new Quaternion(0, 180, 0, 0);
+            }
+
             yield return new WaitForSeconds(0.5f);
         }
     }

@@ -93,6 +93,7 @@ public class GrappleController : MonoBehaviour
     float timeStamp = 0.0f;
     float translationTime = 1.0f;
     public float minimumRadius = 2.3f;
+    public float minimumHook = 0.5f;
 
     void FixedUpdate()
     {
@@ -122,17 +123,15 @@ public class GrappleController : MonoBehaviour
 
     IEnumerator SwingStart()
     {
-        mSceneManager.mPlayerManager.lockPlayerInput = true;
-
         radius = Mathf.Sqrt((this.gameObject.transform.position.x - mSceneManager.mPlayerManager.playerController.gameObject.transform.position.x) * (this.gameObject.transform.position.x - mSceneManager.mPlayerManager.playerController.gameObject.transform.position.x) + (this.gameObject.transform.position.y - mSceneManager.mPlayerManager.playerController.gameObject.transform.position.y) * (this.gameObject.transform.position.y - mSceneManager.mPlayerManager.playerController.gameObject.transform.position.y));
 
-
+        mSceneManager.mPlayerManager.lockPlayerInput = true;
         timeStamp = Time.time;
         translationTime = 1.0f * radius / 8.0f;
         swinging = true;
 
         // Exit State, Duration, Collided by Wall, or Collided by Ground
-        while (mSceneManager.mPlayerManager.state == PlayerManager.PlayerState.Swinging && swinging && mSceneManager.mPlayerManager.RTH && Time.time - timeStamp <= translationTime && radius > 0.5f)
+        while (mSceneManager.mPlayerManager.state == PlayerManager.PlayerState.Swinging && swinging && mSceneManager.mPlayerManager.RTH && Time.time - timeStamp <= translationTime && radius > 0.5f && radius > minimumHook)
         {
 
             yield return new WaitForSeconds(0.01f);

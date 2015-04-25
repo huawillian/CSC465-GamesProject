@@ -55,7 +55,11 @@ public class KappaController : MonoBehaviour {
         while (!playerFound)
         {
             yield return StartCoroutine(MoveObject(transform, patrolACoordinates, patrolBCoordinates, 2.0f));
+            this.gameObject.transform.rotation = new Quaternion(0, 0, 0, 0);
+
             yield return StartCoroutine(MoveObject(transform, patrolBCoordinates, patrolACoordinates, 2.0f));
+            this.gameObject.transform.rotation = new Quaternion(0, 180, 0, 0);
+
         }
     }
 
@@ -96,6 +100,18 @@ public class KappaController : MonoBehaviour {
         {
             if (mSceneManager.state != SceneManager.SceneState.Paused && mSceneManager.state != SceneManager.SceneState.Locked)
             Instantiate(projectile, this.gameObject.transform.position, Quaternion.identity);
+
+            Vector3 distDiff = player.transform.position - this.transform.position;
+
+            if (distDiff.x > 0)
+            {
+                this.gameObject.transform.rotation = new Quaternion(0, 0, 0, 0);
+            }
+            else
+            {
+                this.gameObject.transform.rotation = new Quaternion(0, 180, 0, 0);
+            }
+
             yield return new WaitForSeconds(shootingDelay);
         }
     }

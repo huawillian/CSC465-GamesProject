@@ -5,7 +5,7 @@ public class DamageController : MonoBehaviour
 {
     SceneManager mSceneManager;
 
-    public float damagedDuration = 0.5f;
+    public float damagedDuration = 0.1f;
     public GameObject collidedEnemy;
 
 	// Use this for initialization

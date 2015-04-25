@@ -69,7 +69,16 @@ public class RedFloatingHeadController : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
+        Vector3 distDiff = player.transform.position - this.transform.position;
 
+        if (distDiff.x > 0)
+        {
+            this.gameObject.transform.rotation = new Quaternion(0, 0, 0, 0);
+        }
+        else
+        {
+            this.gameObject.transform.rotation = new Quaternion(0, 180, 0, 0);
+        }
     }
 
     IEnumerator DestroyScript()

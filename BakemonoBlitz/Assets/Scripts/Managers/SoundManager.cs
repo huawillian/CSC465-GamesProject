@@ -68,26 +68,10 @@ public class SoundManager : MonoBehaviour
 
     }
 
-    public void Update()
+    void Update()
     {
         Vector3 camPos = mSceneManager.mCameraManager.getCurrentCamera().transform.position;
         backgroundMusic.transform.position = new Vector3(camPos.x, camPos.y, 0);
-
-        // Set Background Music Volume
-        if (Math.Abs(backgroundMusicVolume - soundVolume * backgroundMusicCoefficient) > 0.01f)
-        {
-            backgroundMusicVolume = soundVolume * backgroundMusicCoefficient;
-
-            for (int i = 0; i < soundList.Length; i++)
-            {
-                if (soundHolders[i] == backgroundMusic)
-                {
-                    soundHolders[i].GetComponent<AudioSource>().volume = backgroundMusicVolume;
-                }
-            }
-
-        }
-
     }
 
     // Called by other classes to play sound

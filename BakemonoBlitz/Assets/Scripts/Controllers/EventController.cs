@@ -19,6 +19,14 @@ public class EventController : MonoBehaviour
     public Texture2D scoreWord;
     public Texture2D timeWord;
 
+    //Input used to skip Level Complete part
+    public bool skipBonus = false;
+    public Texture2D frame1;
+    public Texture2D frame2;
+
+    // Set in editor for Speech Event
+    public string speechString = "Enter Speech Here...";
+
     // Use this for initialization
     void Start()
     {
@@ -222,8 +230,18 @@ public class EventController : MonoBehaviour
         this.gameObject.GetComponent<BoxCollider2D>().enabled = false;
 
         mSceneManager.state = SceneManager.SceneState.Locked;
-        mSceneManager.mHUDManager.addTextToQueue("You have touched Event Speech! You have touched Event Speech! You have touched Event Speech! You have touched Event Speech! You have touched Event Speech! You have touched Event Speech! You have touched Event Speech! You have touched Event Speech!");
-        mSceneManager.mHUDManager.addTextToQueue("Now releasing Lock!");
+
+        if (frame1 != null)
+        {
+            mSceneManager.mHUDManager.tex2 = frame1;
+        }
+
+        if (frame2 != null)
+        {
+            mSceneManager.mHUDManager.tex3 = frame2;
+        }
+
+        mSceneManager.mHUDManager.addTextToQueue(speechString + " ");
 
         while (mSceneManager.mHUDManager.texts.Count > 0)
         {
@@ -271,6 +289,19 @@ public class EventController : MonoBehaviour
                 tempTimer = 0;
             }
 
+            if (skipBonus)
+            {
+                mSceneManager.mPlayerManager.score += mSceneManager.mPlayerManager.gems * 10;
+                mSceneManager.mPlayerManager.gems = 0;
+
+                if (tempTimer < 200 && tempTimer != 0)
+                {
+                    mSceneManager.mPlayerManager.score += (200 - tempTimer) * 10;
+                    tempTimer = 0;
+                }
+
+            }
+
             mSceneManager.mSoundManager.playSound("coin", mSceneManager.mCameraManager.getCamera("Main Camera").transform.position);
             yield return new WaitForSeconds(0.05f);
         }
@@ -285,4 +316,13 @@ public class EventController : MonoBehaviour
 
         StartCoroutine("NextStart");
     }
+
+    public void A()
+    {
+        if (levelComplete2)
+        {
+            skipBonus = true;
+        }
+    }
+
 }

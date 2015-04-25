@@ -39,18 +39,22 @@ public class FlamingSkullController : MonoBehaviour
             case 0:
                 currentStartPos = pos1;
                 currentEndPos = pos2;
+                this.gameObject.transform.rotation = new Quaternion(0, 180, 0, 0);
                 break;
             case 1:
                 currentStartPos = pos2;
                 currentEndPos = pos1;
+                this.gameObject.transform.rotation = new Quaternion(0, 0, 0, 0);
                 break;
             case 2:
                 currentStartPos = pos1;
                 currentEndPos = pos3;
+                this.gameObject.transform.rotation = new Quaternion(0, 0, 0, 0);
                 break;
             case 3:
                 currentStartPos = pos3;
                 currentEndPos = pos1;
+                this.gameObject.transform.rotation = new Quaternion(0, 180, 0, 0);
                 break;
             default:
                 break;

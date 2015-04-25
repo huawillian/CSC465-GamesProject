@@ -117,6 +117,15 @@ public class InputManager : MonoBehaviour {
             mSceneManager.mMenuController.A();
             mSceneManager.mMainMenuController.A();
             mSceneManager.mPlayerManager.A();
+
+            GameObject events = GameObject.Find("EventLevelComplete");
+
+            if (events != null)
+            {
+                events.GetComponent<EventController>().A();
+            }
+
+
         }
 
         if (Input.GetKeyUp(KeyCode.Keypad2) || Input.GetButtonUp("A"))

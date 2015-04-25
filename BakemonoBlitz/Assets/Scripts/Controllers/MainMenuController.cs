@@ -23,9 +23,9 @@ public class MainMenuController : MonoBehaviour
     private float volMin = 0.0f;
     private float volMax = 100.0f;
 
-    public float resolution = 5.0f;
+    public float resolution = 4.0f;
     private float resMin = 3.0f;
-    private float resMax = 7.0f;
+    private float resMax = 5.0f;
 
     public enum MainMenuState { StartScreen, Menu, NewGame, LoadGame, Settings, SettingsSound, SettingsVideo, QuitGame };
     public MainMenuState state;
