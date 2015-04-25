@@ -85,15 +85,14 @@ public class GrappleController : MonoBehaviour
         {
             this.transform.rotation = new Quaternion(0, 180, 0, 0);
         }
-
     }
 
     public float radius = 6.0f;
     public bool swinging = false;
     float timeStamp = 0.0f;
     float translationTime = 1.0f;
-    public float minimumRadius = 2.3f;
-    public float minimumHook = 0.5f;
+    public float minimumRadius = 4.0f;
+    public float minimumHook = 1.0f;
 
     void FixedUpdate()
     {
@@ -114,10 +113,6 @@ public class GrappleController : MonoBehaviour
             }
             mSceneManager.mPlayerManager.playerController.gameObject.transform.position = new Vector3(currX, currY, 0);
 
-            if (reelingIn && radius >= minimumRadius + 0.2f)
-            {
-                radius -= reelingSpeed;
-            }
         }
     }
 
@@ -138,8 +133,17 @@ public class GrappleController : MonoBehaviour
 
             if (radius < minimumRadius)
             {
-                    radius += reelingSpeed * 2.0f;
+                    radius += reelingSpeed / 5.0f * (minimumRadius / radius);
             }
+
+            if (swinging && !mSceneManager.mPlayerManager.playerController.EnemyCollide && !mSceneManager.mPlayerManager.playerController.WallCollide && !mSceneManager.mPlayerManager.playerController.GroundCollide)
+            {
+                if (reelingIn && radius >= minimumRadius + 0.2f)
+                {
+                    radius -= reelingSpeed / 10.0f;
+                }
+            }
+
 
             translationTime = 1.0f * radius / 8.0f;
 

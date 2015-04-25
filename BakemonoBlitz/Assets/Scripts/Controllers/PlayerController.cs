@@ -157,5 +157,10 @@ public class PlayerController : MonoBehaviour
         {
             EnemyCollide = false;
         }
+
+        if (other.tag == "Dynamic Platform")
+        {
+            GroundCollide = false;
+        }
     }
 }

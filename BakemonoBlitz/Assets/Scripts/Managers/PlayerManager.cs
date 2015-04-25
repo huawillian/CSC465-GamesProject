@@ -69,6 +69,11 @@ public class PlayerManager : MonoBehaviour
     public int maxLives = 5;
     public int maxHealth = 3;
 
+    // Variables used to fix bug, where player is on ground and stuck in Jumping/Falling state
+    public float lastYCoor = 0.0f;
+    public bool recordLastY = false;
+    public float timeStartedRecord = 0.0f;
+
     void Awake()
     {
         player = GameObject.Find("Player");
@@ -463,6 +468,25 @@ public class PlayerManager : MonoBehaviour
             health = maxHealth;
         }
 
+        if((state == PlayerState.Jumping || state == PlayerState.Falling))
+        {
+            if (Math.Abs(lastYCoor - player.transform.position.y) < 0.001 && !recordLastY)
+            {
+                recordLastY = true;
+                timeStartedRecord = Time.time;
+            }
+
+            if (recordLastY && Math.Abs(lastYCoor - player.transform.position.y) < 0.001 && Time.time - timeStartedRecord > 2.0f)
+            {
+                state = PlayerState.Idling;
+            }
+        }
+        else
+        {
+            recordLastY = false;
+        }
+
+        lastYCoor = player.transform.position.y;
     }
 
 
