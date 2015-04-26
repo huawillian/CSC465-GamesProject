@@ -91,7 +91,7 @@ public class GrappleController : MonoBehaviour
     public bool swinging = false;
     float timeStamp = 0.0f;
     float translationTime = 1.0f;
-    public float minimumRadius = 4.0f;
+    public float minimumRadius = 2.25f;
     public float minimumHook = 1.0f;
 
     void FixedUpdate()
@@ -133,7 +133,7 @@ public class GrappleController : MonoBehaviour
 
             if (radius < minimumRadius)
             {
-                    radius += reelingSpeed / 5.0f * (minimumRadius / radius);
+                    radius += reelingSpeed / 3.5f * (minimumRadius / radius);
             }
 
             if (swinging && !mSceneManager.mPlayerManager.playerController.EnemyCollide && !mSceneManager.mPlayerManager.playerController.WallCollide && !mSceneManager.mPlayerManager.playerController.GroundCollide)
@@ -236,8 +236,8 @@ public class GrappleController : MonoBehaviour
             }
         }
 
+        mSceneManager.mPlayerManager.state = PlayerManager.PlayerState.Jumping;
 
-        mSceneManager.mPlayerManager.state = PlayerManager.PlayerState.Falling;
         mSceneManager.mPlayerManager.grappleState = PlayerManager.GrappleState.GrappleRetracting;
         swinging = false;
         mSceneManager.mPlayerManager.lockPlayerInput = false;

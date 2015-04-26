@@ -27,6 +27,14 @@ public class EventController : MonoBehaviour
     // Set in editor for Speech Event
     public string speechString = "Enter Speech Here...";
 
+    // Variables used for event camera
+    public enum CameraPatrolState { Idle, MovingA, MovingB };
+    public CameraPatrolState cameraPatrolState;
+    public float cameraSize = 2.5f;
+    public float cameraTransitionTime = 1.0f;
+    public float cameraStayTime = 4.0f;
+    public GameObject cameraObj;
+
     // Use this for initialization
     void Start()
     {
@@ -138,6 +146,11 @@ public class EventController : MonoBehaviour
             {
                 StartCoroutine("LevelCompleteStart");
             }
+
+            if (this.gameObject.name == "EventCamera")
+            {
+                StartCoroutine("CameraStart");
+            }
         }
 
     }
@@ -245,10 +258,22 @@ public class EventController : MonoBehaviour
 
         while (mSceneManager.mHUDManager.texts.Count > 0)
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.1f);
+        }
+
+
+        mSceneManager.state = SceneManager.SceneState.Animating;
+
+        float timestart = Time.time;
+
+        while (Time.time - timestart < 0.5f)
+        {
+            mSceneManager.mPlayerManager.player.rigidbody2D.velocity = new Vector2(0, mSceneManager.mPlayerManager.player.rigidbody2D.velocity.y);
+            yield return new WaitForSeconds(0.005f);
         }
 
         mSceneManager.state = SceneManager.SceneState.Playing;
+
 
         mSceneManager.mStageManager.removeEvent(this.gameObject);
 
@@ -276,10 +301,10 @@ public class EventController : MonoBehaviour
             if (mSceneManager.mPlayerManager.gems != 0)
             {
                 mSceneManager.mPlayerManager.gems--;
-                mSceneManager.mPlayerManager.score = mSceneManager.mPlayerManager.score + 10;
+                mSceneManager.mPlayerManager.score = mSceneManager.mPlayerManager.score + 15;
             }
 
-            if (tempTimer < 200 && tempTimer != 0)
+            if (tempTimer < 500 && tempTimer != 0)
             {
                 tempTimer++;
                 mSceneManager.mPlayerManager.score = mSceneManager.mPlayerManager.score + 10;
@@ -291,19 +316,19 @@ public class EventController : MonoBehaviour
 
             if (skipBonus)
             {
-                mSceneManager.mPlayerManager.score += mSceneManager.mPlayerManager.gems * 10;
+                mSceneManager.mPlayerManager.score += mSceneManager.mPlayerManager.gems * 15;
                 mSceneManager.mPlayerManager.gems = 0;
 
-                if (tempTimer < 200 && tempTimer != 0)
+                if (tempTimer < 500 && tempTimer != 0)
                 {
-                    mSceneManager.mPlayerManager.score += (200 - tempTimer) * 10;
+                    mSceneManager.mPlayerManager.score += (500 - tempTimer) * 10;
                     tempTimer = 0;
                 }
 
             }
 
             mSceneManager.mSoundManager.playSound("coin", mSceneManager.mCameraManager.getCamera("Main Camera").transform.position);
-            yield return new WaitForSeconds(0.05f);
+            yield return new WaitForSeconds(0.02f);
         }
 
         yield return new WaitForSeconds(1.0f);
@@ -322,6 +347,88 @@ public class EventController : MonoBehaviour
         if (levelComplete2)
         {
             skipBonus = true;
+        }
+    }
+
+    IEnumerator CameraStart()
+    {
+        this.gameObject.GetComponent<BoxCollider2D>().enabled = false;
+
+        float timestart = Time.time;
+        while (Time.time - timestart < 0.5f)
+        {
+            mSceneManager.mPlayerManager.player.rigidbody2D.velocity = new Vector2(0, mSceneManager.mPlayerManager.player.rigidbody2D.velocity.y);
+            yield return new WaitForSeconds(0.005f);
+        }
+
+
+        cameraPatrolState = CameraPatrolState.Idle;
+        // Patrol Coordinates
+        GameObject patrolA = null;
+        GameObject patrolB = null;
+        cameraObj = null;
+        Vector3 patrolACoordinates;
+        Vector3 patrolBCoordinates;
+
+        foreach (Transform t in this.transform)
+        {
+            if (t.name == "PatrolA")
+                patrolA = t.gameObject;
+
+            if (t.name == "PatrolB")
+                patrolB = t.gameObject;
+
+            if (t.name == "Camera")
+                cameraObj = t.gameObject;
+        }
+
+        patrolACoordinates = patrolA.transform.position;
+        patrolBCoordinates = patrolB.transform.position;
+
+        mSceneManager.mCameraManager.setCamera(cameraObj.name);
+
+        cameraPatrolState = CameraPatrolState.MovingA;
+        yield return StartCoroutine(MoveObject(transform, patrolACoordinates, patrolBCoordinates, cameraTransitionTime));
+
+        yield return new WaitForSeconds(cameraStayTime);
+
+        cameraPatrolState = CameraPatrolState.MovingB;
+        yield return StartCoroutine(MoveObject(transform, patrolBCoordinates, patrolACoordinates, cameraTransitionTime));
+
+
+        cameraPatrolState = CameraPatrolState.Idle;
+
+        mSceneManager.mCameraManager.setCamera("Main Camera");
+
+        cameraObj.transform.parent = mSceneManager.gameObject.transform.parent;
+        mSceneManager.mStageManager.removeEvent(this.gameObject);
+
+        Destroy(this.gameObject);
+    }
+
+
+
+
+    IEnumerator MoveObject(Transform thisTransform, Vector3 startPos, Vector3 endPos, float time)
+    {
+        // Patrol only if player hasn't been found
+        double i = 0.0d;
+        double rate = 1.0d / time;
+        while (i < 1.0d)
+        {
+            i += Time.deltaTime * rate;
+            thisTransform.position = Vector3.Lerp(startPos, endPos, (float)i);
+
+            if (cameraPatrolState == CameraPatrolState.MovingA)
+            {
+                cameraObj.camera.orthographicSize = mSceneManager.mResolution + (cameraSize - mSceneManager.mResolution) * (float)i;
+            }
+            else
+            {
+                cameraObj.camera.orthographicSize = cameraSize + (mSceneManager.mResolution - cameraSize) * (float)i;
+            }
+
+            yield return null;
         }
     }
 

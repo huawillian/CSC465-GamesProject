@@ -35,6 +35,7 @@ public class SceneManager : MonoBehaviour
     public StageManager mStageManager;
     public VideoManager mVideoManager;
     public ProfileManager mProfileManager;
+    public LevelManager mLevelManager;
 
     public int mSceneNumber = 1;
     public int mCheckpointNumber = 1;
@@ -107,7 +108,7 @@ public class SceneManager : MonoBehaviour
         mStageManager = GameObject.Find("Stage Manager").GetComponent<StageManager>();
         mVideoManager = GameObject.Find("Video Manager").GetComponent<VideoManager>();
         mProfileManager = GameObject.Find("Profile Manager").GetComponent<ProfileManager>();
-
+        mLevelManager = GameObject.Find("Level Manager").GetComponent<LevelManager>();
 
         Debug.Log("Initializing other Managers...");
         mCameraManager.InitializeManager();
@@ -178,15 +179,15 @@ public class SceneManager : MonoBehaviour
             switch (loadingStageIncrement)
             {
                 case 0:
-                    GUI.Box(new Rect(mHUDManager.getPositionX(40), mHUDManager.getPositionY(25), mHUDManager.getPositionX(90), mHUDManager.getPositionY(30)), "Loading " + Application.loadedLevelName + ".");
+                    GUI.Box(new Rect(mHUDManager.getPositionX(40), mHUDManager.getPositionY(25), mHUDManager.getPositionX(90), mHUDManager.getPositionY(30)), "Loading Level " + mLevelManager.data.level + "-" + mLevelManager.data.stage + ".");
                     GUI.DrawTexture(new Rect(mHUDManager.getPositionX(60), mHUDManager.getPositionY(40), 60, 70), playerTexture1);
                     break;
                 case 1:
-                    GUI.Box(new Rect(mHUDManager.getPositionX(40), mHUDManager.getPositionY(25), mHUDManager.getPositionX(90), mHUDManager.getPositionY(30)), "Loading " + Application.loadedLevelName + "..");
+                    GUI.Box(new Rect(mHUDManager.getPositionX(40), mHUDManager.getPositionY(25), mHUDManager.getPositionX(90), mHUDManager.getPositionY(30)), "Loading Level " + mLevelManager.data.level + "-" + mLevelManager.data.stage + "..");
                     GUI.DrawTexture(new Rect(mHUDManager.getPositionX(60), mHUDManager.getPositionY(40), 60, 70), playerTexture2);
                     break;
                 case 2:
-                    GUI.Box(new Rect(mHUDManager.getPositionX(40), mHUDManager.getPositionY(25), mHUDManager.getPositionX(90), mHUDManager.getPositionY(30)), "Loading " + Application.loadedLevelName + "...");
+                    GUI.Box(new Rect(mHUDManager.getPositionX(40), mHUDManager.getPositionY(25), mHUDManager.getPositionX(90), mHUDManager.getPositionY(30)), "Loading Level " + mLevelManager.data.level + "-" + mLevelManager.data.stage + "...");
                     GUI.DrawTexture(new Rect(mHUDManager.getPositionX(60), mHUDManager.getPositionY(40), 60, 70), playerTexture3);
                     break;
                 default:
@@ -203,7 +204,6 @@ public class SceneManager : MonoBehaviour
             GUI.DrawTexture(new Rect(0, 0, mHUDManager.getPositionX(100), mHUDManager.getPositionY(100)), loadingSceneTexture);
             GUI.DrawTexture(new Rect(mHUDManager.getPositionX(10), mHUDManager.getPositionY(20), mHUDManager.getPositionX(80), mHUDManager.getPositionY(100)), teamLogoTexture);
         }
-
     }
 	// Use this for initialization
 	void Start ()
@@ -221,6 +221,9 @@ public class SceneManager : MonoBehaviour
 
         string sceneName = Application.loadedLevelName;
 
+        mLevelManager.loadCurrentLevel();
+
+        /*
         if(sceneName.Equals("MainMenuScene"))
         {
             StartCoroutine("MainMenuScript", 0.0f);
@@ -234,138 +237,19 @@ public class SceneManager : MonoBehaviour
         if (sceneName.StartsWith("Scene"))
         {
             StartCoroutine(sceneName + "Script", 0.0f);
-        }
+        }*/
 
         mHUDManager.disableHUD = true;
 
+        // This needs to be called after profile is loaded
+        if (mLevelManager.data.level > 0 && mLevelManager.data.stage == 1)
+        {
+            mPlayerManager.savedTime = 0;
+            mPlayerManager.startTime = Time.time;
+        }
+
+        mCameraManager.setCamera("Main Camera");
 	}
-
-    IEnumerator MainMenuScript()
-    {
-        mCameraManager.setCamera("Camera1");
-
-        // Set Default Scene Properties
-        mProfileManager.LoadProfile(0);
-        mProfileManager.setResolution(4.0f);
-        mProfileManager.setVolume(100.0f);
-
-        // Disable Unecessary Managers
-        mMainMenuController.showMenu = false;
-        mBackgroundManager.enabled = false;
-
-
-        mCameraManager.beginFadeIn();
-        displayLogo = true;
-        yield return new WaitForSeconds(1.0f);
-        mCameraManager.beginFadeOut();
-        yield return new WaitForSeconds(3.0f);
-        displayLogo = false;
-
-        // Set the State to Main Menu, so we don't go to other Scene States
-        state = SceneState.MainMenu;
-
-        // Fade into game Menu when done with Video
-        mCameraManager.beginFadeIn();
-        mMainMenuController.showMenu = true;
-
-
-        // Play Background Music Here.
-        mSoundManager.playSound("Yoshida Brothers - Rising", Vector3.zero);
-        yield return new WaitForSeconds(1.0f);
-    }
-
-    IEnumerator TestSceneScript()
-    {
-        mSoundManager.setBackgroundMusic("Saitama Saishuu Heiki - Momentary Life [Remix]");
-
-        state = SceneState.Playing;
-        mProfileManager.setResolution(mResolution);
-        mProfileManager.setVolume(mVolume);
-
-        yield return new WaitForSeconds(1.5f);
-        
-        state = SceneState.Locked;
-        mHUDManager.addTextToQueue("Hello Friends...");
-        mHUDManager.addTextToQueue("Welcome to Testing the TestScene");
-        mHUDManager.addTextToQueue("LALALALALALALALALALA");
-
-        while(this.mHUDManager.texts.Count > 0)
-        {
-            yield return new WaitForSeconds(0.5f);
-        }
-
-        state = SceneState.Playing;
-    }
-
-    IEnumerator Scene1Script()
-    {
-        yield return StartCoroutine("LoadingLevelAnimation");
-
-        mCameraManager.beginFadeIn();
-        mSoundManager.setBackgroundMusic("Saitama Saishuu Heiki - Momentary Life [Remix]");
-
-        state = SceneState.Playing;
-        mProfileManager.setResolution(mResolution);
-        mProfileManager.setVolume(mVolume);
-
-        this.mSceneNumber = 1;
-
-        this.playerStart = GameObject.Find("Start").transform.position;
-        this.playerEnd = GameObject.Find("End").transform.position;
-
-        if (mProfileManager.getProfileData(0)._userData.sceneNumber > this.mSceneNumber)
-        {
-            this.mPlayerManager.player.transform.position = playerEnd;
-        }
-        else
-        {
-            this.mPlayerManager.player.transform.position = playerStart;
-
-        }
-
-        yield return new WaitForSeconds(3.0f);
-
-        state = SceneState.Playing;
-    }
-
-    IEnumerator Scene2Script()
-    {
-        mCameraManager.beginFadeIn();
-        mSoundManager.setBackgroundMusic("Saitama Saishuu Heiki - Momentary Life [Remix]");
-
-        state = SceneState.Playing;
-        mProfileManager.setResolution(mResolution);
-        mProfileManager.setVolume(mVolume);
-
-        this.mSceneNumber = 2;
-
-        this.playerStart = GameObject.Find("Start").transform.position;
-        this.playerEnd = GameObject.Find("End").transform.position;
-
-        if (mProfileManager.getProfileData(0)._userData.sceneNumber > this.mSceneNumber)
-        {
-            this.mPlayerManager.player.transform.position = playerEnd;
-        }
-        else
-        {
-            this.mPlayerManager.player.transform.position = playerStart;
-
-        }
-
-        yield return new WaitForSeconds(1.5f);
-
-        state = SceneState.Locked;
-        mHUDManager.addTextToQueue("Scene 2. Testing");
-
-        while (this.mHUDManager.texts.Count > 0)
-        {
-            yield return new WaitForSeconds(0.5f);
-        }
-
-        state = SceneState.Playing;
-    }
-
-
 
 	// Update is called once per frame
 	void Update ()
@@ -505,7 +389,7 @@ public class SceneManager : MonoBehaviour
 
     IEnumerator GameOverAnimation()
     {
-        mSoundManager.setVolumeSounds(10.0f);
+        mSoundManager.setVolumeSounds(25.0f);
         mHUDManager.enabled = false;
         state = SceneState.Animating;
         mCameraManager.beginFadeOut();

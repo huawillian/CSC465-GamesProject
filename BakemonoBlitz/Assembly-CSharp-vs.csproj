@@ -58,6 +58,7 @@
      <Compile Include="Assets\GrapplingPlatformController.cs" />
      <Compile Include="Assets\GreenFloatingHeadController.cs" />
      <Compile Include="Assets\KappaController.cs" />
+     <Compile Include="Assets\LevelManager.cs" />
      <Compile Include="Assets\MovingPlatformController.cs" />
      <Compile Include="Assets\PlatformTemplate.cs" />
      <Compile Include="Assets\ProjectileController.cs" />

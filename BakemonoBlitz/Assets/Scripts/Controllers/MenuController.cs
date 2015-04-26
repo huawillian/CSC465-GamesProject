@@ -417,9 +417,9 @@ public class MenuController : MonoBehaviour
                 UserData profile3 = mSceneManager.mProfileManager.getProfileData(3);
 
                 // Display Profiles
-                GUI.Box(new Rect(_Profile1.x, _Profile1.y, _Profile1.z, _Profile1.w+100), "Profile 1\nScene: " + profile1._userData.sceneNumber + "\nCheckpoint: " + profile1._userData.checkpointNumber);
-                GUI.Box(new Rect(_Profile2.x, _Profile2.y, _Profile2.z, _Profile2.w), "Profile 2\nScene: " + profile2._userData.sceneNumber + "\nCheckpoint: " + profile2._userData.checkpointNumber);
-                GUI.Box(new Rect(_Profile3.x, _Profile3.y, _Profile3.z, _Profile3.w), "Profile 3\nScene: " + profile3._userData.sceneNumber + "\nCheckpoint: " + profile3._userData.checkpointNumber);
+                GUI.Box(new Rect(_Profile1.x, _Profile1.y, _Profile1.z, _Profile1.w + 100), "Profile 1\n" + "Level:  " + mSceneManager.mLevelManager.levels["Scene" + profile1._userData.sceneNumber].level + "-" + mSceneManager.mLevelManager.levels["Scene" + profile1._userData.sceneNumber].stage + "\tLives:  " + profile1._userData.lives + "\tScore:  " + profile1._userData.score);
+                GUI.Box(new Rect(_Profile2.x, _Profile2.y, _Profile2.z, _Profile2.w), "Profile 2\n" + "Level:  " + mSceneManager.mLevelManager.levels["Scene" + profile2._userData.sceneNumber].level + "-" + mSceneManager.mLevelManager.levels["Scene" + profile2._userData.sceneNumber].stage + "\tLives:  " + profile2._userData.lives + "\tScore:  " + profile2._userData.score);
+                GUI.Box(new Rect(_Profile3.x, _Profile3.y, _Profile3.z, _Profile3.w), "Profile 3\n" + "Level:  " + mSceneManager.mLevelManager.levels["Scene" + profile3._userData.sceneNumber].level + "-" + mSceneManager.mLevelManager.levels["Scene" + profile3._userData.sceneNumber].stage + "\tLives:  " + profile3._userData.lives + "\tScore:  " + profile3._userData.score);
 
             }
 

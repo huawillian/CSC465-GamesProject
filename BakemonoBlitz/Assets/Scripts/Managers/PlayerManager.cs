@@ -399,7 +399,16 @@ public class PlayerManager : MonoBehaviour
             }
             else if ((player.rigidbody2D.velocity.x > 0.0f && LX < 0.0f) || (player.rigidbody2D.velocity.x < 0.0f && LX > 0.0f))
             {
-                player.rigidbody2D.AddForce(new Vector2(LX * maxSpeed * 2.0f, 0));
+                if (player.rigidbody2D.velocity.x > 0.0f && LX < 0.0f)
+                {
+                    player.rigidbody2D.AddForce(new Vector2(-70f, 0));
+                }
+                else if (player.rigidbody2D.velocity.x < 0.0f && LX > 0.0f) 
+                {
+                    player.rigidbody2D.AddForce(new Vector2(70f, 0));
+                }
+
+                //player.rigidbody2D.AddForce(new Vector2(LX * maxSpeed * 2.0f, 0));
 
                 if (Math.Abs(player.rigidbody2D.velocity.x) < 1.0f && wasSpeeding)
                 {
@@ -411,11 +420,11 @@ public class PlayerManager : MonoBehaviour
             }
             else if (player.rigidbody2D.velocity.x > 0.0f && LX == 0.0f)
             {
-                player.rigidbody2D.AddForce(new Vector2(maxSpeed * -0.5f, 0));
+                player.rigidbody2D.AddForce(new Vector2(-25, 0));
             }
             else if (player.rigidbody2D.velocity.x < 0.0f && LX == 0.0f)
             {
-                player.rigidbody2D.AddForce(new Vector2(maxSpeed * 0.5f, 0));
+                player.rigidbody2D.AddForce(new Vector2(25, 0));
             }
             else if (Math.Abs(player.rigidbody2D.velocity.x) < maxSpeed)
             {
@@ -432,7 +441,18 @@ public class PlayerManager : MonoBehaviour
         else
         if (state == PlayerState.Falling || state == PlayerState.Jumping)
         {
-            player.rigidbody2D.AddForce(new Vector2(LX * maxSpeed / 1.25f, 0));
+            if (player.rigidbody2D.velocity.x > 0.0f && LX < 0.0f)
+            {
+                player.rigidbody2D.AddForce(new Vector2(LX * maxSpeed / 0.65f, 0));
+            }
+            else if (player.rigidbody2D.velocity.x < 0.0f && LX > 0.0f)
+            {
+                player.rigidbody2D.AddForce(new Vector2(LX * maxSpeed / 0.65f, 0));
+            }
+            else
+            {
+                player.rigidbody2D.AddForce(new Vector2(LX * maxSpeed / 1.0f, 0));
+            }
         }
 
         if (state == PlayerState.WallSliding)

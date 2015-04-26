@@ -70,8 +70,12 @@ public class SoundManager : MonoBehaviour
 
     void Update()
     {
-        Vector3 camPos = mSceneManager.mCameraManager.getCurrentCamera().transform.position;
-        backgroundMusic.transform.position = new Vector3(camPos.x, camPos.y, 0);
+        try
+        {
+            Vector3 camPos = mSceneManager.mCameraManager.getCurrentCamera().transform.position;
+            backgroundMusic.transform.position = new Vector3(camPos.x, camPos.y, 0);
+        }
+        catch (Exception e) { }
     }
 
     // Called by other classes to play sound

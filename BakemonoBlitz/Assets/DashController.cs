@@ -37,7 +37,7 @@ public class DashController : MonoBehaviour
 
         dashSpeedShort = 12.0f;
         dashLongCoeff = 1.8f;
-        dashCooldown = 3.0f;
+        dashCooldown = 2.0f;
         dashExitPauseDuration = 0.5f;
         dashDurationShort = 0.15f;
         dashDurationLong = 0.3f;
@@ -188,7 +188,7 @@ public class DashController : MonoBehaviour
 
         // Start cooldowns
         dashState = DashState.DashCooldown;
-        mSceneManager.mPlayerManager.state = PlayerManager.PlayerState.Idling;
+        mSceneManager.mPlayerManager.state = PlayerManager.PlayerState.Falling;
         float dashCooldownTimestamp = Time.time;
 
         while (Time.time - dashCooldownTimestamp < dashCooldown)

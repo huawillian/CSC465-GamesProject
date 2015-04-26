@@ -35,6 +35,9 @@ public class MainMenuController : MonoBehaviour
 
     public Texture2D darkbluebox, lightyellowbox, bluebox;
 
+    public Texture2D mainMenuTexture;
+
+
     // Use this for initialization
     void Start()
     {
@@ -342,8 +345,16 @@ public class MainMenuController : MonoBehaviour
             GUI.backgroundColor = Color.clear;
             GUI.color = Color.white;
             GUI.skin.box.fontSize = 60;
+            GUI.skin.box.alignment = TextAnchor.UpperCenter;
 
-            //GUI.DrawTexture(new Rect(_Title.x, _Title.y, _Title.z, _Title.w), bluebox);
+            GUI.DrawTexture(new Rect(0, 0, mSceneManager.mHUDManager.getPositionX(100), mSceneManager.mHUDManager.getPositionY(100)), mainMenuTexture);
+
+
+
+
+
+
+
             GUI.Box(new Rect(_Title.x, _Title.y, _Title.z, _Title.w), "Bakemono Blitz");
             GUI.skin.box.fontSize = 25;
 
@@ -435,12 +446,12 @@ public class MainMenuController : MonoBehaviour
                 UserData profile2 = mSceneManager.mProfileManager.getProfileData(2);
                 UserData profile3 = mSceneManager.mProfileManager.getProfileData(3);
 
-                GUI.skin.box.fontSize = 15;
+                GUI.skin.box.fontSize = 20;
 
                 // Display Profiles
-                GUI.Box(new Rect(_Profile1.x, _Profile1.y, _Profile1.z, _Profile1.w + 100), "Profile 1\nScene: " + profile1._userData.sceneNumber + "\nCheckpoint: " + profile1._userData.checkpointNumber);
-                GUI.Box(new Rect(_Profile2.x, _Profile2.y, _Profile2.z, _Profile2.w), "Profile 2\nScene: " + profile2._userData.sceneNumber + "\nCheckpoint: " + profile2._userData.checkpointNumber);
-                GUI.Box(new Rect(_Profile3.x, _Profile3.y, _Profile3.z, _Profile3.w), "Profile 3\nScene: " + profile3._userData.sceneNumber + "\nCheckpoint: " + profile3._userData.checkpointNumber);
+                GUI.Box(new Rect(_Profile1.x, _Profile1.y, _Profile1.z, _Profile1.w + 100), "Profile 1\n" + "Level:  " + mSceneManager.mLevelManager.levels["Scene" + profile1._userData.sceneNumber].level + "\tStage:  " + mSceneManager.mLevelManager.levels["Scene" + profile1._userData.sceneNumber].stage + "\t\tLives:  " + profile1._userData.lives + "\tScore:  " + profile1._userData.score);
+                GUI.Box(new Rect(_Profile2.x, _Profile2.y, _Profile2.z, _Profile2.w), "Profile 2\n" + "Level:  " + mSceneManager.mLevelManager.levels["Scene" + profile2._userData.sceneNumber].level + "\tStage:  " + mSceneManager.mLevelManager.levels["Scene" + profile2._userData.sceneNumber].stage + "\t\tLives:  " + profile2._userData.lives + "\tScore:  " + profile2._userData.score);
+                GUI.Box(new Rect(_Profile3.x, _Profile3.y, _Profile3.z, _Profile3.w), "Profile 3\n" + "Level:  " + mSceneManager.mLevelManager.levels["Scene" + profile3._userData.sceneNumber].level + "\tStage:  " + mSceneManager.mLevelManager.levels["Scene" + profile3._userData.sceneNumber].stage + "\t\tLives:  " + profile3._userData.lives + "\tScore:  " + profile3._userData.score);
 
                 GUI.skin.box.fontSize = 25;
 

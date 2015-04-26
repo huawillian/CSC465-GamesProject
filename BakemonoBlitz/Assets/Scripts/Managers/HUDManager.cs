@@ -244,7 +244,7 @@ public class HUDManager : MonoBehaviour
 
         float timeStart = Time.time;
 
-        while (Time.time - timeStart < 3.0f)
+        while (Time.time - timeStart < 5.0f)
         {
             if (pressedA)
             {

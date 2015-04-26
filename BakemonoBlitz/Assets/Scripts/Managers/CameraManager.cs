@@ -251,7 +251,7 @@ public class CameraManager : MonoBehaviour
     {
         for (int i = 0; i < numCameras; i++)
         {
-            cameras[i].GetComponent<Camera>().orthographicSize = 5;
+            cameras[i].GetComponent<Camera>().orthographicSize = 4;
         }
     }
 
@@ -259,7 +259,7 @@ public class CameraManager : MonoBehaviour
     {
         for (int i = 0; i < numCameras; i++)
         {
-            cameras[i].GetComponent<Camera>().orthographicSize = 7;
+            cameras[i].GetComponent<Camera>().orthographicSize = 5;
         }
     }
 
