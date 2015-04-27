@@ -27,6 +27,8 @@ using System.Collections.Generic;
 public class HUDManager : MonoBehaviour
 {
     PlayerManager mPlayerManager;
+    SceneManager mSceneManager;
+
     public int health, energy, lives, gems, score, time;
 
     private int screenWidth, screenHeight;
@@ -41,12 +43,33 @@ public class HUDManager : MonoBehaviour
 
     public LinkedList<string> texts = new LinkedList<string>();
 
+    // Displaying Speech pictures
     public Texture2D tex;
+    public Texture2D tex2;
+    public Texture2D tex3;
+    public bool texSelector = false;
+
+    public Texture2D livesTexture;
+    public Texture2D hp0Texture;
+    public Texture2D hp1Texture;
+    public Texture2D hp2Texture;
+    public Texture2D hp3Texture;
+    public Texture2D gemsTexture;
+
+    public Texture2D healthWord;
+    public Texture2D livesWord;
+    public Texture2D scoreWord;
+    public Texture2D timeWord;
+
+    public Font font;
 
 	// Use this for initialization
 	void Start ()
     {
-
+        Debug.Log("Initializing " + this.gameObject.name);
+        mPlayerManager = GameObject.Find("Player Manager").GetComponent<PlayerManager>();
+        mSceneManager = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
+        StartCoroutine("AlternateSpeechPicture");
 	}
 	
 	// Update is called once per frame
@@ -64,36 +87,86 @@ public class HUDManager : MonoBehaviour
 
 	}
 
+    IEnumerator AlternateSpeechPicture()
+    {
+        while (true)
+        {
+            texSelector = !texSelector;
+            yield return new WaitForSeconds(0.5f);
+        }
+    }
+
     void OnGUI()
     {
         // Make a background box
-        GUI.backgroundColor = Color.black;
+        GUI.backgroundColor = Color.clear;
         GUI.color = Color.white;
-        GUI.skin.box.fontSize = 15;
+        GUI.skin.box.fontSize = 30;
+        GUI.skin.box.alignment = TextAnchor.UpperLeft;
+        GUI.skin.box.fontStyle = FontStyle.Bold;
+        GUI.skin.box.font = font;
 
-        if (!disableHUD)
+        if (!disableHUD && mSceneManager.state != SceneManager.SceneState.MainMenu)
         {
-            // Draw Health
-            GUI.Box(new Rect(getPositionX(1), getPositionY(1), getPositionX(14), getPositionY(4)), "HEALTH: " + health);
-            // Draw Energy
-            GUI.Box(new Rect(getPositionX(1), getPositionY(6), getPositionX(14), getPositionY(4)), "ENERGY: " + energy);
             // Draw Lives
-            GUI.Box(new Rect(getPositionX(1), getPositionY(11), getPositionX(14), getPositionY(4)), "LIVES: " + lives);
+            GUI.DrawTexture(new Rect(getPositionX(1), getPositionY(1), getPositionX(9), 40), livesWord);
+
+            for (int i = 0; i < lives; i++)
+            {
+                GUI.DrawTexture(new Rect(getPositionX(11.0f + i * 4.0f), getPositionY(1), 40, 40), livesTexture);
+            }
+
+            // Draw Health
+            GUI.DrawTexture(new Rect(getPositionX(1), getPositionY(10), getPositionX(9), 40), healthWord);
+
+            switch (health)
+            {
+                case 0:
+                    GUI.DrawTexture(new Rect(getPositionX(11.0f), getPositionY(10.0f), 88, 40), hp0Texture);
+                    break;
+                case 1:
+                    GUI.DrawTexture(new Rect(getPositionX(11.0f), getPositionY(10.0f), 88, 40), hp1Texture);
+                    break;
+                case 2:
+                    GUI.DrawTexture(new Rect(getPositionX(11.0f), getPositionY(10.0f), 88, 40), hp2Texture);
+                    break;
+                case 3:
+                    GUI.DrawTexture(new Rect(getPositionX(11.0f), getPositionY(10.0f), 88, 40), hp3Texture);
+                    break;
+                default:
+                    GUI.DrawTexture(new Rect(getPositionX(11.0f), getPositionY(10.0f), 88, 40), hp3Texture);
+                    break;
+            }
+
             // Draw Gems
-            GUI.Box(new Rect(screenWidth / 2 - getPositionX(7), getPositionY(1), getPositionX(14), getPositionY(4)), "GEMS: " + gems);
+            GUI.Box(new Rect(screenWidth / 2 - getPositionX(4), getPositionY(5), getPositionX(14), getPositionY(8)), "       " + gems);
+            GUI.DrawTexture(new Rect(screenWidth / 2 - getPositionX(4), getPositionY(1.0f), 40, 80), gemsTexture);
+
             // Draw Score
-            GUI.Box(new Rect(screenWidth - getPositionX(15), getPositionY(1), getPositionX(14), getPositionY(4)), "SCORE: " + score);
+            //GUI.Box(new Rect(screenWidth - getPositionX(25), getPositionY(1), getPositionX(22), getPositionY(8)), "SCORE: " + score);
+            GUI.DrawTexture(new Rect(screenWidth - getPositionX(25), getPositionY(1), 110, 40), scoreWord);
+            GUI.Box(new Rect(screenWidth - getPositionX(25) + 110, getPositionY(1), 110, 50), " " + score);
             // Draw Time
-            GUI.Box(new Rect(screenWidth - getPositionX(15), getPositionY(6), getPositionX(14), getPositionY(4)), "TIME: " + time);
+            GUI.DrawTexture(new Rect(screenWidth - getPositionX(25), getPositionY(10), 110, 40), timeWord);
+            GUI.Box(new Rect(screenWidth - getPositionX(25) + 110, getPositionY(10), 110, 50), " " + time);
         }
 
         if (showingTextbox)
         {
-            GUI.DrawTexture(new Rect(getPositionX(5), getPositionY(3), getPositionX(90), getPositionY(30)), tex);
+            GUI.DrawTexture(new Rect(getPositionX(10), getPositionY(5), getPositionX(80), getPositionY(30)), tex);
 
-            GUI.skin.box.fontSize = 25;
+            if (texSelector)
+            {
+                GUI.DrawTexture(new Rect(getPositionX(12), getPositionY(7), getPositionY(26), getPositionY(26)), tex2);
+            }
+            else
+            {
+                GUI.DrawTexture(new Rect(getPositionX(12), getPositionY(7), getPositionY(26), getPositionY(26)), tex3);
+            }
+
+            GUI.skin.box.fontSize = 33;
             GUI.skin.box.wordWrap = true;
-            GUI.Box(new Rect(getPositionX(5), getPositionY(3), getPositionX(90), getPositionY(30)), text);
+            GUI.Box(new Rect(getPositionX(14) + getPositionY(26), getPositionY(7), getPositionX(55), getPositionY(26)), text);
             GUI.skin.box.fontSize = 15;
         }
 
@@ -106,12 +179,12 @@ public class HUDManager : MonoBehaviour
     }
 
     // Return position depending on percentage
-    private float getPositionX(float percX)
+    public float getPositionX(float percX)
     {
         return percX / 100 * screenWidth;
     }
 
-    private float getPositionY(float percY)
+    public float getPositionY(float percY)
     {
         return percY / 100 * screenHeight;
     }
@@ -119,8 +192,7 @@ public class HUDManager : MonoBehaviour
     // Initialization called by Scene Manager
     public void InitializeManager()
     {
-        Debug.Log("Initializing " + this.gameObject.name);
-        mPlayerManager = GameObject.Find("Player Manager").GetComponent<PlayerManager>();
+
     }
 
     public void showTextbox(string someText)
@@ -172,14 +244,14 @@ public class HUDManager : MonoBehaviour
 
         float timeStart = Time.time;
 
-        while (Time.time - timeStart < 3.0f)
+        while (Time.time - timeStart < 5.0f)
         {
             if (pressedA)
             {
                 pressedA = false;
                 break;
             }
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.01f);
         }
 
         removeTextFromQueue();
@@ -189,6 +261,9 @@ public class HUDManager : MonoBehaviour
 
     public void A()
     {
-        pressedA = true;
+        if (showingTextbox)
+        {
+            pressedA = true;
+        }
     }
 }

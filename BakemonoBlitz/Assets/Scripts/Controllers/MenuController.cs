@@ -18,9 +18,9 @@ public class MenuController : MonoBehaviour
     private float volMin = 0.0f;
     private float volMax = 100.0f;
 
-    public float resolution = 5.0f;
+    public float resolution = 4.0f;
     private float resMin = 3.0f;
-    private float resMax = 7.0f;
+    private float resMax = 5.0f;
 
     public enum Direction { Menu, Sound, Video, SaveProfile, Exit };
     public Direction state;
@@ -56,16 +56,55 @@ public class MenuController : MonoBehaviour
         Application.LoadLevel("MainMenuScene");
     }
 
-    public void A()
+    public void B()
     {
         if (!lockMenuInput)
         {
-            mSceneManager.mSoundManager.playSound("beep1", this.transform.position);
-            selectorIndex++;
+            moveUp();
         }
     }
 
-    public void B()
+    public void moveUp()
+    {
+        if (!lockMenuInput)
+        {
+            Debug.Log("MoveUp");
+            mSceneManager.mSoundManager.playSound("beep1", this.transform.position);
+            switch (state)
+            {
+                case Direction.Menu:
+                    if (selectorIndex < menuNum - 1) selectorIndex++;
+                    break;
+                case Direction.Sound:
+                    if (selectorIndex < soundNum - 1) selectorIndex++;
+                    break;
+                case Direction.Video:
+                    if (selectorIndex < videoNum - 1) selectorIndex++;
+                    break;
+                case Direction.SaveProfile:
+                    if (selectorIndex < saveNum - 1) selectorIndex++;
+                    break;
+                case Direction.Exit:
+                    if (selectorIndex < exitNum - 1) selectorIndex++;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    public void moveDown()
+    {
+        if (!lockMenuInput)
+        {
+            Debug.Log("MoveDown");
+
+            mSceneManager.mSoundManager.playSound("beep1", this.transform.position);
+            if(selectorIndex > 0) selectorIndex--;
+        }
+    }
+
+    public void A()
     {
         if (!lockMenuInput)
         {
@@ -161,6 +200,7 @@ public class MenuController : MonoBehaviour
     {
         if (!lockMenuInput)
         {
+
             if (screenHeight != Screen.height || screenWidth != Screen.width)
             {
                 screenHeight = Screen.height;
@@ -377,9 +417,9 @@ public class MenuController : MonoBehaviour
                 UserData profile3 = mSceneManager.mProfileManager.getProfileData(3);
 
                 // Display Profiles
-                GUI.Box(new Rect(_Profile1.x, _Profile1.y, _Profile1.z, _Profile1.w+100), "Profile 1\nScene: " + profile1._userData.sceneNumber + "\nCheckpoint: " + profile1._userData.checkpointNumber);
-                GUI.Box(new Rect(_Profile2.x, _Profile2.y, _Profile2.z, _Profile2.w), "Profile 2\nScene: " + profile2._userData.sceneNumber + "\nCheckpoint: " + profile2._userData.checkpointNumber);
-                GUI.Box(new Rect(_Profile3.x, _Profile3.y, _Profile3.z, _Profile3.w), "Profile 3\nScene: " + profile3._userData.sceneNumber + "\nCheckpoint: " + profile3._userData.checkpointNumber);
+                GUI.Box(new Rect(_Profile1.x, _Profile1.y, _Profile1.z, _Profile1.w + 100), "Profile 1\n" + "Level:  " + mSceneManager.mLevelManager.levels["Scene" + profile1._userData.sceneNumber].level + "-" + mSceneManager.mLevelManager.levels["Scene" + profile1._userData.sceneNumber].stage + "\tLives:  " + profile1._userData.lives + "\tScore:  " + profile1._userData.score);
+                GUI.Box(new Rect(_Profile2.x, _Profile2.y, _Profile2.z, _Profile2.w), "Profile 2\n" + "Level:  " + mSceneManager.mLevelManager.levels["Scene" + profile2._userData.sceneNumber].level + "-" + mSceneManager.mLevelManager.levels["Scene" + profile2._userData.sceneNumber].stage + "\tLives:  " + profile2._userData.lives + "\tScore:  " + profile2._userData.score);
+                GUI.Box(new Rect(_Profile3.x, _Profile3.y, _Profile3.z, _Profile3.w), "Profile 3\n" + "Level:  " + mSceneManager.mLevelManager.levels["Scene" + profile3._userData.sceneNumber].level + "-" + mSceneManager.mLevelManager.levels["Scene" + profile3._userData.sceneNumber].stage + "\tLives:  " + profile3._userData.lives + "\tScore:  " + profile3._userData.score);
 
             }
 

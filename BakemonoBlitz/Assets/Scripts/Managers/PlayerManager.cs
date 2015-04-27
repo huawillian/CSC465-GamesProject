@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 /*
     The Player Manager manages all things having to deal with the player such as allowable movements and actions, items the player is holding, player statistics, and player state. This manager is initialized by the Scene Manager.
@@ -15,12 +16,15 @@ using System.Collections;
 
 public class PlayerManager : MonoBehaviour
 {
+    private SceneManager mSceneManager;
+
     public string gender;
     public int health, energy, lives, gems, score, time;
     public bool weapon1, weapon2, weapon3;
     public float x, y, z;
 
-    private float startTime;
+    public float startTime;
+    public float savedTime;
     private float currentTime;
 
     public bool lockPlayerCoordinates = false;
@@ -52,29 +56,69 @@ public class PlayerManager : MonoBehaviour
     public bool canRun, canDash, canJump, canThrow, canSlide;
     public bool throwReady, dashReady, jumpReady, reelReady, dashReadyFromGrapple;
 
-    public float maxSpeed = 25.0f;
+    public float maxSpeed = 20.0f;
     public float dashCooldown = 3.0f;
     public float dashTimeStamp = 0.0f;
     public bool longDashReady = false;
 
+    public bool braked = false;
+    public bool wasSpeeding = false;
+
+    public bool invincible = false;
+
+    public int maxLives = 5;
+    public int maxHealth = 3;
+
+    // Variables used to fix bug, where player is on ground and stuck in Jumping/Falling state
+    public float lastYCoor = 0.0f;
+    public bool recordLastY = false;
+    public float timeStartedRecord = 0.0f;
+
+    void Awake()
+    {
+        player = GameObject.Find("Player");
+        playerController = player.GetComponent<PlayerController>();
+    }
+
 	// Use this for initialization
 	void Start ()
     {
+        this.mSceneManager = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
+        Debug.Log("Initializing " + this.gameObject.name);
+
+        grappleController = GameObject.Find("Grapple").GetComponent<GrappleController>();
+        dashReady = true;
+        dashReadyFromGrapple = true;
 	}
 	
 	// Update is called once per frame
-	void Update ()
+	void FixedUpdate ()
     {
+        if (mSceneManager.state == SceneManager.SceneState.MainMenu) return;
+
+        if (!lockPlayerCoordinates && (mSceneManager.state == SceneManager.SceneState.Locked || mSceneManager.state == SceneManager.SceneState.SceneComplete || mSceneManager.state == SceneManager.SceneState.Paused))
+        {
+            lockPlayerCoordinates = true;
+            lockedPlayerVel = player.rigidbody2D.velocity;
+            player.rigidbody2D.isKinematic = true;
+
+        }
+        
+        if (lockPlayerCoordinates && !((mSceneManager.state == SceneManager.SceneState.Locked || mSceneManager.state == SceneManager.SceneState.SceneComplete || mSceneManager.state == SceneManager.SceneState.Paused)))
+        {
+            lockPlayerCoordinates = false;
+            player.rigidbody2D.isKinematic = false;
+            player.rigidbody2D.velocity = lockedPlayerVel;
+        }
 
         // Update time
         currentTime = Time.time;
-        time = (int)(currentTime - startTime);
+        time = (int)(currentTime - startTime + savedTime);
 
         // Lock Player coordinates
         if (lockPlayerCoordinates)
         {
             player.gameObject.transform.position = new Vector3(x,y,z);
-            player.rigidbody2D.velocity = lockedPlayerVel;
         }
         else
         {
@@ -82,15 +126,11 @@ public class PlayerManager : MonoBehaviour
             x = player.gameObject.transform.position.x;
             y = player.gameObject.transform.position.y;
             z = player.gameObject.transform.position.z;
-
-            lockedPlayerVel = player.rigidbody2D.velocity;
         }
 
         // If we lock Player Input, we set reset everything, and, we don't do the input functions
         if (lockPlayerInput)
         {
-            LTH = false;
-            RTH = false;
             LTA = 0.0f;
             LX = 0.0f;
             LY = 0.0f;
@@ -199,9 +239,13 @@ public class PlayerManager : MonoBehaviour
                 {
                     state = PlayerState.Running;
                 }
+                if (Math.Abs(player.rigidbody2D.velocity.x) > 0.0f) player.rigidbody2D.velocity = player.rigidbody2D.velocity * 0.95f;
+                if (Math.Abs(player.rigidbody2D.velocity.x) < 1.0f) player.rigidbody2D.velocity = new Vector2(0, player.rigidbody2D.velocity.y);
                 // Dash By Input
                 // Jump By Input
                 // Throw By Input
+                player.rigidbody2D.gravityScale = 2.0f;
+
                 break;
             case PlayerState.Running:
                 if (player.rigidbody2D.velocity.y < 0.0f)
@@ -216,6 +260,8 @@ public class PlayerManager : MonoBehaviour
                 // Dash By Input
                 // Jump By Input
                 // Throw By Input
+                player.rigidbody2D.gravityScale = 2.0f;
+
                 break;
             case PlayerState.Jumping:
                 if (player.rigidbody2D.velocity.y < 0.0f || (!playerController.GroundCollide && player.rigidbody2D.velocity.y == 0.0f))
@@ -225,6 +271,8 @@ public class PlayerManager : MonoBehaviour
                 }
                 // Dash By Input
                 // Throw By Input
+                player.rigidbody2D.gravityScale = 2.0f;
+
                 break;
             case PlayerState.Falling:
                 if (player.rigidbody2D.velocity.y == 0.0f)
@@ -235,6 +283,8 @@ public class PlayerManager : MonoBehaviour
                 // Dash By Input
                 // Throw By Input
                 // Slide By Input
+                player.rigidbody2D.gravityScale = 2.0f;
+
                 break;
             case PlayerState.Dashing:
                 /*
@@ -249,7 +299,8 @@ public class PlayerManager : MonoBehaviour
                     state = PlayerState.Idling;
                     break;
                 }
-                 */ 
+                 */
+                player.rigidbody2D.gravityScale = 0.25f;
                 break;
             case PlayerState.Swinging:
                 /*
@@ -260,19 +311,21 @@ public class PlayerManager : MonoBehaviour
                 }*/
                 if (!RTH)
                 {
-                    state = PlayerState.Falling;
-                    grappleState = GrappleState.GrappleRetracting;
-                    grappleController.swinging = false;
                 }
+
                 if (LTH)
                 {
-                    grappleController.radius -= 0.1f;
+                    grappleController.reelingIn = true;
+                }
+                else
+                {
+                    grappleController.reelingIn = false;
                 }
                 // Will set Player State to falling after completing Swing
                 break;
             case PlayerState.WallSliding:
                 
-                if (playerController.WallCollide && playerController.WallCollideRight && LX < 0.0f)
+                /*if (playerController.WallCollide && playerController.WallCollideRight && LX < 0.0f)
                 {
                     state = PlayerState.Falling;
                     break;
@@ -282,7 +335,7 @@ public class PlayerManager : MonoBehaviour
                 {
                     state = PlayerState.Falling;
                     break;
-                }
+                }*/
 
                 if (playerController.WallCollide && !playerController.GroundCollide)
                 {
@@ -303,16 +356,12 @@ public class PlayerManager : MonoBehaviour
 
         if (state == PlayerState.Falling)
         {
-            if ((playerController.WallCollide && playerController.WallCollideRight && LX > 0.0f) || (playerController.WallCollide && !playerController.WallCollideRight && LX < 0.0f)) state = PlayerState.WallSliding;
-        }
+            // Initiate WallSlide
+            //if ((playerController.WallCollide && playerController.WallCollideRight && LX > 0.0f) || (playerController.WallCollide && !playerController.WallCollideRight && LX < 0.0f)) 
+            //    state = PlayerState.WallSliding;
 
-
-        if ((state == PlayerState.Dashing && playerController.EnemyCollide))
-        {
-            longDashReady = true;
-            playerController.EnemyCollide = false;
-            dashReady = true;
-            state = PlayerState.Dashing;
+            if (playerController.WallCollide && !playerController.GroundCollide)
+                state = PlayerState.WallSliding;
         }
 
         if(state != PlayerState.Dashing && Time.time - dashTimeStamp > dashCooldown && !dashReady && !longDashReady)
@@ -321,44 +370,143 @@ public class PlayerManager : MonoBehaviour
             longDashReady = false;
         }
 
-        if (state == PlayerState.Dashing && Time.time - dashTimeStamp > dashCooldown / 6 && dashReady && longDashReady)
+        if (state == PlayerState.Dashing && Time.time - dashTimeStamp > dashCooldown / 3.0f && longDashReady)
         {
             dashReady = false;
             longDashReady = false;
             state = PlayerState.Falling;
         }
 
-	}
 
-    void FixedUpdate()
-    {
-        if (canRun)
+
+        /*
+        if (longDashReady)
+        {
+            player.rigidbody2D.velocity = Vector2.zero;
+        }*/
+
+        if (canRun && !braked)
         {
             if (player.rigidbody2D.velocity.x > maxSpeed)
             {
                 player.rigidbody2D.velocity = new Vector2(maxSpeed, player.rigidbody2D.velocity.y);
+                wasSpeeding = true;
             }
-            else
+            else if (player.rigidbody2D.velocity.x < -maxSpeed)
+            {
+                player.rigidbody2D.velocity = new Vector2(-maxSpeed, player.rigidbody2D.velocity.y);
+                wasSpeeding = true;
+            }
+            else if ((player.rigidbody2D.velocity.x > 0.0f && LX < 0.0f) || (player.rigidbody2D.velocity.x < 0.0f && LX > 0.0f))
+            {
+                if (player.rigidbody2D.velocity.x > 0.0f && LX < 0.0f)
+                {
+                    player.rigidbody2D.AddForce(new Vector2(-70f, 0));
+                }
+                else if (player.rigidbody2D.velocity.x < 0.0f && LX > 0.0f) 
+                {
+                    player.rigidbody2D.AddForce(new Vector2(70f, 0));
+                }
+
+                //player.rigidbody2D.AddForce(new Vector2(LX * maxSpeed * 2.0f, 0));
+
+                if (Math.Abs(player.rigidbody2D.velocity.x) < 1.0f && wasSpeeding)
+                {
+                    braked = true;
+                    wasSpeeding = false;
+                    player.rigidbody2D.velocity = Vector2.zero;
+                    StartCoroutine("SetBraked");
+                }
+            }
+            else if (player.rigidbody2D.velocity.x > 0.0f && LX == 0.0f)
+            {
+                player.rigidbody2D.AddForce(new Vector2(-25, 0));
+            }
+            else if (player.rigidbody2D.velocity.x < 0.0f && LX == 0.0f)
+            {
+                player.rigidbody2D.AddForce(new Vector2(25, 0));
+            }
+            else if (Math.Abs(player.rigidbody2D.velocity.x) < maxSpeed)
             {
                 player.rigidbody2D.AddForce(new Vector2(LX * maxSpeed, 0));
+                wasSpeeding = false;
             }
         }
 
 
         if ((state == PlayerState.Falling || state == PlayerState.Jumping) && longDashReady)
         {
-            player.rigidbody2D.velocity = new Vector2(0, player.rigidbody2D.velocity.y * 0.1f);
+            //player.rigidbody2D.velocity = new Vector2(0, player.rigidbody2D.velocity.y * 0.0f);
         }
         else
         if (state == PlayerState.Falling || state == PlayerState.Jumping)
         {
-            player.rigidbody2D.AddForce(new Vector2(LX * maxSpeed, 0));
+            if (player.rigidbody2D.velocity.x > 0.0f && LX < 0.0f)
+            {
+                player.rigidbody2D.AddForce(new Vector2(LX * maxSpeed / 0.65f, 0));
+            }
+            else if (player.rigidbody2D.velocity.x < 0.0f && LX > 0.0f)
+            {
+                player.rigidbody2D.AddForce(new Vector2(LX * maxSpeed / 0.65f, 0));
+            }
+            else
+            {
+                player.rigidbody2D.AddForce(new Vector2(LX * maxSpeed / 1.0f, 0));
+            }
         }
 
         if (state == PlayerState.WallSliding)
         {
             player.rigidbody2D.velocity = new Vector2(player.rigidbody2D.velocity.x, player.rigidbody2D.velocity.y * 0.5f);
         }
+
+        if (player.rigidbody2D.velocity.x > maxSpeed && state != PlayerState.Dashing)
+        {
+            player.rigidbody2D.velocity = new Vector2(maxSpeed, player.rigidbody2D.velocity.y);
+        }
+        else if (player.rigidbody2D.velocity.x < -maxSpeed && state != PlayerState.Dashing)
+        {
+            player.rigidbody2D.velocity = new Vector2(-maxSpeed, player.rigidbody2D.velocity.y);
+        }
+
+        if (player.rigidbody2D.velocity.y > maxSpeed && state != PlayerState.Dashing)
+        {
+            player.rigidbody2D.velocity = new Vector2(player.rigidbody2D.velocity.x, maxSpeed);
+        }
+        else if (player.rigidbody2D.velocity.y < -maxSpeed && state != PlayerState.Dashing)
+        {
+            player.rigidbody2D.velocity = new Vector2(player.rigidbody2D.velocity.x, -maxSpeed);
+        }
+
+        if (lives > maxLives)
+        {
+            lives = maxLives;
+        }
+
+        if (health > maxHealth)
+        {
+            health = maxHealth;
+        }
+
+        if((state == PlayerState.Jumping || state == PlayerState.Falling))
+        {
+            if (Math.Abs(lastYCoor - player.transform.position.y) < 0.001 && !recordLastY)
+            {
+                recordLastY = true;
+                timeStartedRecord = Time.time;
+            }
+
+            if (recordLastY && Math.Abs(lastYCoor - player.transform.position.y) < 0.001 && Time.time - timeStartedRecord > 2.0f)
+            {
+                state = PlayerState.Idling;
+            }
+        }
+        else
+        {
+            recordLastY = false;
+        }
+
+        lastYCoor = player.transform.position.y;
     }
 
 
@@ -371,21 +519,37 @@ public class PlayerManager : MonoBehaviour
         {
             if (state == PlayerState.WallSliding)
             {
-
-                if (playerController.WallCollideRight)
+                if (LY < 0)
                 {
-                    StartCoroutine("DashUpLeft");
+                    state = PlayerState.Falling;
+                    if (playerController.WallCollideRight)
+                    {
+                        StartCoroutine("DashUpLeftSmallSmall");
+                    }
+                    else
+                    {
+                        StartCoroutine("DashUpRightSmallSmall");
+                    }
                 }
                 else
                 {
-                    StartCoroutine("DashUpRight");
+
+                    if (playerController.WallCollideRight)
+                    {
+                        StartCoroutine("DashUpLeft");
+                    }
+                    else
+                    {
+                        StartCoroutine("DashUpRight");
+                    }
+                    jumpReady = false;
+                    state = PlayerState.Jumping;
                 }
-                jumpReady = false;
-                state = PlayerState.Jumping;
             }
             else
             {
                 player.rigidbody2D.AddForce(new Vector2(0, 400));
+                GameObject.Find("SmokeController").GetComponent<SmokeController>().StartCoroutine("TwoSmokeGeneratorStart");
                 jumpReady = false;
                 state = PlayerState.Jumping;
             }
@@ -404,18 +568,23 @@ public class PlayerManager : MonoBehaviour
     {
         if (lockPlayerInput) return;
 
-        if (canDash && dashReady && dashReadyFromGrapple)
+        if (canDash && dashReady && dashReadyFromGrapple && weapon1)
         {
-            if (!longDashReady)
+            if (playerController.GetComponentInChildren<DashController>().dashState == DashController.DashState.DashReady)
             {
-                StartCoroutine("Dash");
+                playerController.GetComponentInChildren<DashController>().StartCoroutine("Dash");
+                GameObject.Find("DashingLineController").GetComponent<DashingLineController>().StartCoroutine("DashAnimationStart");
+
             }
-            else
+
+            if (playerController.GetComponentInChildren<DashController>().dashState == DashController.DashState.DashLong || playerController.GetComponentInChildren<DashController>().dashState == DashController.DashState.DashExit)
             {
-                StartCoroutine("LongDash");
+                playerController.GetComponentInChildren<DashController>().StopCoroutine("Dash");
+                GameObject.Find("DashingLineController").GetComponent<DashingLineController>().StopCoroutine("DashAnimationStart");
+                playerController.gameObject.rigidbody2D.velocity = Vector2.zero;
+                playerController.GetComponentInChildren<DashController>().StartCoroutine("Dash");
+                GameObject.Find("DashingLineController").GetComponent<DashingLineController>().StartCoroutine("DashAnimationStart");
             }
-            state = PlayerState.Dashing;
-            dashTimeStamp = Time.time;
         }
 
     }
@@ -437,199 +606,109 @@ public class PlayerManager : MonoBehaviour
     public void RT()
     {
         if (lockPlayerInput) return;
-        if (canThrow && throwReady)
+        if (canThrow && throwReady && weapon2)
         {
             grappleState = GrappleState.GrappleExtending;
             grappleController.timeThrown = Time.time;
+            grappleController.incre = 0;
         }
     }
 
-    IEnumerator Dash()
+    public IEnumerator DashUpRight()
     {
-        float dashSpeed = 20.0f;
+        float timeStart = Time.time;
+        float dashDuration = 0.2f;
 
-        dashReady = false;
-
-        if (LX == 0.0f && playerController.FaceRight && LY == 0.0f)
+        while(Time.time - timeStart < dashDuration)
         {
-            for (int i = 0; i < 5; i++)
-            {
-                player.rigidbody2D.velocity = new Vector2(dashSpeed, 0);
-                yield return new WaitForSeconds(0.01f);
-            }
-        }
-        else if (LX == 0.0f && !playerController.FaceRight && LY == 0.0f)
-        {
-            for (int i = 0; i < 5; i++)
-            {
-                player.rigidbody2D.velocity = new Vector2(-dashSpeed, 0);
-                yield return new WaitForSeconds(0.01f);
-            }
-        }
-        else
-        {
-            float curX = LX;
-            float curY = LY;
-
-            for (int i = 0; i < 5; i++)
-            {
-                player.rigidbody2D.velocity = new Vector2(curX * dashSpeed, curY * dashSpeed);
-                yield return new WaitForSeconds(0.01f);
-            }
-        }
-
-        if (playerController.WallCollide)
-        {
-            if (playerController.WallCollideRight)
-                StartCoroutine("DashUpLeftSmall");
-            else
-                StartCoroutine("DashUpRightSmall");
-        }
-        else if (playerController.GroundCollide)
-        {
-            if (playerController.FaceRight)
-                StartCoroutine("DashUpRightSmall");
-            else
-                StartCoroutine("DashUpLeftSmall");
-        }
-        else
-        {
-            player.rigidbody2D.velocity = player.rigidbody2D.velocity * 0.1f;
-        }
-
-        yield return new WaitForSeconds(0.1f);
-
-        if (!longDashReady)
-        {
-            state = PlayerState.Falling;
-        }
-        else
-        {
-            state = PlayerState.Dashing;
-        }
-
-    }
-
-    IEnumerator LongDash()
-    {
-        float dashSpeed = 20.0f;
-
-        dashReady = false;
-        longDashReady = false;
-
-        if (LX == 0.0f && playerController.FaceRight && LY == 0.0f)
-        {
-            for (int i = 0; i < 5; i++)
-            {
-                player.rigidbody2D.velocity = new Vector2(dashSpeed * 2f, 0);
-                yield return new WaitForSeconds(0.01f);
-            }
-        }
-        else if (LX == 0.0f && !playerController.FaceRight && LY == 0.0f)
-        {
-            for (int i = 0; i < 5; i++)
-            {
-                player.rigidbody2D.velocity = new Vector2(-dashSpeed * 2f, 0);
-                yield return new WaitForSeconds(0.01f);
-            }
-        }
-        else
-        {
-            float curX = LX;
-            float curY = LY;
-            for (int i = 0; i < 5; i++)
-            {
-                player.rigidbody2D.velocity = new Vector2(curX * dashSpeed * 2f, curY * dashSpeed * 2f);
-                yield return new WaitForSeconds(0.01f);
-            }
-        }
-
-        if (playerController.WallCollide)
-        {
-            if (playerController.WallCollideRight)
-                StartCoroutine("DashUpLeftSmall");
-            else
-                StartCoroutine("DashUpRightSmall");
-        }
-        else if (playerController.GroundCollide)
-        {
-            if (playerController.FaceRight)
-                StartCoroutine("DashUpRightSmall");
-            else
-                StartCoroutine("DashUpLeftSmall");
-        }
-        else
-        {
-            player.rigidbody2D.velocity = player.rigidbody2D.velocity * 0.1f;
-        }
-
-
-        yield return new WaitForSeconds(0.1f);
-
-        if (!longDashReady)
-        {
-            state = PlayerState.Falling;
-        }
-        else
-        {
-            state = PlayerState.Dashing;
-        }
-
-    }
-
-    IEnumerator DashUpRight()
-    {
-        for (int i = 0; i < 5; i++)
-        {
-            player.rigidbody2D.velocity = new Vector2(7,7);
+            player.rigidbody2D.velocity = new Vector2(7, 6);
             yield return new WaitForSeconds(0.005f);
-
         }
     }
 
-    IEnumerator DashUpRightSmall()
+    public IEnumerator DashUpRightSmall()
     {
         for (int i = 0; i < 5; i++)
         {
             player.rigidbody2D.velocity = new Vector2(4, 4);
             yield return new WaitForSeconds(0.005f);
-
         }
     }
 
-    IEnumerator DashUpLeft()
+    public IEnumerator DashUpRightSmallSmall()
     {
         for (int i = 0; i < 5; i++)
         {
-            player.rigidbody2D.velocity = new Vector2(-7, 7);
+            player.rigidbody2D.velocity = new Vector2(3, 1);
             yield return new WaitForSeconds(0.005f);
-
         }
     }
 
-    IEnumerator DashUpLeftSmall()
+    public IEnumerator DashUpLeft()
+    {
+        float timeStart = Time.time;
+        float dashDuration = 0.2f;
+
+        while (Time.time - timeStart < dashDuration)
+        {
+            player.rigidbody2D.velocity = new Vector2(-7, 6);
+            yield return new WaitForSeconds(0.005f);
+        }
+
+    }
+
+    public IEnumerator DashUpLeftSmall()
     {
         for (int i = 0; i < 5; i++)
         {
             player.rigidbody2D.velocity = new Vector2(-4, 4);
             yield return new WaitForSeconds(0.005f);
-
         }
+    }
+
+    public IEnumerator DashUpLeftSmallSmall()
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            player.rigidbody2D.velocity = new Vector2(-3, 1);
+            yield return new WaitForSeconds(0.005f);
+        }
+    }
+
+    public IEnumerator SetBraked()
+    {
+        yield return new WaitForSeconds(0.2f);
+        braked = false;
+    }
+
+    public IEnumerator SetInvincible()
+    {
+        invincible = true;
+
+        for (int i = 0; i < 10; i++)
+        {
+            player.gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            yield return new WaitForSeconds(0.1f);
+            player.gameObject.GetComponent<SpriteRenderer>().enabled = true;
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        for (int i = 0; i < 10; i++)
+        {
+            player.gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            yield return new WaitForSeconds(0.05f);
+            player.gameObject.GetComponent<SpriteRenderer>().enabled = true;
+            yield return new WaitForSeconds(0.05f);
+        }
+
+        yield return new WaitForSeconds(0.1f);
+        invincible = false;
     }
 
     // Initialization called by Scene Manager
     public void InitializeManager()
     {
-        Debug.Log("Initializing " + this.gameObject.name);
 
-        if (!(Application.loadedLevelName == "MainMenuScene"))
-        {
-            player = GameObject.Find("Player");
-            playerController = player.GetComponent<PlayerController>();
-            grappleController = GameObject.Find("Grapple").GetComponent<GrappleController>();
-            dashReady = true;
-            dashReadyFromGrapple = true;
-        }
     }
 
 }

@@ -23,9 +23,9 @@ public class MainMenuController : MonoBehaviour
     private float volMin = 0.0f;
     private float volMax = 100.0f;
 
-    public float resolution = 5.0f;
+    public float resolution = 4.0f;
     private float resMin = 3.0f;
-    private float resMax = 7.0f;
+    private float resMax = 5.0f;
 
     public enum MainMenuState { StartScreen, Menu, NewGame, LoadGame, Settings, SettingsSound, SettingsVideo, QuitGame };
     public MainMenuState state;
@@ -34,6 +34,9 @@ public class MainMenuController : MonoBehaviour
     int menuNum = 4, newGameNum = 1, loadGameNum = 3, settingsNum = 2,  soundNum = 1, videoNum = 1, quitGameNum = 2;
 
     public Texture2D darkbluebox, lightyellowbox, bluebox;
+
+    public Texture2D mainMenuTexture;
+
 
     // Use this for initialization
     void Start()
@@ -44,7 +47,7 @@ public class MainMenuController : MonoBehaviour
         volume = mSceneManager.mVolume;
     }
 
-    public void A()
+    public void B()
     {
         if (showMenu)
         {
@@ -53,7 +56,7 @@ public class MainMenuController : MonoBehaviour
         }
     }
 
-    public void B()
+    public void A()
     {
         if (showMenu)
         {
@@ -168,43 +171,64 @@ public class MainMenuController : MonoBehaviour
         float tempRes = resolution;
 
         mSceneManager.mProfileManager.LoadProfile(profileNumber);
+        mSceneManager.mSceneNumber = mSceneManager.mProfileManager.getProfileData(profileNumber)._userData.sceneNumber;
 
         if (tempVol != 100.0f)
         {
             mSceneManager.mProfileManager.setVolume(tempVol);
+            mSceneManager.mProfileManager.SaveProfile(profileNumber);
         }
 
         if (tempRes != 5.0f)
         {
             mSceneManager.mProfileManager.setResolution(tempRes);
+            mSceneManager.mProfileManager.SaveProfile(profileNumber);
         }
-
-        mSceneManager.mProfileManager.SaveProfile(profileNumber);
 
         // Use profile SaveData0 as temp data
         // This will be opened in the New Scene First in order to select which profile data to Load
         mSceneManager.mProfileManager.LoadProfile(0);
+
+        mSceneManager.mSceneNumber = 0;
+        mSceneManager.mCheckpointNumber = 1;
+
         mSceneManager.mProfileNumber = profileNumber;
         mSceneManager.mProfileManager.SaveProfile(0);
 
         mSceneManager.mCameraManager.beginFadeOut();
         yield return new WaitForSeconds(2.5f);
 
+
+
         // Load Scene given profile Number
-        Application.LoadLevel("TestScene");
+        Application.LoadLevel("Scene" + mSceneManager.mProfileManager.getProfileData(profileNumber)._userData.sceneNumber);
     }
 
     IEnumerator loadNewProfile()
     {
         mSceneManager.mCameraManager.beginFadeOut();
         yield return new WaitForSeconds(2.5f);
-        mSceneManager.mSceneNumber = 1;
+        mSceneManager.mSceneNumber = 0;
         mSceneManager.mCheckpointNumber = 1;
         mSceneManager.mProfileNumber = 0;
+
+        mSceneManager.mPlayerManager.gender = "male";
+        mSceneManager.mPlayerManager.health = 3;
+        mSceneManager.mPlayerManager.lives = 3;
+        mSceneManager.mPlayerManager.energy = 100;
+        mSceneManager.mPlayerManager.time = 0;
+        mSceneManager.mPlayerManager.score = 0;
+
+        mSceneManager.mPlayerManager.weapon1 = false;
+        mSceneManager.mPlayerManager.weapon2 = false;
+        mSceneManager.mPlayerManager.weapon3 = false;
+
+        mSceneManager.mPlayerManager.gems = 0;
+
         mSceneManager.mProfileManager.SaveProfile(0);
 
         // Load Tutorial scene
-        Application.LoadLevel("TestScene");
+        Application.LoadLevel("Scene1");
     }
 
     IEnumerator quitGame()
@@ -321,8 +345,16 @@ public class MainMenuController : MonoBehaviour
             GUI.backgroundColor = Color.clear;
             GUI.color = Color.white;
             GUI.skin.box.fontSize = 60;
+            GUI.skin.box.alignment = TextAnchor.UpperCenter;
 
-            GUI.DrawTexture(new Rect(_Title.x, _Title.y, _Title.z, _Title.w), bluebox);
+            GUI.DrawTexture(new Rect(0, 0, mSceneManager.mHUDManager.getPositionX(100), mSceneManager.mHUDManager.getPositionY(100)), mainMenuTexture);
+
+
+
+
+
+
+
             GUI.Box(new Rect(_Title.x, _Title.y, _Title.z, _Title.w), "Bakemono Blitz");
             GUI.skin.box.fontSize = 25;
 
@@ -414,12 +446,12 @@ public class MainMenuController : MonoBehaviour
                 UserData profile2 = mSceneManager.mProfileManager.getProfileData(2);
                 UserData profile3 = mSceneManager.mProfileManager.getProfileData(3);
 
-                GUI.skin.box.fontSize = 15;
+                GUI.skin.box.fontSize = 20;
 
                 // Display Profiles
-                GUI.Box(new Rect(_Profile1.x, _Profile1.y, _Profile1.z, _Profile1.w + 100), "Profile 1\nScene: " + profile1._userData.sceneNumber + "\nCheckpoint: " + profile1._userData.checkpointNumber);
-                GUI.Box(new Rect(_Profile2.x, _Profile2.y, _Profile2.z, _Profile2.w), "Profile 2\nScene: " + profile2._userData.sceneNumber + "\nCheckpoint: " + profile2._userData.checkpointNumber);
-                GUI.Box(new Rect(_Profile3.x, _Profile3.y, _Profile3.z, _Profile3.w), "Profile 3\nScene: " + profile3._userData.sceneNumber + "\nCheckpoint: " + profile3._userData.checkpointNumber);
+                GUI.Box(new Rect(_Profile1.x, _Profile1.y, _Profile1.z, _Profile1.w + 100), "Profile 1\n" + "Level:  " + mSceneManager.mLevelManager.levels["Scene" + profile1._userData.sceneNumber].level + "\tStage:  " + mSceneManager.mLevelManager.levels["Scene" + profile1._userData.sceneNumber].stage + "\t\tLives:  " + profile1._userData.lives + "\tScore:  " + profile1._userData.score);
+                GUI.Box(new Rect(_Profile2.x, _Profile2.y, _Profile2.z, _Profile2.w), "Profile 2\n" + "Level:  " + mSceneManager.mLevelManager.levels["Scene" + profile2._userData.sceneNumber].level + "\tStage:  " + mSceneManager.mLevelManager.levels["Scene" + profile2._userData.sceneNumber].stage + "\t\tLives:  " + profile2._userData.lives + "\tScore:  " + profile2._userData.score);
+                GUI.Box(new Rect(_Profile3.x, _Profile3.y, _Profile3.z, _Profile3.w), "Profile 3\n" + "Level:  " + mSceneManager.mLevelManager.levels["Scene" + profile3._userData.sceneNumber].level + "\tStage:  " + mSceneManager.mLevelManager.levels["Scene" + profile3._userData.sceneNumber].stage + "\t\tLives:  " + profile3._userData.lives + "\tScore:  " + profile3._userData.score);
 
                 GUI.skin.box.fontSize = 25;
 
@@ -557,6 +589,53 @@ public class MainMenuController : MonoBehaviour
                 GUI.Box(new Rect(_No.x, _No.y, _No.z, _No.w), "No");
             }
 
+        }
+    }
+
+    public void moveUp()
+    {
+        if (showMenu)
+        {
+            Debug.Log("MoveUp");
+            mSceneManager.mSoundManager.playSound("beep1", this.transform.position);
+            // Check selector
+            switch (state)
+            {
+                case MainMenuState.Menu:
+                    if (selectorIndex < menuNum - 1) selectorIndex++;
+                    break;
+                case MainMenuState.NewGame:
+                    if (selectorIndex < newGameNum - 1) selectorIndex++;
+                    break;
+                case MainMenuState.LoadGame:
+                    if (selectorIndex < loadGameNum - 1) selectorIndex++;
+                    break;
+                case MainMenuState.Settings:
+                    if (selectorIndex < settingsNum - 1) selectorIndex++;
+                    break;
+                case MainMenuState.SettingsSound:
+                    if (selectorIndex < soundNum - 1) selectorIndex++;
+                    break;
+                case MainMenuState.SettingsVideo:
+                    if (selectorIndex < videoNum - 1) selectorIndex++;
+                    break;
+                case MainMenuState.QuitGame:
+                    if (selectorIndex < quitGameNum - 1) selectorIndex++;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    public void moveDown()
+    {
+        if (showMenu)
+        {
+            Debug.Log("MoveDown");
+
+            mSceneManager.mSoundManager.playSound("beep1", this.transform.position);
+            if (selectorIndex > 0) selectorIndex--;
         }
     }
 

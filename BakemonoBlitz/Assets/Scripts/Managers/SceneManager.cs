@@ -35,11 +35,12 @@ public class SceneManager : MonoBehaviour
     public StageManager mStageManager;
     public VideoManager mVideoManager;
     public ProfileManager mProfileManager;
+    public LevelManager mLevelManager;
 
     public int mSceneNumber = 1;
     public int mCheckpointNumber = 1;
     public float mVolume = 100.0f;
-    public float mResolution = 5.0f;
+    public float mResolution = 4.0f;
 
     public MenuController mMenuController;
     public MainMenuController mMainMenuController;
@@ -53,9 +54,28 @@ public class SceneManager : MonoBehaviour
     // Debug variables, used to create button
     Rect _Save, _Load, _SaveMSG, _LoadMSG;
 
-    public enum SceneState { MainMenu, Playing, Paused, Locked, Animating, SceneComplete};
+    public enum SceneState { MainMenu, Playing, Paused, Locked, Animating, SceneComplete, GameOver, Retry};
     public SceneState state = SceneState.Playing;
-    public float tempVol;
+
+    // Set and place player at these locations at the start of the scene
+    public Vector3 playerStart, playerEnd;
+
+    // Used to display Game over animation
+    public bool displayGameOver = false;
+    public Texture2D gameOverTexture;
+
+    // Used to display loading stage animation
+    public bool displayLoadingStage = false;
+    public Texture2D loadingSceneTexture;
+    public Texture2D livesTexture;
+    public Texture2D playerTexture1;
+    public Texture2D playerTexture2;
+    public Texture2D playerTexture3;
+    public int loadingStageIncrement = 0;
+
+    public Texture2D teamLogoTexture;
+    public bool displayLogo = false;
+
     // State:
     // Main Menu - Input to all except the Main Menu Controller is disabled, Main Menu is enabled, Menu is disabled
     // Playing - Everything is normal, Input to the Main Menu is disabled
@@ -73,10 +93,6 @@ public class SceneManager : MonoBehaviour
     // Animating State is set/reset via script 
     // Scene Complete is set/reset via script
 
-
-
-
-
     // Initialize Scene Manager and get reference to all other Managers
     void Awake()
     {
@@ -92,7 +108,7 @@ public class SceneManager : MonoBehaviour
         mStageManager = GameObject.Find("Stage Manager").GetComponent<StageManager>();
         mVideoManager = GameObject.Find("Video Manager").GetComponent<VideoManager>();
         mProfileManager = GameObject.Find("Profile Manager").GetComponent<ProfileManager>();
-
+        mLevelManager = GameObject.Find("Level Manager").GetComponent<LevelManager>();
 
         Debug.Log("Initializing other Managers...");
         mCameraManager.InitializeManager();
@@ -145,7 +161,49 @@ public class SceneManager : MonoBehaviour
         
         }
 
+        if (displayGameOver)
+        {
+            GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), gameOverTexture);
+        }
 
+        if (displayLoadingStage)
+        {
+            GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), loadingSceneTexture);
+            // Make a background box
+            GUI.backgroundColor = Color.clear;
+            GUI.color = Color.white;
+            GUI.skin.box.fontSize = 35;
+            GUI.skin.box.alignment = TextAnchor.UpperLeft;
+            GUI.skin.box.fontStyle = FontStyle.Bold;
+
+            switch (loadingStageIncrement)
+            {
+                case 0:
+                    GUI.Box(new Rect(mHUDManager.getPositionX(40), mHUDManager.getPositionY(25), mHUDManager.getPositionX(90), mHUDManager.getPositionY(30)), "Loading Level " + mLevelManager.data.level + "-" + mLevelManager.data.stage + ".");
+                    GUI.DrawTexture(new Rect(mHUDManager.getPositionX(60), mHUDManager.getPositionY(40), 60, 70), playerTexture1);
+                    break;
+                case 1:
+                    GUI.Box(new Rect(mHUDManager.getPositionX(40), mHUDManager.getPositionY(25), mHUDManager.getPositionX(90), mHUDManager.getPositionY(30)), "Loading Level " + mLevelManager.data.level + "-" + mLevelManager.data.stage + "..");
+                    GUI.DrawTexture(new Rect(mHUDManager.getPositionX(60), mHUDManager.getPositionY(40), 60, 70), playerTexture2);
+                    break;
+                case 2:
+                    GUI.Box(new Rect(mHUDManager.getPositionX(40), mHUDManager.getPositionY(25), mHUDManager.getPositionX(90), mHUDManager.getPositionY(30)), "Loading Level " + mLevelManager.data.level + "-" + mLevelManager.data.stage + "...");
+                    GUI.DrawTexture(new Rect(mHUDManager.getPositionX(60), mHUDManager.getPositionY(40), 60, 70), playerTexture3);
+                    break;
+                default:
+                    break;
+            }
+
+            GUI.DrawTexture(new Rect(mHUDManager.getPositionX(40), mHUDManager.getPositionY(40), 40, 40), livesTexture);
+            GUI.Box(new Rect(mHUDManager.getPositionX(40) + 40.0f, mHUDManager.getPositionY(40), mHUDManager.getPositionX(15), mHUDManager.getPositionY(15)), " x " + mPlayerManager.lives);
+        }
+
+        if (displayLogo)
+        {
+            GUI.skin.box.alignment = TextAnchor.MiddleCenter;
+            GUI.DrawTexture(new Rect(0, 0, mHUDManager.getPositionX(100), mHUDManager.getPositionY(100)), loadingSceneTexture);
+            GUI.DrawTexture(new Rect(mHUDManager.getPositionX(10), mHUDManager.getPositionY(20), mHUDManager.getPositionX(80), mHUDManager.getPositionY(100)), teamLogoTexture);
+        }
     }
 	// Use this for initialization
 	void Start ()
@@ -163,6 +221,9 @@ public class SceneManager : MonoBehaviour
 
         string sceneName = Application.loadedLevelName;
 
+        mLevelManager.loadCurrentLevel();
+
+        /*
         if(sceneName.Equals("MainMenuScene"))
         {
             StartCoroutine("MainMenuScript", 0.0f);
@@ -172,59 +233,23 @@ public class SceneManager : MonoBehaviour
         {
             StartCoroutine("TestSceneScript", 0.0f);
         }
-	}
 
-    IEnumerator MainMenuScript()
-    {
-        state = SceneState.MainMenu;
-        mCameraManager.setCamera("Camera1");
-
-
-
-        mProfileManager.LoadProfile(0);
-        mProfileManager.setResolution(5.0f);
-        mProfileManager.setVolume(100.0f);
-
-        mMainMenuController.showMenu = false;
-
-        mVideoManager.playVideo("starcraft");
-        yield return new WaitForSeconds(mSoundManager.getSoundLength("starcraft") - 0.2f);
-        mSoundManager.playSound("lol", Vector3.zero);
-
-        mCameraManager.beginFadeIn();
-        mMainMenuController.showMenu = true;
-    }
-
-    IEnumerator TestSceneScript()
-    {
-        state = SceneState.Playing;
-        mProfileManager.setResolution(mResolution);
-        mProfileManager.setVolume(mVolume);
-
-
-        yield return new WaitForSeconds(1.5f);
-        
-        state = SceneState.Locked;
-        mHUDManager.addTextToQueue("Hello Friends...");
-        mHUDManager.addTextToQueue("Welcome to Testing the TestScene");
-        mHUDManager.addTextToQueue("LALALALALALALALALALA");
-
-        while(this.mHUDManager.texts.Count > 0)
+        if (sceneName.StartsWith("Scene"))
         {
-            yield return new WaitForSeconds(0.5f);
+            StartCoroutine(sceneName + "Script", 0.0f);
+        }*/
+
+        mHUDManager.disableHUD = true;
+
+        // This needs to be called after profile is loaded
+        if (mLevelManager.data.level > 0 && mLevelManager.data.stage == 1)
+        {
+            mPlayerManager.savedTime = 0;
+            mPlayerManager.startTime = Time.time;
         }
 
-        state = SceneState.Playing;
-
-
-        mSoundManager.playSound("sound3", Vector3.zero);
-
-
-    }
-
-
-
-
+        mCameraManager.setCamera("Main Camera");
+	}
 
 	// Update is called once per frame
 	void Update ()
@@ -246,7 +271,6 @@ public class SceneManager : MonoBehaviour
                 this.mHUDManager.lockHUDSpeech = false;
 
                 this.mPlayerManager.enabled = true;
-                this.mPlayerManager.lockPlayerCoordinates = false;
                 this.mPlayerManager.lockPlayerInput = false;
 
                 this.mEnemyManager.enabled = true;
@@ -263,7 +287,6 @@ public class SceneManager : MonoBehaviour
                 mMenuController.lockMenuInput = false;
                 this.mHUDManager.lockHUDSpeech = true;
 
-                this.mPlayerManager.lockPlayerCoordinates = true;
                 this.mPlayerManager.lockPlayerInput = true;
 
                 this.mEnemyManager.lockEnemyCoordinates = true;
@@ -277,7 +300,6 @@ public class SceneManager : MonoBehaviour
                 this.mHUDManager.enabled = true;
                 this.mHUDManager.disableHUD = true;
 
-                this.mPlayerManager.lockPlayerCoordinates = true;
                 this.mPlayerManager.lockPlayerInput = true;
 
                 this.mEnemyManager.lockEnemyCoordinates = true;
@@ -292,7 +314,6 @@ public class SceneManager : MonoBehaviour
                 this.mHUDManager.enabled = true;
                 this.mHUDManager.disableHUD = false;
 
-                this.mPlayerManager.lockPlayerCoordinates = false;
                 this.mPlayerManager.lockPlayerInput = true;
 
                 this.mEnemyManager.lockEnemyCoordinates = true;
@@ -308,7 +329,6 @@ public class SceneManager : MonoBehaviour
                 this.mHUDManager.enabled = false;
                 this.mHUDManager.disableHUD = false;
 
-                this.mPlayerManager.lockPlayerCoordinates = true;
                 this.mPlayerManager.lockPlayerInput = true;
 
                 this.mEnemyManager.lockEnemyCoordinates = true;
@@ -323,7 +343,39 @@ public class SceneManager : MonoBehaviour
                 break;
         }
 
+        // Check if Player has run out of lives or hp
+        if (mPlayerManager.health == -1)
+        {
+            state = SceneState.Animating;
+            mCameraManager.lockCameraPositions();
+
+            BoxCollider2D[] colliders =  mPlayerManager.player.gameObject.GetComponents<BoxCollider2D>();
+
+            for (int i = 0; i < colliders.Length; i++)
+            {
+                colliders[i].enabled = false;
+            }
+
+                mPlayerManager.lives--;
+
+            if (mPlayerManager.lives <= -1)
+            {
+                mPlayerManager.health = -2;
+                StartCoroutine("GameOverAnimation");
+            }
+            else
+            {
+                mPlayerManager.health = 3;
+                mProfileManager.SaveProfile(0);
+                StartCoroutine("RestartLevel");
+            }
+        }
+
+
+
     }
+
+
 
     // Load Properties
     void LoadSceneProperties(int profileNumber)
@@ -335,21 +387,78 @@ public class SceneManager : MonoBehaviour
         mCameraManager.setResolution(mResolution);        
     }
 
+    IEnumerator GameOverAnimation()
+    {
+        mSoundManager.setVolumeSounds(25.0f);
+        mHUDManager.enabled = false;
+        state = SceneState.Animating;
+        mCameraManager.beginFadeOut();
+        yield return new WaitForSeconds(3.0f);
+        displayGameOver = true;
+        mCameraManager.beginFadeIn();
+        yield return new WaitForSeconds(3.0f);
+        mCameraManager.beginFadeOut();
+        yield return new WaitForSeconds(3.0f);
+        displayGameOver = false;
+        Application.LoadLevel("MainMenuScene");
+    }
+
+    IEnumerator LoadingLevelAnimation()
+    {
+        SceneState originalState = this.state;
+        bool originalHUD = mHUDManager.enabled;
+
+        mHUDManager.enabled = false;
+        state = SceneState.Animating;
+        mCameraManager.beginFadeIn();
+        displayLoadingStage = true;
+        StartCoroutine("LoadingLevelAnimationHelper");
+        yield return new WaitForSeconds(3.0f);
+        mCameraManager.beginFadeOut();
+        yield return new WaitForSeconds(1.0f);
+        displayLoadingStage = false;
+        StopCoroutine("LoadingLevelAnimationHelper");
+
+        state = originalState;
+        mHUDManager.enabled = originalHUD;
+    }
+
+    IEnumerator LoadingLevelAnimationHelper()
+    {
+        while (displayLoadingStage)
+        {
+            loadingStageIncrement++;
+            loadingStageIncrement = loadingStageIncrement % 3;
+            yield return new WaitForSeconds(0.33f);
+        }
+    }
+
     public void StartButton()
     {
         switch (state)
         {
             case SceneState.Playing:
-                tempVol = mVolume;
-                this.mProfileManager.setVolume(mVolume * 0.25f);
                 state = SceneState.Paused;
                 break;
             case SceneState.Paused:
-                this.mProfileManager.setVolume(tempVol);
                 state = SceneState.Playing;
                 break;
             default:
                 break;
         }
+    }
+
+
+    IEnumerator RestartLevel()
+    {
+        state = SceneState.Animating;
+        mCameraManager.beginFadeOut();
+        yield return new WaitForSeconds(3.0f);
+        Application.LoadLevel(Application.loadedLevelName);
+    }
+
+    public void BackButton()
+    {
+        StartCoroutine("RestartLevel");
     }
 }

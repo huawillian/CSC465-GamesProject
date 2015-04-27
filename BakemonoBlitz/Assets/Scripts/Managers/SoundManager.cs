@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 //  playSound([name], [Vector3 location]);
 //  stopSound([name]);
@@ -27,29 +28,24 @@ public class SoundManager : MonoBehaviour
     public string[] soundList;
     public GameObject[] soundHolders;
 
-/*
-    IEnumerator Start()
-    {
-        yield return new WaitForSeconds(1);
-        playSound("sound1", Vector3.zero);
-        yield return new WaitForSeconds(1);
+    public GameObject backgroundMusic;
+    private SceneManager mSceneManager;
 
-        setVolumeSound("sound1", 0.3f);
-        yield return new WaitForSeconds(1);
+    public float soundCoefficient = 1.0f;
+    public float soundVolume = 1.0f;
+    public float backgroundMusicCoefficient = 1.0f;
+    public float backgroundMusicVolume = 0.5f;
 
-        setVolumeSounds(1.0f);
-    }
-*/
-    // Initialization called by Scene Manager
-    public void InitializeManager()
+    void Start()
     {
+        mSceneManager = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
         Debug.Log("Initializing " + this.gameObject.name);
 
-        soundList = new string[] { "sound1", "sound2", "sound3", "scene", "beep1" , "beep2", "starcraft", "lol"};
+        soundList = new string[] { "sound1", "sound2", "sound3", "scene", "beep1", "beep2", "starcraft", "lol", "Yoshida Brothers - Rising", "Saitama Saishuu Heiki - Momentary Life [Remix]", "coin", "oneup" };
         clip = new AudioClip[soundList.Length];
         soundHolders = new GameObject[soundList.Length];
 
-        for(int i=0; i<soundList.Length; i++)
+        for (int i = 0; i < soundList.Length; i++)
         {
             // Load Sound
             Debug.Log(soundList[i]);
@@ -60,6 +56,26 @@ public class SoundManager : MonoBehaviour
             soundHolders[i].AddComponent<AudioSource>();
             soundHolders[i].transform.parent = this.transform;
         }
+
+        backgroundMusic = new GameObject();
+        backgroundMusic.AddComponent<AudioSource>();
+
+    }
+
+    // Initialization called by Scene Manager
+    public void InitializeManager()
+    {
+
+    }
+
+    void Update()
+    {
+        try
+        {
+            Vector3 camPos = mSceneManager.mCameraManager.getCurrentCamera().transform.position;
+            backgroundMusic.transform.position = new Vector3(camPos.x, camPos.y, 0);
+        }
+        catch (Exception e) { }
     }
 
     // Called by other classes to play sound
@@ -139,7 +155,7 @@ public class SoundManager : MonoBehaviour
         {
             if (soundList[i].Equals(name))
             {
-                soundHolders[i].GetComponent<AudioSource>().volume = volume;
+                soundHolders[i].GetComponent<AudioSource>().volume = volume / 100.0f * soundCoefficient;
                 return;
             }
         }
@@ -153,8 +169,10 @@ public class SoundManager : MonoBehaviour
 
         for (int i = 0; i < soundList.Length; i++)
         {
-            soundHolders[i].GetComponent<AudioSource>().volume = volume;
+            soundHolders[i].GetComponent<AudioSource>().volume = volume / 100.0f * soundCoefficient;
         }
+
+        soundVolume = volume;
     }
 
     void OnDestroy()
@@ -163,5 +181,22 @@ public class SoundManager : MonoBehaviour
         {
             Resources.UnloadAsset(clip[i]);
         }
+    }
+
+    public void setBackgroundMusic(string name)
+    {
+        for (int i = 0; i < soundList.Length; i++)
+        {
+            if (soundList[i].Equals(name))
+            {
+                backgroundMusic = soundHolders[i];
+                soundHolders[i].GetComponent<AudioSource>().PlayOneShot(clip[i]);
+                loopSound(name);
+                return;
+            }
+        }
+
+        Debug.Log("Sound Not Found: " + name);
+
     }
 }

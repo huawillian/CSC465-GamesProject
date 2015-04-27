@@ -19,7 +19,7 @@
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
 	<OutputPath>Temp\bin\Debug\</OutputPath>
-	<DefineConstants>DEBUG;TRACE;UNITY_4_6_2;UNITY_4_6;UNITY_STANDALONE_WIN;ENABLE_MICROPHONE;ENABLE_TEXTUREID_MAP;ENABLE_UNITYEVENTS;ENABLE_NEW_HIERARCHY ;ENABLE_AUDIO_FMOD;UNITY_STANDALONE;ENABLE_TERRAIN;ENABLE_SUBSTANCE;ENABLE_GENERICS;INCLUDE_IL2CPP;INCLUDE_WP8SUPPORT;ENABLE_MOVIES;ENABLE_WWW;ENABLE_IMAGEEFFECTS;ENABLE_4_6_FEATURES;INCLUDE_WP_BLUE_SUPPORT;ENABLE_WEBCAM;INCLUDE_METROSUPPORT;RENDER_SOFTWARE_CURSOR;ENABLE_NETWORK;ENABLE_PHYSICS;UNITY5_SCRIPTING_IN_UNITY4;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_2D_PHYSICS;ENABLE_SHADOWS;ENABLE_AUDIO;ENABLE_NAVMESH_CARVING;ENABLE_DUCK_TYPING;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;ENABLE_MONO;DEVELOPMENT_BUILD;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_WIN</DefineConstants>
+	<DefineConstants>DEBUG;TRACE;UNITY_4_6_2;UNITY_4_6;UNITY_STANDALONE_WIN;ENABLE_MICROPHONE;ENABLE_TEXTUREID_MAP;ENABLE_UNITYEVENTS;ENABLE_NEW_HIERARCHY ;ENABLE_AUDIO_FMOD;UNITY_STANDALONE;ENABLE_TERRAIN;ENABLE_SUBSTANCE;ENABLE_GENERICS;INCLUDE_IL2CPP;INCLUDE_WP8SUPPORT;ENABLE_MOVIES;ENABLE_WWW;ENABLE_IMAGEEFFECTS;ENABLE_4_6_FEATURES;INCLUDE_WP_BLUE_SUPPORT;ENABLE_WEBCAM;INCLUDE_METROSUPPORT;RENDER_SOFTWARE_CURSOR;ENABLE_NETWORK;ENABLE_PHYSICS;UNITY5_SCRIPTING_IN_UNITY4;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_2D_PHYSICS;ENABLE_SHADOWS;ENABLE_AUDIO;ENABLE_NAVMESH_CARVING;ENABLE_DUCK_TYPING;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;ENABLE_MONO;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_WIN</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<NoWarn>0169</NoWarn>
@@ -46,21 +46,32 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Clouds.cs" />
-     <Compile Include="Assets\EnemyController.cs" />
-     <Compile Include="Assets\GrappleController.cs" />
-     <Compile Include="Assets\ItemController.cs" />
-     <Compile Include="Assets\PlayerController.cs" />
-     <Compile Include="Assets\Scripts\Controllers\CameraController.cs" />
-     <Compile Include="Assets\Scripts\Controllers\InputController.cs" />
+     <Compile Include="Assets\AggressiveFloatingHeadController.cs" />
+     <Compile Include="Assets\Animation.cs" />
+     <Compile Include="Assets\ChainController.cs" />
+     <Compile Include="Assets\CrumblingPlatformController.cs" />
+     <Compile Include="Assets\DamageController.cs" />
+     <Compile Include="Assets\DashController.cs" />
+     <Compile Include="Assets\DashingLineController.cs" />
+     <Compile Include="Assets\EnemyTemplate.cs" />
+     <Compile Include="Assets\FlamingSkullController.cs" />
+     <Compile Include="Assets\GrapplingPlatformController.cs" />
+     <Compile Include="Assets\GreenFloatingHeadController.cs" />
+     <Compile Include="Assets\KappaController.cs" />
+     <Compile Include="Assets\LevelManager.cs" />
+     <Compile Include="Assets\MovingPlatformController.cs" />
+     <Compile Include="Assets\PlatformTemplate.cs" />
+     <Compile Include="Assets\ProjectileController.cs" />
+     <Compile Include="Assets\RedFloatingHeadController.cs" />
+     <Compile Include="Assets\Scripts\Controllers\Clouds.cs" />
+     <Compile Include="Assets\Scripts\Controllers\CrumblingPlatform.cs" />
+     <Compile Include="Assets\Scripts\Controllers\EnemyController.cs" />
+     <Compile Include="Assets\Scripts\Controllers\EventController.cs" />
+     <Compile Include="Assets\Scripts\Controllers\GrappleController.cs" />
+     <Compile Include="Assets\Scripts\Controllers\ItemController.cs" />
      <Compile Include="Assets\Scripts\Controllers\MainMenuController.cs" />
      <Compile Include="Assets\Scripts\Controllers\MenuController.cs" />
-     <Compile Include="Assets\Scripts\Controllers\PlayerController1.cs" />
-     <Compile Include="Assets\Scripts\CrumblingPlatform.cs" />
-     <Compile Include="Assets\Scripts\DPadButtons.cs" />
-     <Compile Include="Assets\Scripts\EnemyGreen.cs" />
-     <Compile Include="Assets\Scripts\EventController.cs" />
-     <Compile Include="Assets\Scripts\Grapple.cs" />
+     <Compile Include="Assets\Scripts\Controllers\PlayerController.cs" />
      <Compile Include="Assets\Scripts\Managers\BackgroundManager.cs" />
      <Compile Include="Assets\Scripts\Managers\CameraManager.cs" />
      <Compile Include="Assets\Scripts\Managers\EnemyManager.cs" />
@@ -73,10 +84,21 @@
      <Compile Include="Assets\Scripts\Managers\SoundManager.cs" />
      <Compile Include="Assets\Scripts\Managers\StageManager.cs" />
      <Compile Include="Assets\Scripts\Managers\VideoManager.cs" />
-     <Compile Include="Assets\Scripts\ShurikenController.cs" />
-     <Compile Include="Assets\Scripts\TriggerButtons.cs" />
-     <Compile Include="Assets\Scripts\UpwardsPlatformController.cs" />
-     <Compile Include="Assets\Scripts\s.cs" />
+     <Compile Include="Assets\Scripts\Old\CameraController.cs" />
+     <Compile Include="Assets\Scripts\Old\DPadButtons.cs" />
+     <Compile Include="Assets\Scripts\Old\EnemyGreen.cs" />
+     <Compile Include="Assets\Scripts\Old\Grapple.cs" />
+     <Compile Include="Assets\Scripts\Old\InputController.cs" />
+     <Compile Include="Assets\Scripts\Old\PlayerController1.cs" />
+     <Compile Include="Assets\Scripts\Old\ShurikenController.cs" />
+     <Compile Include="Assets\Scripts\Old\TriggerButtons.cs" />
+     <Compile Include="Assets\Scripts\Old\s.cs" />
+     <Compile Include="Assets\ShadowController.cs" />
+     <Compile Include="Assets\SmallSmokeController.cs" />
+     <Compile Include="Assets\SmokeController.cs" />
+     <Compile Include="Assets\TwoSmallSmokeController.cs" />
+     <Compile Include="Assets\UpwardsPlatformController.cs" />
+     <Compile Include="Assets\VicinityScript.cs" />
      <None Include="Assets\StreamingAssets\Profiles\SaveData1.xml" />
      <None Include="Assets\StreamingAssets\Profiles\SaveData2.xml" />
      <None Include="Assets\StreamingAssets\Profiles\SaveData3.xml" />

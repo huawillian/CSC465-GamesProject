@@ -135,6 +135,8 @@ public class ProfileManager : MonoBehaviour
             myData._userData.y = mPlayerManager.y;
             myData._userData.z = mPlayerManager.z;
             myData._userData.gems = mPlayerManager.gems;
+            myData._userData.time = mPlayerManager.time;
+            myData._userData.score = mPlayerManager.score;
 
             myData._userData.volume = mSceneManager.mVolume;
             myData._userData.resolution = mSceneManager.mResolution;
@@ -227,11 +229,17 @@ public class ProfileManager : MonoBehaviour
                 mPlayerManager.z = myData._userData.z;
 
                 mPlayerManager.gems = myData._userData.gems;
+                mPlayerManager.score = myData._userData.score;
+                mPlayerManager.time = (int) myData._userData.time;
+                mPlayerManager.startTime = Time.time;
+                mPlayerManager.savedTime = (int)myData._userData.time;
+
                 mPlayerManager.gender = myData._userData.gender;
 
                 mSceneManager.mVolume = myData._userData.volume;
                 mSceneManager.mResolution = myData._userData.resolution;
-                mSceneManager.mSceneNumber = myData._userData.sceneNumber;
+                // mSceneManager.mSceneNumber = myData._userData.sceneNumber;
+                // SceneManager will set this...
                 mSceneManager.mCheckpointNumber = myData._userData.checkpointNumber;
 
                 mSceneManager.mProfileNumber = myData._userData.sessionNumber;
@@ -259,7 +267,8 @@ public class ProfileManager : MonoBehaviour
     public void setVolume(float vol)
     {
         Debug.Log("Setting volume to: " + vol);
-        AudioListener.volume = vol;
+        mSceneManager.mSoundManager.setVolumeSounds(vol);
+       // AudioListener.volume = vol;
         mSceneManager.mVolume = vol;
         this.myData._userData.volume = vol;
     }
@@ -299,6 +308,8 @@ public class UserData
         public float z; // #.##...
 
         public int gems; // #
+        public int score; 
+        public float time;
 
         public float volume; // #.##...
         public float resolution; // #.##...

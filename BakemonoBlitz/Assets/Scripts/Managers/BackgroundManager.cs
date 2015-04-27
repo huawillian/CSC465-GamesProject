@@ -35,6 +35,20 @@ public class BackgroundManager : MonoBehaviour
     {
         mSceneManager = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
         player = GameObject.Find("Player");
+        Debug.Log("Initializing " + this.gameObject.name);
+        images = GameObject.FindGameObjectsWithTag("Background");
+        horizon = GameObject.FindGameObjectsWithTag("Horizon");
+        horizonOrigPosx = new float[horizon.Length];
+        horizonOrigPosy = new float[horizon.Length];
+
+        for (int i = 0; i < horizon.Length; i++)
+        {
+
+            horizonOrigPosx[i] = horizon[i].transform.position.x;
+            horizonOrigPosy[i] = horizon[i].transform.position.y;
+        }
+
+        horSet = true;
 
         StartCoroutine("playClouds");
 
@@ -48,7 +62,7 @@ public class BackgroundManager : MonoBehaviour
         {
             if (horSet)
             {
-                horizon[i].transform.position = new Vector3((mSceneManager.mPlayerManager.x - playerOrigPosx) * 0.4f + horizonOrigPosx[i], horizon[i].transform.position.y, horizon[i].transform.position.z);
+                horizon[i].transform.position = new Vector3((GameObject.FindGameObjectWithTag("MainCamera").transform.position.x - playerOrigPosx) * 0.4f + horizonOrigPosx[i], horizon[i].transform.position.y, horizon[i].transform.position.z);
             }
         }
 	}
@@ -70,19 +84,6 @@ public class BackgroundManager : MonoBehaviour
     // Initialization called by Scene Manager
     public void InitializeManager()
     {
-        Debug.Log("Initializing " + this.gameObject.name);
-        images = GameObject.FindGameObjectsWithTag("Background");
-        horizon = GameObject.FindGameObjectsWithTag("Horizon");
-        horizonOrigPosx = new float[horizon.Length];
-        horizonOrigPosy = new float[horizon.Length];
 
-        for (int i = 0; i < horizon.Length; i++ )
-        {
-
-            horizonOrigPosx[i] = horizon[i].transform.position.x;
-            horizonOrigPosy[i] = horizon[i].transform.position.y;
-        }
-
-        horSet = true;
     }
 }
